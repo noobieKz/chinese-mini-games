@@ -26,6 +26,7 @@ import { Modal } from './components/Modal';
 import { BankEditor } from './components/BankEditor';
 import { request, socket } from './lib/socket';
 import { createId } from './lib/id';
+import { clearSession, loadSession, saveSession } from './lib/session';
 import { parsePastedRoomCode } from './lib/room-code';
 import type { AuthView } from '../shared/auth';
 import { StudentHome } from './pages/StudentHome';
@@ -71,6 +72,7 @@ export default function App() {
   const [mobile, setMobile] = useState(false);
   const [confirmEnd, setConfirmEnd] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const clockOffset = useRef(0);
   const notify = (message: string) => setNotice(message);
   useEffect(() => {
     setBanks(auth.teacher ? loadBanks() : defaultBanks);
@@ -106,7 +108,7 @@ export default function App() {
         headers: { 'X-CSRF-Token': auth.csrfToken ?? '' },
       });
       if (!response.ok) throw new Error('Chưa đăng xuất được. Vui lòng thử lại.');
-      sessionStorage.removeItem('hanplay-session');
+      clearSession();
       setAuth({ ...auth, teacher: null, csrfToken: undefined });
       socket.disconnect();
       socket.connect();
@@ -122,19 +124,16 @@ export default function App() {
   useEffect(() => {
     const connect = () => {
       setConnected(true);
-      try {
-        const saved = JSON.parse(sessionStorage.getItem('hanplay-session') ?? 'null');
-        if (saved)
-          void request('resume', saved).catch((e) => {
-            sessionStorage.removeItem('hanplay-session');
-            setRoom(null);
-            notify(e.message);
-          });
-      } catch {
-        sessionStorage.removeItem('hanplay-session');
-      }
+      const saved = loadSession();
+      if (saved)
+        void request('resume', saved).catch((e) => {
+          clearSession();
+          setRoom(null);
+          notify(e.message);
+        });
     };
     const update = (value: RoomView) => {
+      clockOffset.current = value.serverTime - Date.now();
       setRoom(value);
       setNow(Date.now());
       setModal(null);
@@ -142,25 +141,20 @@ export default function App() {
     const disconnect = () => setConnected(false);
     const authRequired = () => {
       setAuth((current) => ({ ...current, teacher: null, csrfToken: undefined }));
-      sessionStorage.removeItem('hanplay-session');
+      clearSession();
       setRoom((current) => (current?.host ? null : current));
       notify('Phiên giáo viên đã kết thúc. Vui lòng đăng nhập lại.');
     };
     const replaced = () => {
-      sessionStorage.removeItem('hanplay-session');
+      clearSession();
       setRoom(null);
       notify('Phiên chơi đã được mở ở cửa sổ khác.');
     };
     const expired = (expiredCode: string) => {
-      try {
-        const saved = JSON.parse(sessionStorage.getItem('hanplay-session') ?? 'null');
-        if (saved?.code === expiredCode) {
-          sessionStorage.removeItem('hanplay-session');
-          setRoom(null);
-          notify('Phòng đã hết hạn. Hãy tạo phòng mới.');
-        }
-      } catch {
-        /* No active session. */
+      if (loadSession()?.code === expiredCode) {
+        clearSession();
+        setRoom(null);
+        notify('Phòng đã hết hạn. Hãy tạo phòng mới.');
       }
     };
     socket.on('connect', connect);
@@ -191,11 +185,7 @@ export default function App() {
     setBusy(true);
     try {
       const result = await request(event, payload);
-      if (result.token)
-        sessionStorage.setItem(
-          'hanplay-session',
-          JSON.stringify({ code: result.code, token: result.token }),
-        );
+      if (result.token && result.code) saveSession({ code: result.code, token: result.token });
       after?.(result);
     } catch (e) {
       notify((e as Error).message);
@@ -287,12 +277,16 @@ export default function App() {
   };
   const leave = () =>
     void action('leave', {}, () => {
-      sessionStorage.removeItem('hanplay-session');
+      clearSession();
       setRoom(null);
       setFeedback(null);
       history.replaceState({}, '', location.pathname);
     });
-  const seconds = Math.max(0, Math.ceil(((room?.endsAt ?? 0) - now) / 1000));
+  // Phone clocks can be minutes off; count down against the server clock instead.
+  const seconds = Math.max(
+    0,
+    Math.ceil(((room?.endsAt ?? 0) - (now + clockOffset.current)) / 1000),
+  );
   if (!room && (!teacherRoute || !auth.teacher))
     return (
       <>

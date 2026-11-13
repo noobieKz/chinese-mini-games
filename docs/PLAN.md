@@ -8,7 +8,7 @@ Website trò chơi tập thể cho lớp tiếng Trung, ưu tiên giáo viên Vi
 
 - [x] Trang khám phá nhiều game, trạng thái sẵn sàng / đang phát triển rõ ràng.
 - [x] Cướp vàng: 2–4 đội, tối đa 60 người, ván 1–15 phút.
-- [x] Tạo phòng, mã 6 số, liên kết mời, tự cân bằng đội trong phòng chờ.
+- [x] Tạo phòng, mã 6 số, liên kết mời, tự cân bằng đội; học viên vào muộn vẫn tham gia khi ván đang chạy, tên trùng bị chặn.
 - [x] Câu hỏi riêng từng học viên, đáp án được kiểm tra ở server.
 - [x] Rương: 60% +100 vàng, 25% cướp tối đa 150, 15% lá chắn một lượt.
 - [x] Phản hồi đáp án sai, mỗi câu chỉ trả lời một lần.

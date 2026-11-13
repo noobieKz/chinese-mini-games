@@ -30,6 +30,8 @@ export type RoomView = {
   pending?: Reward;
   answered: number;
   total: number;
+  /** Server clock when the view was sent; clients use it to correct phone clock drift. */
+  serverTime: number;
 };
 export type Reply = {
   error?: string;

@@ -32,6 +32,8 @@ export class GamePeer {
   handlers = new Map<string, (data: unknown, reply: (value: Reply) => void) => void>();
   data: { code?: string } = {};
   teacher: Teacher | null = null;
+  /** Last room view sent, so unchanged views are not re-sent to every phone. */
+  lastView?: string;
   constructor(
     public id: string,
     public emit: (event: string, data?: unknown) => void,
@@ -54,12 +56,7 @@ function requireTeacher(peer: GamePeer) {
 export function createRoomHub(seed: Room[] = []) {
   const rooms = new Map(seed.map((room) => [room.code, room]));
   const peers = new Map<string, GamePeer>();
-  const io = {
-    sockets: { sockets: peers },
-    emit: (event: string, data: unknown) => {
-      for (const peer of peers.values()) peer.emit(event, data);
-    },
-  };
+  const io = { sockets: { sockets: peers } };
   function publish(room: Room) {
     for (const socket of io.sockets.sockets.values()) {
       if (socket.data.code !== room.code) continue;
@@ -69,7 +66,7 @@ export function createRoomHub(seed: Room[] = []) {
         room.status === 'playing' && member && !member.pending
           ? room.bank.questions[member.index]
           : undefined;
-      const view: RoomView = {
+      const view: Omit<RoomView, 'serverTime'> = {
         code: room.code,
         status: room.status,
         title: room.bank.title,
@@ -98,7 +95,10 @@ export function createRoomHub(seed: Room[] = []) {
         answered: member?.index ?? 0,
         total: room.bank.questions.length,
       };
-      socket.emit('room', view);
+      const json = JSON.stringify(view);
+      if (socket.lastView === json) continue;
+      socket.lastView = json;
+      socket.emit('room', { ...view, serverTime: Date.now() });
     }
   }
   function log(room: Room, message: string) {
@@ -176,16 +176,14 @@ export function createRoomHub(seed: Room[] = []) {
         .parse(data);
       const room = rooms.get(code);
       if (!room) throw new Error('Mã phòng không tồn tại.');
-      if (room.status !== 'lobby') throw new Error('Phòng đã bắt đầu hoặc kết thúc.');
+      if (room.status === 'finished') throw new Error('Ván chơi đã kết thúc.');
       if (room.players.length >= 60) throw new Error('Phòng đã đủ 60 học viên.');
-      const team = room.teams.reduce(
-        (best, t) =>
-          room.players.filter((p) => p.team === t.id).length <
-          room.players.filter((p) => p.team === best.id).length
-            ? t
-            : best,
-        room.teams[0],
-      );
+      const key = name.toLocaleLowerCase();
+      if (room.players.some((p) => p.online && p.name.toLocaleLowerCase() === key))
+        throw new Error('Tên này đã có trong phòng. Thêm họ hoặc số để phân biệt nhé.');
+      // Balance by players still connected, so late joiners fill the thinnest team.
+      const size = (id: number) => room.players.filter((p) => p.team === id && p.online).length;
+      const team = room.teams.reduce((best, t) => (size(t.id) < size(best.id) ? t : best));
       const token = randomUUID();
       room.players.push({
         id: randomUUID(),
@@ -199,6 +197,7 @@ export function createRoomHub(seed: Room[] = []) {
         lastAnswer: 0,
       });
       socket.data.code = code;
+      if (room.status === 'playing') log(room, `${name} vào muộn · ${team.name}`);
       publish(room);
       return { code, token };
     });
@@ -226,6 +225,7 @@ export function createRoomHub(seed: Room[] = []) {
         member.online = true;
       } else throw new Error('Phiên tham gia không hợp lệ.');
       socket.data.code = code;
+      socket.lastView = undefined;
       publish(room);
       return {};
     });
@@ -317,9 +317,12 @@ export function createRoomHub(seed: Room[] = []) {
         publish(room);
       }
       if (Date.now() - room.createdAt > 6 * 3600000) {
-        io.emit('room-expired', code);
         rooms.delete(code);
-        for (const peer of peers.values()) if (peer.data.code === code) peer.data.code = undefined;
+        for (const peer of peers.values())
+          if (peer.data.code === code) {
+            peer.data.code = undefined;
+            peer.emit('room-expired', code);
+          }
       }
     }
   };

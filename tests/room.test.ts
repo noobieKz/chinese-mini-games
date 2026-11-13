@@ -115,6 +115,11 @@ test(
       const joined = await student.send('join', { code: created.code, name: 'An' });
       assert.ok(joined.token);
       await second.send('join', { code: created.code, name: 'Bình' });
+      const late = await connect();
+      assert.ok(
+        (await late.send('join', { code: created.code, name: ' an ' })).error,
+        'duplicate online name is rejected',
+      );
       await waitForView(student, (view) => view.players.length === 2);
       assert.deepEqual(
         student.view!.players.map((p) => p.team),
@@ -135,6 +140,13 @@ test(
       assert.ok(!(await host.send('start')).error);
       await waitForView(student, (view) => view.status === 'playing');
       assert.equal(student.view!.status, 'playing');
+      assert.equal(typeof student.view!.serverTime, 'number');
+      assert.ok(
+        !(await late.send('join', { code: created.code, name: 'Cường' })).error,
+        'late student can join a running game',
+      );
+      await waitForView(late, (view) => view.status === 'playing' && !!view.question);
+      assert.ok(late.view!.activity.some((line) => line.includes('Cường vào muộn')));
       assert.ok(student.view!.question);
       assert.ok(!('answer' in student.view!.question!));
       assert.ok((await student.send('finish')).error);
@@ -157,6 +169,10 @@ test(
       assert.ok(!(await restoredHost.send('finish')).error);
       await waitForView(restored, (view) => view.status === 'finished');
       assert.equal(restored.view!.status, 'finished');
+      assert.ok(
+        (await (await connect()).send('join', { code: created.code, name: 'Dũng' })).error,
+        'finished game cannot be joined',
+      );
       assert.ok((await restored.send('answer', { index: 1, option: 1 })).error);
       const loggedOut = await fetch(origin + '/api/auth/logout', {
         method: 'POST',

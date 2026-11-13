@@ -1,12 +1,5 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "lib": ["ES2022"], "types": ["@cloudflare/workers-types"] },
-  "include": [
-    "cloudflare",
-    "functions",
-    "server/auth.ts",
-    "server/game.ts",
-    "server/room-hub.ts",
-    "shared"
-  ]
+  "include": ["cloudflare", "server/auth.ts", "server/game.ts", "server/room-hub.ts", "shared"]
 }

@@ -13,6 +13,9 @@ type Attachment = { id: string; code?: string; sessionToken?: string };
 export class ClassroomHub extends DurableObject<Env> {
   private hub = createRoomHub();
   private auth: AuthService;
+  /** Storage key → JSON last written, so each message only writes rooms that changed. */
+  private saved = new Map<string, string>();
+  private alarmAt: number | null | undefined;
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     this.auth = new AuthService(
@@ -35,6 +38,7 @@ export class ClassroomHub extends DurableObject<Env> {
     );
     ctx.blockConcurrencyWhile(async () => {
       const saved = await ctx.storage.list<Room>({ prefix: 'room:' });
+      for (const [key, room] of saved) this.saved.set(key, JSON.stringify(room));
       this.hub = createRoomHub([...saved.values()]);
       for (const ws of ctx.getWebSockets()) {
         const attachment = ws.deserializeAttachment() as Attachment;
@@ -55,16 +59,23 @@ export class ClassroomHub extends DurableObject<Env> {
     return peer;
   }
   private async persist() {
-    const prior = await this.ctx.storage.list({ prefix: 'room:' });
+    const stale = new Set(this.saved.keys());
     for (const room of this.hub.rooms.values()) {
-      prior.delete('room:' + room.code);
-      await this.ctx.storage.put('room:' + room.code, room);
+      const key = 'room:' + room.code;
+      const json = JSON.stringify(room);
+      stale.delete(key);
+      if (this.saved.get(key) === json) continue;
+      await this.ctx.storage.put(key, room);
+      this.saved.set(key, json);
     }
-    if (prior.size) await this.ctx.storage.delete([...prior.keys()]);
+    if (stale.size) {
+      await this.ctx.storage.delete([...stale]);
+      for (const key of stale) this.saved.delete(key);
+    }
     for (const ws of this.ctx.getWebSockets()) {
       const a = ws.deserializeAttachment() as Attachment;
       const peer = this.hub.peers.get(a.id);
-      if (peer) ws.serializeAttachment({ ...a, code: peer.data.code });
+      if (peer && peer.data.code !== a.code) ws.serializeAttachment({ ...a, code: peer.data.code });
     }
     const next = Math.min(
       ...[...this.hub.rooms.values()].map((room) =>
@@ -73,8 +84,11 @@ export class ClassroomHub extends DurableObject<Env> {
           : room.createdAt + 6 * 3600000,
       ),
     );
-    if (Number.isFinite(next)) await this.ctx.storage.setAlarm(Math.max(Date.now() + 100, next));
-    else await this.ctx.storage.deleteAlarm();
+    const wanted = Number.isFinite(next) ? next : null;
+    if (wanted === this.alarmAt) return;
+    if (wanted === null) await this.ctx.storage.deleteAlarm();
+    else await this.ctx.storage.setAlarm(Math.max(Date.now() + 100, wanted));
+    this.alarmAt = wanted;
   }
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
@@ -152,6 +166,7 @@ export class ClassroomHub extends DurableObject<Env> {
     await this.webSocketClose(ws);
   }
   async alarm() {
+    this.alarmAt = undefined;
     this.hub.tick();
     await this.persist();
   }

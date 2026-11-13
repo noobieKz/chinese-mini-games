@@ -34,7 +34,7 @@ Một WebSocket cùng origin tại `/api/socket`. Client gửi `{ id, event, dat
 - `claim { target? }` → `{ reward, amount }`.
 - Push: `room`, `replaced`, `room-expired`, `auth-required`.
 
-Client timeout 8 giây, reconnect backoff tới 10 giây, không tự retry mutation. Token tham gia trong sessionStorage phục hồi tiến độ cùng tab. Google cookie tách biệt, chỉ server đọc được. Server chỉ gửi câu hỏi hiện tại và đáp án sau khi chốt lựa chọn, không broadcast bank / host token.
+Client timeout 8 giây, reconnect backoff tới 10 giây, không tự retry mutation. Token tham gia lưu trong localStorage (hết hạn sau 6 giờ) nên học viên lỡ đóng tab vẫn mở lại web và chơi tiếp. Mỗi view `room` kèm `serverTime` để đồng hồ đếm ngược không lệch theo giờ điện thoại; server chỉ gửi lại view khi nội dung thay đổi. Durable Object chỉ ghi các phòng vừa thay đổi. Google cookie tách biệt, chỉ server đọc được. Server chỉ gửi câu hỏi hiện tại và đáp án sau khi chốt lựa chọn, không broadcast bank / host token.
 
 ## Giới hạn
 
