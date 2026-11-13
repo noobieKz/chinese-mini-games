@@ -1,0 +1,22 @@
+{
+  "name": "hanplay-classroom",
+  "account_id": "055aaf3c6be57fe42c3a6bbc20b8d854",
+  "main": "dist/server/index.js",
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"],
+  },
+  "compatibility_date": "2026-11-13",
+  "durable_objects": {
+    "bindings": [{ "name": "HUB", "class_name": "ClassroomHub" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ClassroomHub"] }],
+  "vars": {
+    "GOOGLE_CLIENT_ID": "149806339689-89evmnd0qqq8cr6mkapdussduffhvctl.apps.googleusercontent.com",
+    "TEACHER_EMAILS": "giathe.bk@gmail.com,anhbpt.haui@gmail.com",
+    "ALLOWED_ORIGINS": "https://hanplay-classroom.giathe-bk.workers.dev,http://localhost:5173,http://localhost:3001,http://localhost:8788,http://127.0.0.1:8788",
+  },
+  "observability": { "enabled": true },
+}

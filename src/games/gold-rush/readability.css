@@ -1,0 +1,493 @@
+/* Content layer: opaque reading surfaces and legible type, independent of scene art. */
+.gold-game {
+  --reading-paper: #fff7e6;
+  --reading-ink: #183b44;
+  --reading-muted: #52666b;
+}
+.gold-game .game-kicker {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #e5d09e;
+}
+.gold-game .game-connection {
+  font-size: 12px;
+  color: #d3e3dc;
+}
+.gold-game .hud-chapter {
+  font-size: 13px;
+}
+.gold-game .hud-chapter small {
+  font-size: 11px;
+  color: #bcd3cc;
+}
+.gold-game .room-invite > span {
+  font-size: 11px;
+  color: #c6dad1;
+}
+.gold-game .room-invite > b {
+  font-size: 16px;
+}
+.gold-game .game-clock > b {
+  font-size: 23px;
+}
+.gold-game .player-team {
+  width: 300px;
+  left: calc(50% - 150px);
+  padding: 12px 16px;
+  background: #102d39;
+  border: 1px solid #71968a;
+  border-radius: 10px;
+}
+.gold-game .player-team small {
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: #bed5ca;
+}
+.gold-game .player-team b {
+  font-size: 16px;
+  color: #f5f9ed;
+}
+.gold-game .my-gold {
+  font-size: 23px;
+  color: #ffe09c;
+}
+.gold-game.is-player.state-playing {
+  min-height: 1000px;
+  height: max(100svh, 1000px);
+}
+.gold-game .treasure-heading {
+  top: 22%;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: min(660px, calc(100% - 60px));
+  background: var(--reading-paper);
+  color: var(--reading-ink);
+  border: 2px solid #e3c78e;
+  border-radius: 16px;
+  padding: 24px 30px;
+  box-shadow: 0 12px 38px #04172355;
+}
+.gold-game .treasure-heading > .game-kicker {
+  color: #6a542c;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+}
+.gold-game .treasure-heading h2 {
+  font-family: 'Be Vietnam Pro', 'Noto Sans SC', sans-serif;
+  font-size: 30px;
+  line-height: 1.4;
+  color: var(--reading-ink);
+  margin: 12px 0;
+  letter-spacing: -0.7px;
+}
+.gold-game .treasure-heading > p {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--reading-muted);
+}
+.gold-game .chest-select {
+  gap: 28px;
+}
+.gold-game .chest-select > button {
+  min-height: 56px;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  color: #fff5d7;
+  border-color: #e4c583;
+  background: #183845;
+}
+.gold-game .chest-select > button > span {
+  font-size: 26px;
+  color: #ffe3a5;
+}
+.gold-game .reward-actions {
+  width: min(460px, calc(100% - 40px));
+  padding: 22px;
+  background: var(--reading-paper);
+  border: 2px solid #e3c78e;
+  border-radius: 14px;
+  box-shadow: 0 12px 38px #04172355;
+}
+.gold-game .reward-emblem {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--reading-ink);
+  filter: none;
+  margin-bottom: 18px;
+}
+.gold-game .reward-emblem strong {
+  font-size: 26px;
+  letter-spacing: -0.5px;
+}
+.gold-game .reward-emblem > svg {
+  color: #8c631b;
+}
+.gold-game .quest-button {
+  min-height: 56px;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.4px;
+  color: #293728;
+  background: #f5cd76;
+  border-color: #b28c41;
+  box-shadow: 0 3px 0 #ad8034;
+}
+.gold-game .quest-button:hover {
+  background: #ffdfa0;
+}
+.gold-game .raid-targets > button {
+  padding: 14px;
+  min-height: 66px;
+  color: #183b44;
+  background: white;
+  border: 1px solid #adbaae;
+  border-radius: 8px;
+}
+.gold-game .raid-targets > button:hover {
+  background: #e7f0e6;
+  border-color: #496f60;
+}
+.gold-game .raid-targets > button > span:nth-child(2) {
+  font-size: 16px;
+  font-weight: 600;
+}
+.gold-game .raid-targets small {
+  font-size: 13px;
+  color: #52666b;
+}
+.gold-game .raid-targets > button > svg {
+  color: #876019;
+}
+.gold-game .raid-targets .team-sigil {
+  background: #e8eee4;
+  color: #284f47;
+  border-color: #a7b6a4;
+}
+.gold-game .question-scroll {
+  background: var(--reading-paper);
+  color: var(--reading-ink);
+  border: 2px solid #e3c78e;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 20px 60px #02182780;
+  backdrop-filter: none;
+}
+.gold-game .scroll-header {
+  color: #5e522f;
+}
+.gold-game .scroll-header > span {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.gold-game .scroll-header > b {
+  color: #274b4a;
+  font-size: 28px;
+}
+.gold-game .scroll-header small {
+  color: #52666b;
+  font-size: 17px;
+}
+.gold-game .quest-progress {
+  background: #d9dfcf;
+  height: 5px;
+}
+.gold-game .quest-progress > i {
+  background: #397764;
+}
+.gold-game .question-scroll > h2 {
+  font-size: 29px;
+  color: var(--reading-ink);
+}
+.gold-game .quest-pinyin {
+  color: #5b5c3c;
+  font-size: 18px !important;
+}
+.gold-game .quest-answers > button {
+  background: white;
+  color: #173b44;
+  border: 1px solid #acbcae;
+  border-radius: 9px;
+  min-height: 72px;
+}
+.gold-game .quest-answers > button:hover {
+  background: #e3efdf;
+  border-color: #336955;
+}
+.gold-game .quest-answers > button > b {
+  font-size: 19px;
+  font-weight: 500;
+}
+.gold-game .quest-answers > button > span {
+  background: #e5eee2;
+  color: #2b574c;
+  border-color: #9eb19f;
+  font-size: 13px;
+}
+.gold-game .quest-answers > button > svg {
+  color: #496b5b;
+}
+.gold-game .scroll-foot {
+  color: #52666b;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.gold-game .answer-feedback > .game-kicker {
+  color: #6a542c;
+  font-size: 11px;
+}
+.gold-game .answer-feedback h2 {
+  color: var(--reading-ink);
+  font-size: 28px;
+}
+.gold-game .answer-feedback > p {
+  color: #52666b;
+  font-size: 17px;
+}
+.gold-game .answer-feedback > p > b {
+  color: #193d43;
+}
+.gold-game .feedback-seal {
+  background: #edf0dd;
+  color: #786021;
+  border-color: #b7aa79;
+  box-shadow: none;
+}
+.gold-game .feedback-seal.correct {
+  color: #246c4b;
+  background: #e5efdc;
+  border-color: #91b18c;
+}
+.gold-game .live-ranking {
+  background: #102d39;
+  border-color: #5e8278;
+  width: 240px;
+}
+.gold-game .live-ranking > .game-kicker {
+  font-size: 12px;
+}
+.gold-game .ranking-name {
+  font-size: 13px;
+  color: #e2eee0;
+}
+.gold-game .ranking-position {
+  color: #c3d3bd;
+}
+.gold-game .live-ranking > div > b {
+  font-size: 18px;
+  color: #ffe2a0;
+}
+.gold-game .live-ranking > .your-team .ranking-name {
+  color: #fff7d9;
+}
+.gold-game .game-event {
+  font-size: 12px;
+  color: #c5dacf;
+}
+.gold-game .game-footer-label {
+  font-size: 10px;
+  color: #bfd3c8;
+}
+.gold-game .game-footer-brand > small {
+  display: none;
+}
+.gold-game .game-footer > button {
+  font-size: 12px;
+  color: #e5e8d4;
+}
+.gold-game .expedition-bank {
+  color: #c2d8cd;
+  font-size: 13px !important;
+}
+.gold-game .lobby-roster b {
+  font-size: 14px;
+  color: #f2f6e9;
+}
+.gold-game .lobby-roster small {
+  font-size: 12px;
+  color: #bdd4c9;
+}
+.gold-game .lobby-help {
+  color: #c1d6ca;
+  font-size: 11px !important;
+}
+.gold-game .lobby-code > span {
+  font-size: 11px;
+  color: #c4d5c3;
+}
+.gold-game .host-announcement > p {
+  font-size: 15px;
+  color: #e1ead9;
+  background: #102d39e8;
+  padding: 10px;
+  border-radius: 7px;
+}
+.gold-game .host-legend > span {
+  font-size: 12px;
+  color: #e9d6a9;
+}
+.gold-game .victory-panel {
+  background: #102d39;
+}
+.gold-game .victory-panel > p {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #d1e0c6;
+}
+.gold-game .victory-panel > .victory-learning {
+  font-size: 13px;
+  color: #c0d8c7;
+}
+.gold-game .victory-ranking b {
+  font-size: 14px;
+  color: #e1edda;
+}
+.gold-game .victory-ranking strong {
+  font-size: 18px;
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+  .gold-game .question-scroll {
+    width: min(530px, calc(100% - 280px));
+    left: 62%;
+    padding: 24px;
+  }
+  .gold-game .live-ranking {
+    width: 210px;
+  }
+}
+@media (max-width: 700px) {
+  .gold-game.is-player.state-playing {
+    min-height: 100svh;
+    height: auto;
+  }
+  .gold-game .game-connection {
+    font-size: 10px;
+  }
+  .gold-game .game-kicker {
+    font-size: 10px;
+    letter-spacing: 0.4px;
+  }
+  .gold-game .game-clock > b {
+    font-size: 18px;
+  }
+  .gold-game .player-team {
+    position: relative;
+    left: auto;
+    width: max-content;
+    max-width: calc(100% - 32px);
+    margin-top: 42px;
+    padding: 10px 13px;
+  }
+  .gold-game .player-team small {
+    font-size: 9px;
+  }
+  .gold-game .player-team b {
+    font-size: 15px;
+  }
+  .gold-game .treasure-stage {
+    min-height: 520px;
+  }
+  .gold-game .treasure-stage.revealed {
+    min-height: 540px;
+  }
+  .gold-game .treasure-stage.revealed[data-reward='steal'] {
+    min-height: 700px;
+  }
+  .gold-game .treasure-heading {
+    position: relative;
+    inset: auto;
+    transform: none;
+    width: calc(100% - 32px);
+    margin: 24px auto 0;
+    padding: 20px 17px;
+    border-radius: 12px;
+  }
+  .gold-game .treasure-heading > .game-kicker {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  .gold-game .treasure-heading h2 {
+    font-size: 25px;
+    margin: 12px 0;
+  }
+  .gold-game .treasure-heading > p {
+    font-size: 14px;
+    padding: 0;
+    line-height: 1.65;
+  }
+  .gold-game .chest-select {
+    top: 330px;
+    gap: 10px;
+  }
+  .gold-game .chest-select > button {
+    font-size: 10px;
+    min-height: 52px;
+    padding: 8px 5px;
+    gap: 5px;
+    letter-spacing: 0;
+  }
+  .gold-game .chest-select > button > span {
+    font-size: 21px;
+  }
+  .gold-game .reward-actions {
+    top: 330px;
+    width: calc(100% - 32px);
+    padding: 18px;
+  }
+  .gold-game .reward-emblem {
+    margin-bottom: 15px;
+  }
+  .gold-game .reward-emblem strong {
+    font-size: 24px;
+  }
+  .gold-game .quest-button {
+    font-size: 12px;
+    min-height: 55px;
+  }
+  .gold-game .question-scroll {
+    margin-top: 22px;
+    width: calc(100% - 32px);
+    left: auto;
+    padding: 22px 18px;
+  }
+  .gold-game .question-scroll > h2 {
+    font-size: 25px;
+  }
+  .gold-game .scroll-header > span {
+    font-size: 10px;
+  }
+  .gold-game .quest-pinyin {
+    font-size: 17px !important;
+  }
+  .gold-game .quest-answers > button {
+    min-height: 66px;
+  }
+  .gold-game .quest-answers > button > b {
+    font-size: 18px;
+  }
+  .gold-game .scroll-foot {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+  .gold-game .answer-feedback h2 {
+    font-size: 25px;
+  }
+  .gold-game .answer-feedback > p {
+    font-size: 16px;
+  }
+  .gold-game .live-ranking {
+    width: calc(100% - 32px);
+  }
+  .gold-game .game-event {
+    font-size: 10px;
+  }
+  .gold-game .game-footer > button {
+    font-size: 11px;
+  }
+  .gold-game .expedition-panel > .game-kicker {
+    font-size: 10px;
+  }
+}

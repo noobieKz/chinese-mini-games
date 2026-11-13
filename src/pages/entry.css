@@ -1,0 +1,450 @@
+.student-home {
+  min-height: 100svh;
+  background: #f7f8fc;
+  color: #243d48;
+}
+.entry-header {
+  max-width: 1280px;
+  margin: auto;
+  padding: 30px 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.entry-brand {
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+}
+.entry-brand > span {
+  width: 39px;
+  height: 43px;
+  background: #7555d9;
+  color: white;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  font-family: serif;
+  font-size: 26px;
+  margin-right: 10px;
+  transform: rotate(-6deg);
+}
+.entry-brand > b {
+  color: #7555d9;
+}
+.teacher-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #7e718e;
+  border: 1px solid #e1daed;
+  border-radius: 8px;
+  padding: 11px 15px;
+  background: white;
+}
+.student-main {
+  max-width: 1180px !important;
+  padding: 50px 45px 30px !important;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 70px;
+  align-items: center;
+}
+.entry-eyebrow {
+  display: block;
+  font-size: 10px;
+  color: #8c72bd;
+  letter-spacing: 1.4px;
+  font-weight: 600;
+}
+.student-welcome h1 {
+  font-size: 43px;
+  line-height: 1.45;
+  letter-spacing: -1.5px;
+  margin: 20px 0;
+  color: #283c47;
+}
+.student-welcome h1 > em {
+  font-style: normal;
+  color: #7555d9;
+}
+.student-welcome > p {
+  font-size: 15px;
+  line-height: 1.95;
+  color: #7f7c8f;
+}
+.student-art {
+  position: relative;
+  max-width: 330px;
+  height: 240px;
+  margin: 10px 0 0 30px;
+  background: radial-gradient(ellipse, #f4e5bb8a, transparent 70%);
+}
+.student-art > .chest {
+  width: 310px;
+  height: 240px;
+  transform: rotate(-7deg);
+}
+.student-art-word {
+  position: absolute;
+  left: -5px;
+  top: 30px;
+  background: white;
+  border: 1px solid #e5ddf3;
+  padding: 9px 13px;
+  font-size: 24px;
+  color: #8d70b5;
+  transform: rotate(-10deg);
+  border-radius: 9px;
+  z-index: 1;
+  font-weight: 600;
+}
+.student-star {
+  position: absolute;
+  right: 0;
+  top: 60px;
+  color: #d6ad53;
+  font-size: 32px;
+}
+.entry-assurance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8d8498;
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+.entry-assurance svg {
+  color: #a395bd;
+  flex-shrink: 0;
+}
+.student-join {
+  background: white;
+  border: 1px solid #e8e2ef;
+  box-shadow: 0 20px 65px #52377509;
+  border-radius: 23px;
+  padding: 34px;
+  max-width: 450px;
+}
+.entry-form-icon {
+  height: 55px;
+  width: 55px;
+  display: grid;
+  place-items: center;
+  background: #eee8fa;
+  color: #8b68c1;
+  border: 1px solid #e7ddf5;
+  border-radius: 15px;
+  margin-bottom: 22px;
+}
+.student-join h2 {
+  font-size: 26px;
+  letter-spacing: -0.7px;
+}
+.student-join > p {
+  font-size: 13px;
+  color: #95869f;
+  margin: 9px 0 28px;
+}
+.student-join label {
+  font-size: 13px;
+  color: #5d526c;
+  margin-bottom: 21px;
+}
+.student-join input {
+  font-size: 14px;
+  padding: 15px;
+}
+.student-join .student-code {
+  font-size: 29px;
+  letter-spacing: 10px;
+  text-align: center;
+  background: #faf8fd;
+  font-weight: 600;
+  color: #7253a3;
+}
+.student-join form > small {
+  display: block;
+  margin: -10px 0 25px;
+  font-size: 10px;
+  color: #a092ab;
+  line-height: 1.8;
+}
+.student-join .button {
+  font-size: 14px;
+  min-height: 50px;
+}
+.entry-network {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #ac9375;
+  margin-top: 20px;
+}
+.entry-network > i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #bb9d6a;
+}
+.entry-network.ready {
+  color: #8e9e8d;
+}
+.entry-network.ready > i {
+  background: #7eb28b;
+}
+.entry-footer {
+  padding: 25px 30px 30px;
+  text-align: center;
+  color: #b0a4bd;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+.entry-footer > span {
+  display: block;
+  letter-spacing: 0;
+  font-size: 10px;
+  margin-top: 9px;
+}
+.teacher-login {
+  background: radial-gradient(ellipse at top, #ebe1fa, #f7f8fc 65%);
+  min-height: 100svh;
+  padding: 30px;
+}
+.entry-back {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #877796;
+  font-size: 12px;
+  max-width: 1100px;
+  margin: auto;
+}
+.teacher-login-card {
+  max-width: 530px;
+  margin: 70px auto 30px;
+  background: white;
+  border: 1px solid #e8deef;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 20px 70px #5c39770a;
+}
+.teacher-login-card > .entry-form-icon {
+  margin: 0 auto 25px;
+}
+.teacher-login-card h1 {
+  font-size: 24px;
+  line-height: 1.6;
+  margin: 16px -15px;
+  color: #3b314b;
+  letter-spacing: -0.7px;
+}
+.teacher-login-card > p {
+  font-size: 13px;
+  color: #9a8ba4;
+  margin: 16px auto 25px;
+  max-width: 370px;
+}
+.google-login-target {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+  margin: 25px auto;
+}
+.auth-busy {
+  pointer-events: none;
+  opacity: 0.6;
+}
+.auth-status {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #8f7b9c;
+  padding: 20px;
+  background: #f8f4fc;
+  border-radius: 9px;
+  margin: 20px 0;
+}
+.teacher-private {
+  font-size: 10px;
+  color: #a395ab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 30px;
+  line-height: 1.7;
+}
+.login-error {
+  padding: 14px;
+  border: 1px solid #efd2db;
+  border-radius: 9px;
+  background: #fff7f8;
+  font-size: 12px;
+  color: #a45570;
+  line-height: 1.8;
+}
+.login-error button {
+  background: white;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 12px auto 0;
+  border: 1px solid #e4c5ce;
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 7px 12px;
+  color: #9e647b;
+}
+.entry-toast {
+  left: 50% !important;
+}
+.sidebar-bottom .teacher-logout {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.sidebar-bottom .teacher-identity {
+  min-width: 0;
+}
+.teacher-identity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 135px;
+}
+.entry-auth-loading {
+  padding: 80px;
+  text-align: center;
+  color: #9d8aa9;
+}
+@media (max-width: 850px) {
+  .student-main {
+    gap: 30px;
+    padding: 30px !important;
+  }
+  .student-welcome h1 {
+    font-size: 33px;
+  }
+  .student-welcome > p {
+    font-size: 13px;
+  }
+  .student-join {
+    padding: 26px;
+  }
+  .student-art {
+    max-width: 260px;
+    height: 200px;
+    margin-left: 0;
+  }
+  .student-art > .chest {
+    width: 260px;
+    height: 210px;
+  }
+  .entry-header {
+    padding: 25px 30px;
+  }
+  .entry-assurance {
+    font-size: 10px;
+  }
+}
+@media (max-width: 600px) {
+  .entry-header {
+    padding: 22px 21px;
+  }
+  .entry-brand {
+    font-size: 23px;
+  }
+  .entry-brand > span {
+    width: 34px;
+    height: 38px;
+    font-size: 23px;
+  }
+  .teacher-entry {
+    font-size: 10px;
+    padding: 9px;
+    gap: 5px;
+  }
+  .teacher-entry > svg {
+    width: 14px;
+  }
+  .student-main {
+    display: flex;
+    flex-direction: column;
+    gap: 27px;
+    padding: 22px 21px 10px !important;
+  }
+  .student-welcome {
+    text-align: center;
+  }
+  .entry-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .student-welcome h1 {
+    font-size: 29px;
+    margin: 16px 0;
+    letter-spacing: -1px;
+  }
+  .student-welcome > p {
+    font-size: 12px;
+  }
+  .student-art {
+    display: none;
+  }
+  .entry-assurance {
+    margin-top: 19px;
+    font-size: 9px;
+    justify-content: center;
+  }
+  .student-join {
+    width: 100%;
+    padding: 27px 24px;
+    border-radius: 17px;
+    max-width: 450px;
+  }
+  .student-join > .entry-form-icon {
+    display: none;
+  }
+  .student-join h2 {
+    font-size: 23px;
+  }
+  .student-join > p {
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+  .student-join .student-code {
+    font-size: 27px;
+  }
+  .student-join input {
+    font-size: 13px;
+  }
+  .entry-footer {
+    padding-top: 30px;
+    font-size: 11px;
+  }
+  .teacher-login {
+    padding: 25px 18px;
+  }
+  .teacher-login-card {
+    padding: 30px 23px;
+    margin-top: 45px;
+  }
+  .teacher-login-card h1 {
+    font-size: 21px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .teacher-login-card > p {
+    font-size: 12px;
+  }
+  .teacher-private {
+    font-size: 9px;
+  }
+}

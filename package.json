@@ -1,0 +1,46 @@
+{
+  "name": "hanplay",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"tsx watch server/main.ts\" \"vite --host 0.0.0.0\"",
+    "build": "tsc --noEmit && tsc -p tsconfig.worker.json && vite build && esbuild cloudflare/worker.ts --bundle --format=esm --platform=browser --target=es2022 --external:cloudflare:workers --outfile=dist/server/index.js",
+    "start": "tsx server/main.ts",
+    "deploy": "npm run build && wrangler deploy",
+    "preview": "wrangler dev --port 8788",
+    "test": "tsx --test tests/*.test.ts",
+    "format": "prettier --write src server shared cloudflare tests docs README.md package.json tsconfig*.json vite.config.ts index.html wrangler.jsonc",
+    "format:check": "prettier --check src server shared cloudflare tests docs README.md package.json tsconfig*.json vite.config.ts index.html wrangler.jsonc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.3.0",
+    "jose": "^6.2.17",
+    "lucide-react": "^1.72.0",
+    "phaser": "^3.90.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "ws": "^8.23.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261113.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/ws": "^8.18.2",
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^10.0.7",
+    "esbuild": "^0.28.2",
+    "prettier": "^3.10.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^6.4.6",
+    "wrangler": "^4.161.0"
+  }
+}
