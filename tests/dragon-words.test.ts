@@ -125,3 +125,17 @@ test('biting its own body cuts the tail and costs a life instead of ending the g
   assert.equal(state.snake.length, 4, 'tail from the bitten segment is gone');
   assert.ok(state.events.some((e) => e.kind === 'bite'));
 });
+
+test('canTurn accepts a real change of direction only, at most two waiting', async () => {
+  const { canTurn } = await import('../src/games/dragon-words/model');
+  const state = fresh();
+  assert.equal(state.dir, 'right');
+  assert.equal(canTurn(state, 'right'), false, 'same direction');
+  assert.equal(canTurn(state, 'left'), false, 'reverse into the neck');
+  assert.equal(canTurn(state, 'down'), true);
+  turn(state, 'down');
+  assert.equal(canTurn(state, 'up'), false, 'reverse of the waiting turn');
+  assert.equal(canTurn(state, 'left'), true);
+  turn(state, 'left');
+  assert.equal(canTurn(state, 'up'), false, 'two turns already waiting');
+});

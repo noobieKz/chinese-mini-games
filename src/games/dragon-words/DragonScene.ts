@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { Word } from '../word-garden/vocabulary';
 import {
+  canTurn,
   createDragon,
   step,
   STEP,
@@ -90,8 +91,17 @@ class DragonScene extends Phaser.Scene {
     this.lastStep = performance.now();
     this.publish();
   }
+  /**
+   * Turn at the cell the player sees the head in. The head is drawn sliding into the next cell, so
+   * past halfway it looks like it is already there: finish that step now, then turn from that cell.
+   * Before halfway the head still reads as the current cell, and the turn applies from there.
+   */
   turn(dir: Dir) {
-    if (this.model && !this.paused) turn(this.model, dir);
+    const model = this.model;
+    if (!model || this.paused || !canTurn(model, dir)) return;
+    const now = performance.now();
+    if (!model.turns.length && now - this.lastStep >= model.stepMs * 0.5) this.advance(now, false);
+    turn(model, dir);
   }
   pause(paused: boolean) {
     const now = performance.now();
@@ -114,14 +124,19 @@ class DragonScene extends Phaser.Scene {
   update() {
     const model = this.model;
     const now = performance.now();
-    if (model && model.phase === 'playing' && !this.paused && now - this.lastStep >= model.stepMs) {
-      step(model);
-      // Keep the rhythm, but never try to catch up a backlog after a stall.
-      this.lastStep = now - this.lastStep > model.stepMs * 2 ? now : this.lastStep + model.stepMs;
-      model.events.forEach((event) => this.effect(event));
-      this.publish();
-    }
+    if (model && model.phase === 'playing' && !this.paused && now - this.lastStep >= model.stepMs)
+      this.advance(now, true);
     this.drawDragon(now);
+  }
+  /** One step of the rules. On the beat it keeps the rhythm; an early step (a late turn) restarts it now. */
+  private advance(now: number, onBeat: boolean) {
+    const model = this.model!;
+    step(model);
+    // Never try to catch up a backlog after a stall.
+    this.lastStep =
+      onBeat && now - this.lastStep <= model.stepMs * 2 ? this.lastStep + model.stepMs : now;
+    model.events.forEach((event) => this.effect(event));
+    this.publish();
   }
   private center(p: Point) {
     return { x: (p.x + 0.5) * CELL, y: (p.y + 0.5) * CELL };

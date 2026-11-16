@@ -157,17 +157,17 @@ export function createDragon(
   return state;
 }
 
-/** Buffer up to two turns so quick "down, left" presses between steps both count; no reversing into the neck. */
-export function turn(state: DragonState, dir: Dir) {
+/** A turn counts when it changes direction without reversing into the neck; at most two wait between steps. */
+export function canTurn(state: DragonState, dir: Dir) {
   const last = state.turns.at(-1) ?? state.dir;
-  if (
-    state.phase !== 'playing' ||
-    dir === last ||
-    dir === OPPOSITE[last] ||
-    state.turns.length >= 2
-  )
-    return;
-  state.turns.push(dir);
+  return (
+    state.phase === 'playing' && dir !== last && dir !== OPPOSITE[last] && state.turns.length < 2
+  );
+}
+
+/** Buffer up to two turns so quick "down, left" presses between steps both count. */
+export function turn(state: DragonState, dir: Dir) {
+  if (canTurn(state, dir)) state.turns.push(dir);
 }
 
 /** Returns true when that was the last life. */
