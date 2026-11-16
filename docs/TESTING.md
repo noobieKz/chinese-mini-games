@@ -1,31 +1,24 @@
-# Kiểm tra trước buổi học
+# Xác minh phiên bản Vườn chữ · 16/11/2026
 
-## Kết quả xác minh v1
+- Production build và TypeScript strict đạt.
+- 19 test đạt, trong đó 3 test mới dành cho luật Vườn chữ; các test legacy chỉ kiểm hồi quy code cũ.
+- Browser: hoàn thành 12/12 cặp ở Nối từ HSK 1 trên mobile và Ghép chữ HSK 2 ở chế độ 4 phút; điểm, sổ tay, màn kết quả hoạt động. Mỗi lượt thử dùng gợi ý, kết thúc 87 điểm theo luật trừ điểm gợi ý.
+- Đồng hồ đã giảm khi đang chơi và giữ 3:38 trong lúc tạm dừng. Chuyển qua năm khổ 1440, 1280, 1024, 768, 375px không làm mất 3/12 cặp và 24 điểm. Chiều rộng document không vượt viewport ở các khổ này.
+- Ghi nhận lỗi timer Phaser bị chậm khi trình duyệt throttle frame; đổi việc mở khóa input sang wall-clock timer, thử lại hoàn thành hai lượt thành công.
+- Game không yêu cầu tài khoản hoặc mã phòng. API lớp học cũ trả 410 qua Worker.
 
-Ngày 13/11/2026: build production và TypeScript strict đạt; 8 test đạt. Đã thử luồng tạo phòng → học viên tham gia → bắt đầu → trả lời đúng → nhận 100 vàng → kết thúc và đồng bộ kết quả bằng hai tab trình duyệt độc lập. Đã xem UI desktop 1440px, UI học viên / trang chủ mobile 390px và trình soạn câu hỏi. Mobile không tràn ngang. Chưa kiểm tra trên điện thoại vật lý hoặc tải đủ 60 người.
+Giới hạn: chưa thử điện thoại vật lý, chưa đo FPS/bộ nhớ, chưa đợi một lượt đầy đủ 4 phút để quan sát timeout. Âm thanh là tính năng tùy chọn, chưa kiểm bằng nghe trực tiếp. Từ mẫu không thay thế ngân hàng giáo trình đã kiểm duyệt.
 
-## Bổ sung: phiên bản Phaser
+## Bản sửa Pikachu và dropdown
 
-Đã chạy build production và 8 test sau thay đổi engine. Kiểm tra bằng hai tab: tạo phòng mới, tham gia đội, trả lời đúng, mở một trong ba rương, nhận 100 vàng và cập nhật kho; giáo viên kết thúc ván và học viên thấy đội thắng. Một ván khác đã kiểm tra lá chắn và tự kết thúc khi hết giờ. Reload phục hồi pending reward; rời phòng trả số canvas về 0. Màn câu hỏi, chọn rương và kết quả được xem ở mobile 390px, không tràn ngang. Ảnh xác minh có tiền tố `docs/screenshots/game-engine-`.
+Ngày 16/11/2026: 22 test đạt. Đã bổ sung kiểm thử rãnh đường nối luôn nằm trong canvas ở mọi kích thước, chữ giống nhau khác vị trí nguồn, hoàn thành các bàn 4/8/12/18 cặp trên hai cấp độ và cả hai mức yêu cầu thứ tự.
 
-Chưa đo FPS / bộ nhớ trên điện thoại vật lý; chưa kiểm tra tải 60 máy hoặc kiểm chứng âm thanh bằng nghe trực tiếp. Nút bật/tắt âm thanh hoạt động qua UI; Web Audio là tính năng tùy chọn.
+Browser đã thử: bàn 4 và 18 cặp; 3 gợi ý hết lượt thì khóa; nối giúp cộng số cặp nhưng không cộng điểm; gợi ý pinyin; kết thúc sớm và xem kết quả; nhóm 6 từ tự giảm bàn yêu cầu 18 còn 6 cặp; dropdown chuột và End/Enter; chọn HSK bằng menu trên mobile không tràn ngang. Chọn 果 → 水 ở Bình thường được +10; chọn 生 → 学 ở Khó bị từ chối, sau đó 学 → 生 được +10.
 
-## Tự động
+Ảnh chữ trước đây dùng canvas bị mờ khi scale. Bản này chuyển chữ ô sang HTML, bỏ toàn bộ nhãn phụ đầu/sau; Phaser vẫn đảm nhiệm đồ họa. Chưa đo FPS hoặc thử điện thoại vật lý.
 
-`npm test`: luật vàng / cướp / lá chắn và socket tích hợp. `npm run build`: TypeScript strict và Vite production build.
+## Fruit Slash · 16/11/2026
 
-## Thủ công
+27 test đạt. Đã kéo chuột chém quả đúng (+10), thử phím số, hoàn thành 12 câu ghép từ ở viewport 375px: 11 đúng, 158 điểm, combo cao nhất ×8, và bảng ôn đủ 12 cụm từ. Một câu sai được chọn chủ động để kiểm tra phản hồi/reset combo. Xem FRUIT_SLASH.md cho phạm vi và giới hạn kiểm thử.
 
-- Desktop: trang thư viện, tìm game, lọc, mở hướng dẫn và đóng modal bằng Escape.
-- Mobile 390px: không tràn ngang, câu hỏi / đáp án đủ lớn để chạm, menu mở đóng, modal cuộn được.
-- Tạo phòng ở tab giáo viên; mở tab học viên riêng, nhập mã và tên.
-- Thêm học viên: đội được phân cân bằng, giáo viên thấy danh sách trực tiếp.
-- Chỉ giáo viên bắt đầu / kết thúc; không bắt đầu phòng rỗng.
-- Câu đúng → phản hồi → phần thưởng; câu sai → đáp án → câu tiếp theo.
-- Cướp đội khác; vàng không âm; lá chắn chặn một lần rồi biến mất.
-- Hoàn thành bộ câu hỏi: màn hình cổ vũ, không lặp câu để kiếm vàng.
-- Reload cùng tab: giữ vai trò và tiến độ. Mất Wi-Fi: trạng thái kết nối đổi, nối lại phục hồi phòng.
-- Hết giờ hoặc kết thúc sớm: cả lớp thấy kết quả, trường hợp hòa hiện đủ đội thắng.
-- Tự soạn 4 câu, lưu, reload; xuất JSON rồi nhập lại; tệp sai không làm hỏng giao diện.
-
-Chưa kiểm thử tải 60 thiết bị và chưa có kiểm chứng nội dung giáo trình ngoài bộ mẫu. Khi tổ chức buổi đầu nên thử một ván ngắn với 2–3 thiết bị thật.
+Thư viện theo yêu cầu sau cùng tách ba lối vào: Ghép chữ thành từ, Nối từ với nghĩa, Chém hoa quả. Hai trò nối dùng chung engine nhưng không còn dropdown đổi kiểu bên trong. Đã mở route ghép/nối và chuyển URL query cũ, giữ tương thích liên kết.

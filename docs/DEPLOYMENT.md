@@ -1,59 +1,27 @@
-# Cấu hình và deploy HanPlay
+# Deploy HanPlay · Chơi cá nhân
 
-## Quy trình đã chọn
+Dùng Wrangler theo mẫu classroom-management: một Worker phục vụ bản build SPA. URL chính: https://hanplay-classroom.giathe-bk.workers.dev.
 
-Theo mẫu `D:\Bitronics\classroom-management`: Wrangler deploy một Worker chứa static SPA + API. Durable Object đảm nhiệm phòng realtime và auth storage.
+1. `npm run build`
+2. `npm run preview` — http://localhost:8788. Không dùng 8787 vì đã dành cho dự án classroom-management.
+3. Kiểm tra rồi `npm run deploy` (build + `wrangler deploy`).
 
-```sh
-npm run build
-npm run preview
-# kiểm tra local đạt rồi:
-npm run deploy
-```
+`npm run dev` chạy riêng Vite 5173 để sửa giao diện nhanh. Không cần Node API, Google OAuth hoặc WebSocket cho ứng dụng mới. Không cần cấu hình `.env` để chơi.
 
-Preview: `http://localhost:8788`. Cổng 8787 dành cho app classroom-management đang có trên máy. `npm run dev` vẫn hỗ trợ Vite `http://localhost:5173` + Node `3001` khi sửa UI nhanh.
+Các URL `/api/*` cũ trả HTTP 410. Frontend mới không gọi auth, socket hoặc phòng. Durable Object class/binding/migration được giữ lại để tương thích tài nguyên đã deploy; không có luồng public tạo mới hoặc tham gia phòng. Không xóa dữ liệu Cloudflare hay OAuth client cũ trong lần chuyển đổi này.
 
-## Tài nguyên
+Các trang game dùng SPA fallback, vì vậy mở trực tiếp `/games/noi-tu` và `/games/ghep-chu` phải trả ứng dụng. `/` và `/games` hiện là thư viện. Khi thêm landing page sau, giữ nguyên `/games` và các link game để học viên vẫn dùng link cũ.
 
-- Cloudflare account: `055aaf3c6be57fe42c3a6bbc20b8d854`.
-- Worker chính: `hanplay-classroom`.
-- URL dự kiến theo account subdomain: `https://hanplay-classroom.giathe-bk.workers.dev` (chỉ xem là đã deploy khi Wrangler trả URL và kiểm tra HTTP đạt).
-- Durable Object: `ClassroomHub`, SQLite migration `v1`, instance `hanplay-v1`.
-- Google Cloud project: `onyx-silo-514608-b1` / **HanPlay Classroom**.
-- OAuth Web client: **HanPlay Classroom · Web + localhost**.
+Phaser được tách thành chunk tải khi vào bàn chơi. Font Google có fallback hệ thống. Không có service worker/offline cache: lần tải đầu cần mạng; game đã tải xong không cần API.
 
-Giai đoạn chuẩn bị ban đầu đã tạo Worker `hanplay-realtime` và một Pages project rỗng `hanplay-classroom`; bản chính thức dùng mô hình Worker một site theo yêu cầu sau cùng. Hai tài nguyên chuẩn bị không được dùng làm URL bàn giao và chưa tự xóa để tránh thao tác phá hủy ngoài phạm vi.
+Bản Vườn chữ đã deploy ngày 16/11/2026: version d6422f4e-d566-4c5c-8c59-e3d239d542d4. Đã mở game từ thư viện online, ghép cặp và nhận điểm; API auth cũ trả HTTP 410. Ảnh xác minh: docs/screenshots/word-garden-online.jpg.
 
-## Google Identity Services
+Bản sửa Pikachu ngày 16/11/2026: cecc7dba-0bef-45d7-a713-ef0706d1e946. Đã kiểm tra online dropdown Bình thường/Khó và ghép cặp không yêu cầu thứ tự. Chữ ô render HTML; rãnh đường nối nằm trong canvas. 22 test đạt.
 
-Web dùng GIS popup và POST ID token tới API cùng origin. Không dùng authorization-code redirect nên không cần redirect URI hoặc client secret trong server. Chỉ cần Google Web client ID và **Authorized JavaScript origins** chính xác:
+Bản Chém hoa quả và thư viện ba game ngày 16/11/2026: f8d3df82-7218-42ea-a04d-8195cd3ed2be. Ba trang riêng: `/games/ghep-chu`, `/games/noi-tu`, `/games/chem-hoa-qua`; bỏ dropdown đổi kiểu chơi bên trong hai game nối. Build và 27 test đạt. Đã xác minh thư viện và game trên URL công khai. Ảnh: `docs/screenshots/fruit-slash-library-online.jpg`, `docs/screenshots/fruit-slash-online.jpg`, `docs/screenshots/fruit-slash-result-mobile.jpg`.
 
-```text
-https://hanplay-classroom.giathe-bk.workers.dev
-http://localhost:5173
-http://localhost:8788
-http://127.0.0.1:8788
-http://localhost:3001
-```
+Bản cài đặt âm thanh Chém hoa quả ngày 16/11/2026: b0e76187-5db1-44a1-ad3c-6f4d556c797a. Nhạc nền, vung dao, bổ quả và báo đúng/sai mặc định bật; mỗi kênh và âm lượng tổng có bật/tắt, volume, lưu trên thiết bị. Build, format và 29 test đạt. Đã thử thanh âm lượng, bật/tắt, nút nghe thử không có lỗi console, tải lại giữ thiết lập, mở cài đặt tạm dừng câu hỏi và bố cục 375px. Bản online đã xác minh tất cả kênh bật mặc định. Ảnh: `docs/screenshots/fruit-audio-settings-online.jpg`. Chưa nghe kiểm chứng trực tiếp trên loa hoặc thiết bị cảm ứng thật.
 
-Không dùng wildcard. Đổi host/port phải cập nhật cả origins Google và `ALLOWED_ORIGINS` server. Google có thể cần thời gian để áp dụng thay đổi. Đăng nhập từ IP LAN không nằm trong danh sách trên; học viên vào phòng từ LAN không cần Google login.
+Bản nhạc Lotus Pond và tiếng dao “vút” ngày 16/11/2026: 31a82042-b447-41d4-acf3-a11afd7b30bb. Thay nhạc oscillator bằng asset loop 64 giây (~1 MB) của BiteMe Games, mặc định nhạc 18%, giữ các tùy chỉnh người dùng đã lưu. Nguồn/giấy phép: `public/audio/CREDITS.md`. Dao dùng sweep bandpass và sine glide, bổ quả ngắn và nhẹ hơn. Build, format và 29 test đạt; test bổ sung xác minh không chồng loop, chỉ tải nhạc một lần và tiếp tục đúng vị trí sau khi đổi tab. Preview tải MP3 HTTP 200, các nút nghe thử không ghi lỗi console; bản public đã mở đúng track và đặt nhạc 18% trên trình duyệt hiện tại. Ảnh: `docs/screenshots/fruit-lotus-whoosh-online.jpg`. Chưa nghe kiểm chứng chất âm trực tiếp qua loa.
 
-Google Audience đang Testing, thêm riêng hai test users `giathe.bk@gmail.com` và `anhbpt.haui@gmail.com`. Google có thể hiển thị email đầu theo dạng `GiaThe.BK@gmail.com`; server so sánh không phân biệt hoa/thường. Không bấm Publish app để mở rộng đối tượng nếu chưa có yêu cầu.
-
-## Biến môi trường
-
-- `GOOGLE_CLIENT_ID`: ID công khai, có trong `wrangler.jsonc`. Node đọc `.env`; `.env.example` là mẫu.
-- `TEACHER_EMAILS`: CSV allowlist phía server; ban đầu gồm hai email trên.
-- `ALLOWED_ORIGINS`: CSV origin được gửi auth POST / WebSocket. Bản production trong Wrangler gồm URL online và localhost. Local `.env` chứa localhost.
-
-Wrangler dev tự đọc `.env`, vì vậy `.env` phải có origin `8788` để không ghi đè mất quyền origin preview. Không đưa Google client secret hoặc ID token vào frontend, log, screenshot hay tài liệu. Cookie và auth record được tạo bởi server; không cần biến SESSION_SECRET vì session là opaque token lưu tại server.
-
-## Kiểm tra sau deploy
-
-1. `/` hiển thị form học viên; `/teacher` hiển thị Google login.
-2. `/api/health` trả `runtime: durable-object`; `/api/auth/session` anonymous trả `teacher: null` và đúng clientId.
-3. Chạy smoke WebSocket với origin thật: `npx tsx scripts/smoke-websocket.ts https://<deployed-host>`; anonymous create phải bị từ chối.
-4. Chủ tài khoản tự đăng nhập Google ở online và localhost; xác nhận dashboard, tạo phòng và logout. Không đánh đồng việc nút Google xuất hiện với việc login thật đã được xác minh.
-5. Học viên vào phòng không cần tài khoản. Một giáo viên khác hoặc người chỉ có host token không thể chiếm phòng.
-
-Tham chiếu: [Google ID token verification](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token), [Workers static assets](https://developers.cloudflare.com/workers/static-assets/), [Durable Object WebSockets](https://developers.cloudflare.com/durable-objects/best-practices/websockets/).
+Bản đổi nhạc nền Pikachu ngày 16/11/2026: 46ce9d2a-bd34-4cdc-b9ab-670a874c95f8. Hai game Pikachu (Ghép chữ, Nối từ) dùng chung Lotus Pond với Chém hoa quả thay cho Eastern Thought 3,6 MB. Build và 29 test đạt. Bản online `/games/noi-tu` tải `lotus-pond-loop.mp3` HTTP 200, không lỗi console. `eastern-thought.mp3` vẫn được upload nhưng không game nào tải. Chưa nghe kiểm chứng trực tiếp qua loa.

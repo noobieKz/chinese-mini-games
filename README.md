@@ -1,72 +1,39 @@
-# HanPlay · 一起玩，一起学
+# HanPlay · Game tiếng Trung
 
-Trò chơi tập thể cho lớp tiếng Trung. Cướp vàng dùng Phaser 3.90 và phòng realtime WebSocket. Trang mặc định dành cho học viên; `/teacher` yêu cầu Google login và email trong allowlist server.
+Ứng dụng chơi cá nhân, mở link là chơi, không tài khoản/mã phòng. React + TypeScript cho điều khiển và chữ sắc nét; Phaser 3 cho sân chơi, đồ họa, chuyển động và va chạm. Deploy một Cloudflare Worker chứa static SPA qua Wrangler.
 
-## Chạy giống classroom-management
+## Chạy
 
-Node.js 22+, npm. Cấu hình chính: `wrangler.jsonc`.
+- `npm install`
+- `npm run dev`: Vite localhost:5173, không cần backend.
+- `npm run build`: TypeScript strict, Vite frontend và esbuild Worker.
+- `npm run preview`: bản build ở localhost:8788; không dùng 8787 của classroom-management.
+- `npm run deploy`: build và Wrangler deploy.
+- `npm test`, `npm run format:check`.
 
-```sh
-npm install
-npm run build
-npm run preview
-```
+Website chính: https://hanplay-classroom.giathe-bk.workers.dev.
 
-Mở **http://localhost:8788**. Dùng cổng 8788 để tránh đụng `classroom-management` trên 8787. Wrangler local chạy đúng Worker, assets và Durable Object sẽ dùng trên Cloudflare. Giáo viên mở `/teacher`; học viên mở `/` hoặc liên kết có `?room=123456`.
+## Ba lối vào trong thư viện
 
-Để phát triển có hot reload:
+1. `/games/ghep-chu`: **Ghép chữ thành từ**, nối các chữ Hán thành từ. Bình thường không yêu cầu thứ tự; Khó yêu cầu đúng trước sau.
+2. `/games/noi-tu`: **Nối từ với nghĩa**, nối từ Hán với nghĩa tiếng Việt; không yêu cầu thứ tự chọn.
+3. `/games/chem-hoa-qua`: **Chém hoa quả**, sân Phaser với vuốt/chuột/phím 1–2–3, ba bộ thử thách, 12 câu mỗi lượt, combo và ôn từ sau lượt.
 
-```sh
-npm run dev
-```
+Hai trò nối dùng chung engine và luật Pikachu để dễ bảo trì, nhưng được chọn riêng từ thư viện; không có dropdown chuyển kiểu bên trong. Alias `/games/pikachu` và `/games/pikachu?mode=meaning` vẫn hoạt động cho link cũ.
 
-Mở http://localhost:5173. Vite proxy API và WebSocket sang Node adapter cổng 3001; Node đọc `.env` (xem `.env.example`). Cổng 5173 được cố định để không âm thầm đổi origin Google. Đây là adapter phát triển; dùng Wrangler preview để kiểm tra runtime Cloudflare trước khi deploy.
-
-## Deploy
-
-```sh
-npm run deploy
-```
-
-Lệnh build TypeScript, frontend `dist/client`, Worker `dist/server/index.js`, rồi `wrangler deploy` — cùng mô hình với `D:\Bitronics\classroom-management`. Một Worker phục vụ SPA, API và Durable Object, không cần backend bên ngoài hoặc service binding giữa hai site.
-
-## Google login
-
-- Provider: Google Identity Services, xác minh ID token tại server bằng Google JWKS.
-- Giáo viên mặc định: `giathe.bk@gmail.com`, `anhbpt.haui@gmail.com`.
-- Client ID công khai nằm trong `wrangler.jsonc`; Node local đọc `.env`. Không cần Google client secret cho luồng GIS này.
-- Chỉ thêm email ở phía server; không có API nhập email để tự cấp quyền.
-- Google test users và JavaScript origins phải được cấu hình đúng trong Google Cloud. Xem [cấu hình và deploy](docs/DEPLOYMENT.md).
-
-## Kiểm tra
-
-```sh
-npm test
-npm run build
-npm run format:check
-npx tsx scripts/smoke-websocket.ts http://localhost:8788
-```
-
-Test dùng fixture bộ nhớ, không tạo tài khoản hoặc tự bỏ qua xác thực Google trong app thật.
+`/` và `/games` hiện cùng là thư viện. Sau này thay `/` bằng landing page khóa học mà giữ nguyên các link game.
 
 ## Cấu trúc
 
-```text
-src/pages/                 Trang học viên, Google login, dashboard, game
-src/games/gold-rush/       Phaser scene, assets, audio, UI game
-src/lib/                   WebSocket client, Google GIS loader, helpers
-shared/                    Types, schemas, bộ câu hỏi mẫu
-server/auth.ts             Token verification, sessions, nonce, allowlist
-server/room-hub.ts         Luật phòng và quyền chủ phòng dùng chung
-server/index.ts            Node adapter cho dev / integration tests
-server/main.ts             Entrypoint Node local
-cloudflare/worker.ts       Worker + Durable Object + hibernating WebSockets
-tests/                     Auth, quyền phòng, game và paste regression
-docs/                      Kế hoạch, kiến trúc, triển khai, kiểm tra
-```
+- `src/App.tsx`: thư viện ba lối vào và điều hướng có Back/Forward.
+- `src/games/word-garden`: Pikachu, gồm scene, luật độc lập, layout, nội dung và React HUD.
+- `src/games/fruit-slash`: Chém hoa quả, gồm scene, art thủ tục, model lượt chơi, ngân hàng câu hỏi và lớp điều khiển.
+- `src/components/Select.tsx`: dropdown chung theo component của classroom-management.
+- `tests`: luật game và hồi quy code cũ.
+- `cloudflare/worker.ts`: phục vụ static; API đăng nhập/phòng cũ trả 410.
 
-## Lưu dữ liệu
+Nội dung là bộ từ mẫu chọn lọc, không bao phủ toàn bộ HSK. Không yêu cầu cấu hình Google OAuth hoặc API để chơi.
 
-Cloudflare lưu phòng và phiên giáo viên trong Durable Object; thời hạn phiên 8 giờ, phòng 6 giờ. Node adapter lưu trong RAM và mất khi restart. Bộ câu hỏi tự soạn vẫn lưu trên trình duyệt; có nhập/xuất JSON để sao lưu. Chưa kiểm thử tải đủ 60 điện thoại thực tế.
+Các file `LegacyApp.tsx`, phần `src/pages`, `server`, `shared`, `gold-rush` là bản lớp học cũ được giữ tham khảo, không import vào entrypoint hiện tại. Durable Object cũ vẫn giữ binding/migration tương thích deploy trước; frontend mới không gọi nó.
 
-Xem [kiến trúc](docs/ARCHITECTURE.md), [game engine](docs/GAME_ENGINE.md), [kiểm tra](docs/TESTING.md) và [kế hoạch](docs/PLAN.md).
+Xem `docs/WORD_GARDEN.md`, `docs/FRUIT_SLASH.md`, `docs/DESIGN.md`, `docs/DEPLOYMENT.md`.

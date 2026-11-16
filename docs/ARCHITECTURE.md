@@ -1,41 +1,19 @@
-# Kiến trúc HanPlay
+# Kiến trúc hiện tại
 
-## Vai trò và giao diện
+Chơi cá nhân, không cần tài khoản/mã phòng. React quản lý đường dẫn, chữ rõ, HUD, tùy chọn và các màn bắt đầu/tạm dừng/kết quả. Phaser quản lý sân chơi, đồ họa, chuyển động và va chạm. Cloudflare Worker phục vụ static assets; API auth/phòng cũ trả 410.
 
-`/` là cổng học viên, không cần tài khoản. Nhập mã phòng và tên để chơi; không có UI tạo phòng hay soạn câu hỏi. `/teacher` là trang Google login, sau xác thực mới hiển thị dashboard / câu hỏi. Màn game có HUD riêng theo host hoặc player, dùng Phaser cho scene và React cho chữ / điều khiển truy cập được bằng bàn phím.
+## Điều hướng
 
-Ẩn UI không phải ranh giới bảo mật. `server/room-hub.ts` bắt buộc identity giáo viên ở create, start, finish và resume quyền host. Room gắn `teacherId` lấy từ Google `sub`, vì thế có host token vẫn chưa đủ để chiếm quyền, kể cả một giáo viên được allowlist khác.
+Thư viện có ba lối vào: Ghép chữ thành từ (`/games/ghep-chu`), Nối từ với nghĩa (`/games/noi-tu`), Chém hoa quả (`/games/chem-hoa-qua`). Hai trò nối dùng chung module `word-garden`; chọn riêng từ ngoài và không có dropdown chuyển kiểu. Các alias `/games/pikachu` và query `mode=meaning` giữ tương thích link cũ.
 
-## Runtime
+`/games` độc lập với `/`, để sau này thay trang chủ bằng landing page khóa học mà không thay link game. App hỗ trợ Back/Forward và đổi title theo trò. Lỗi tải chunk cũ sau deploy có cơ chế reload một lần, có giới hạn chống vòng lặp; khi offline giữ nút tải lại thủ công.
 
-Worker `cloudflare/worker.ts` phục vụ API và chuyển sang `ClassroomHub`, một SQLite-backed Durable Object. Static assets / SPA phục vụ qua binding `ASSETS`, chỉ `/api/*` chạy Worker trước. Cấu hình và migrations nằm trong `wrangler.jsonc`; build ra `dist/client` và `dist/server/index.js`.
+## Engine
 
-`ClassroomHub` phục hồi phòng từ storage và connection từ serialized WebSocket attachments khi wake. `acceptWebSocket` cho hibernation, không dùng interval giữ Worker chạy. Alarm xử lý deadline và hết hạn phòng; mỗi mutation lưu lại state. Các WebSocket message được xử lý tuần tự trong Durable Object để tránh race khi đọc phiên và ghi state.
+Pikachu: luật tìm đường tối đa hai lần rẽ và layout tách khỏi scene. Chữ ô dùng HTML/CSS native để sắc nét; Phaser vẽ mặt ô, đường nối và hiệu ứng. Một hệ input DOM tránh bấm xuyên. Bình thường/Khó thay luật yêu cầu thứ tự. Timer mở khóa theo wall clock, được hủy khi shutdown.
 
-Node adapter dùng cùng AuthService và RoomHub qua `ws`, phục vụ dev / tests; cổng 3001 phía sau Vite 5173. Bản Wrangler local ở 8788 dùng đúng runtime triển khai và storage riêng trên máy.
+Fruit Slash: full-screen Phaser scene, art canvas thủ tục, quỹ đạo ném theo thời gian thực, swept segment–circle collision, vệt kiếm, hai nửa quả và juice particles. Input canvas thực; phím số và nút đáp án cho bàn phím là cách thay thế. Một stroke chỉ thuộc về câu lúc bắt đầu; model đóng câu khi nhận đáp án, kiểm question ID và khoảng khóa đầu câu. React cập nhật HUD theo nhịp giới hạn; vị trí nhãn quả được cập nhật qua refs, không rerender React theo từng frame.
 
-## Xác thực Google
+Nội dung tách khỏi scene và luật, gồm từ mẫu HSK 1/2 và cụm ghép động từ. Đây không phải toàn bộ ngân hàng HSK hoặc bản sao tài liệu của website tham khảo. Dropdown dùng chung Select từ dự án classroom-management, có portal, bàn phím và tự đổi hướng mở.
 
-1. Client POST `/api/auth/challenge`: server tạo nonce, cookie challenge HttpOnly và record 10 phút.
-2. Google GIS nhận nonce và trả ID token qua callback trình duyệt.
-3. Client POST token tới `/api/auth/google`. Server tiêu thụ challenge nguyên tử, xác minh chữ ký Google JWKS, issuer, audience, expiry, nonce, `email_verified`, `sub` và email allowlist.
-4. Server tạo opaque session ngẫu nhiên, cookie HttpOnly / SameSite=Lax / Secure trên HTTPS. Session TTL 8 giờ, không lưu Google access/refresh token.
-5. Mỗi lệnh host đọc lại session và allowlist; WebSocket không tin role hay email do client gửi. POST logout yêu cầu origin được cho phép và CSRF token, xóa phiên và báo client kết thúc quyền giáo viên.
-
-Phía Node dùng MemoryAuthStore; Durable Object dùng storage transaction để challenge không bị replay đồng thời. Không có endpoint dev-login, mã bí mật hoặc tự khai email để bỏ qua Google.
-
-## Protocol
-
-Một WebSocket cùng origin tại `/api/socket`. Client gửi `{ id, event, data }`; server ack `{ id, reply }` hoặc push `{ event, data }`.
-
-- `create { bank, teamCount, duration }`, `join { code, name }` → `{ code, token }`.
-- `resume { code, token }`, `start {}`, `finish {}`, `leave {}`.
-- `answer { index, option }` → `{ correct, correctAnswer }`.
-- `claim { target? }` → `{ reward, amount }`.
-- Push: `room`, `replaced`, `room-expired`, `auth-required`.
-
-Client timeout 8 giây, reconnect backoff tới 10 giây, không tự retry mutation. Token tham gia lưu trong localStorage (hết hạn sau 6 giờ) nên học viên lỡ đóng tab vẫn mở lại web và chơi tiếp. Mỗi view `room` kèm `serverTime` để đồng hồ đếm ngược không lệch theo giờ điện thoại; server chỉ gửi lại view khi nội dung thay đổi. Durable Object chỉ ghi các phòng vừa thay đổi. Google cookie tách biệt, chỉ server đọc được. Server chỉ gửi câu hỏi hiện tại và đáp án sau khi chốt lựa chọn, không broadcast bank / host token.
-
-## Giới hạn
-
-Một Durable Object điều phối app v1; chưa đo tải 60 máy thực tế hoặc chia shard theo phòng. Bộ tự soạn chưa có database riêng. Session / challenge hết hạn bị từ chối; record cũ có thể còn trong storage cho đến thao tác dọn hoặc truy cập. Google test mode cho phép test users đã đăng ký; allowlist server vẫn bắt buộc dù sau này publish Google app.
+Code legacy của bản lớp học chưa xóa để giữ tham khảo, không được import vào entrypoint. Durable Object class/binding giữ tương thích deploy trước; frontend mới không gọi nó. Xem WORD_GARDEN.md, FRUIT_SLASH.md, DESIGN.md và DEPLOYMENT.md.
