@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, BookOpen, Flower2, Sparkles } from 'lucide-react';
 import { FruitSlash } from './games/fruit-slash/FruitSlash';
+import { DragonWords } from './games/dragon-words/DragonWords';
 import { WordGarden } from './games/word-garden/WordGarden';
 import type { MatchMode } from './games/word-garden/vocabulary';
 import './games/word-garden/garden.css';
@@ -19,18 +20,21 @@ export default function App() {
   const mode = getMode(path);
   const route = path.split('?')[0].replace(/\/+$/, '') || '/';
   const fruit = route === '/games/chem-hoa-qua';
-  const notFound = !mode && !fruit && !libraryRoutes.includes(route);
+  const dragon = route === '/games/rong-san-chu';
+  const notFound = !mode && !fruit && !dragon && !libraryRoutes.includes(route);
   useEffect(() => {
     document.title = fruit
       ? 'Chém hoa quả · HanPlay'
-      : mode
-        ? mode === 'meaning'
-          ? 'Nối từ với nghĩa · HanPlay'
-          : 'Ghép chữ thành từ · HanPlay'
-        : notFound
-          ? 'Không tìm thấy trang · HanPlay'
-          : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
-  }, [fruit, mode, notFound]);
+      : dragon
+        ? 'Rồng săn chữ · HanPlay'
+        : mode
+          ? mode === 'meaning'
+            ? 'Nối từ với nghĩa · HanPlay'
+            : 'Ghép chữ thành từ · HanPlay'
+          : notFound
+            ? 'Không tìm thấy trang · HanPlay'
+            : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
+  }, [fruit, dragon, mode, notFound]);
   useEffect(() => {
     const changed = () => setPath(getPage());
     window.addEventListener('popstate', changed);
@@ -42,6 +46,7 @@ export default function App() {
     window.scrollTo(0, 0);
   };
   if (fruit) return <FruitSlash onBack={() => navigate('/games')} />;
+  if (dragon) return <DragonWords onBack={() => navigate('/games')} />;
   if (mode) return <WordGarden key={mode} mode={mode} onBack={() => navigate('/games')} />;
   const home = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -126,7 +131,7 @@ export default function App() {
               <span className="garden-eyebrow">CHỌN MỘT NIỀM VUI NHỎ</span>
               <h2>Góc chơi của bạn</h2>
             </div>
-            <span>03 trò chơi · HSK 1–2</span>
+            <span>04 trò chơi · HSK 1–2</span>
           </div>
           <div className="library-card-grid">
             <a
@@ -215,6 +220,42 @@ export default function App() {
                   <span>
                     <BookOpen size={15} />
                     HSK 1 · HSK 2 · Ghép từ
+                  </span>
+                  <b>
+                    Vào chơi <ArrowRight size={17} />
+                  </b>
+                </div>
+              </div>
+            </a>
+            <a
+              href="/games/rong-san-chu"
+              className="library-game-card"
+              onClick={(event) => {
+                event.preventDefault();
+                navigate('/games/rong-san-chu');
+              }}
+            >
+              <div className="game-card-art dragon-art" aria-hidden="true">
+                <div className="dragon-art-trail">
+                  <i />
+                  <i />
+                  <i />
+                  <b>龙</b>
+                </div>
+                <span>朋</span>
+                <span>友</span>
+                <div className="card-art-stars">✧ &nbsp; 游龙识字 · ăn đúng chữ &nbsp; ✧</div>
+              </div>
+              <div className="game-card-copy">
+                <span className="garden-eyebrow">MỚI · RẮN SĂN MỒI · GHÉP TỪ</span>
+                <h3>Rồng săn chữ</h3>
+                <p>
+                  Lái rồng ăn từng chữ Hán theo đúng thứ tự để ghép từ. Càng ghép nhiều, rồng càng
+                  dài và càng nhanh.
+                </p>
+                <div>
+                  <span>
+                    <BookOpen size={15} /> HSK 1 · HSK 2
                   </span>
                   <b>
                     Vào chơi <ArrowRight size={17} />

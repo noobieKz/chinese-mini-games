@@ -13,11 +13,12 @@
 
 Website chính: https://hanplay-classroom.giathe-bk.workers.dev.
 
-## Ba lối vào trong thư viện
+## Bốn lối vào trong thư viện
 
 1. `/games/ghep-chu`: **Ghép chữ thành từ**, nối các chữ Hán thành từ. Bình thường không yêu cầu thứ tự; Khó yêu cầu đúng trước sau.
 2. `/games/noi-tu`: **Nối từ với nghĩa**, nối từ Hán với nghĩa tiếng Việt; không yêu cầu thứ tự chọn.
 3. `/games/chem-hoa-qua`: **Chém hoa quả**, sân Phaser với vuốt/chuột/phím 1–2–3, ba bộ thử thách, 12 câu mỗi lượt, combo và ôn từ sau lượt.
+4. `/games/rong-san-chu`: **Rồng săn chữ**, thể loại rắn săn mồi: lái rồng ăn chữ Hán theo đúng thứ tự để ghép từ theo nghĩa, chơi vô tận với 3 mạng. Xem `docs/DRAGON_WORDS.md`.
 
 Hai trò nối (hiển thị là **Nối cặp**) dùng chung engine và luật nối kiểu Onet để dễ bảo trì, nhưng được chọn riêng từ thư viện; không có dropdown chuyển kiểu bên trong. Alias `/games/pikachu` và `/games/pikachu?mode=meaning` vẫn hoạt động cho link cũ.
 

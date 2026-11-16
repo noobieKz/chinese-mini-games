@@ -4,7 +4,7 @@ Chơi cá nhân, không cần tài khoản/mã phòng. React quản lý đườn
 
 ## Điều hướng
 
-Thư viện có ba lối vào: Ghép chữ thành từ (`/games/ghep-chu`), Nối từ với nghĩa (`/games/noi-tu`), Chém hoa quả (`/games/chem-hoa-qua`). Hai trò nối dùng chung module `word-garden`; chọn riêng từ ngoài và không có dropdown chuyển kiểu. Các alias `/games/pikachu` và query `mode=meaning` giữ tương thích link cũ.
+Thư viện có bốn lối vào, thêm Rồng săn chữ (`/games/rong-san-chu`, xem DRAGON_WORDS.md); Ghép chữ thành từ (`/games/ghep-chu`), Nối từ với nghĩa (`/games/noi-tu`), Chém hoa quả (`/games/chem-hoa-qua`). Hai trò nối dùng chung module `word-garden`; chọn riêng từ ngoài và không có dropdown chuyển kiểu. Các alias `/games/pikachu` và query `mode=meaning` giữ tương thích link cũ.
 
 `/games` độc lập với `/`, để sau này thay trang chủ bằng landing page khóa học mà không thay link game. App hỗ trợ Back/Forward và đổi title theo trò. Lỗi tải chunk cũ sau deploy có cơ chế reload một lần, có giới hạn chống vòng lặp; khi offline giữ nút tải lại thủ công.
 

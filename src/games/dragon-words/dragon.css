@@ -1,0 +1,385 @@
+/* Rồng săn chữ: shares the garden shell (nav, dialogs, buttons) and adds the board, pearls and pad. */
+.dragon-main {
+  padding-bottom: 0;
+}
+.dragon-play {
+  /* Board, prompt and controls fit one laptop screen; phones keep the full width. */
+  width: 100%;
+  max-width: max(340px, calc((100dvh - 270px) * var(--ratio, 1.5)));
+  margin: 0 auto;
+}
+.dragon-hud {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  background: var(--garden-paper);
+  border: 1px solid var(--garden-border);
+  border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  padding: 14px 22px;
+  gap: 8px;
+}
+.dragon-hud > div {
+  text-align: center;
+}
+.dragon-hud > div:first-child {
+  text-align: left;
+}
+.dragon-hud > div:last-child {
+  text-align: right;
+}
+.dragon-hud span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 650;
+  color: #5d6f5f;
+}
+.dragon-hud b {
+  display: flex;
+  justify-content: inherit;
+  font-size: 24px;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.dragon-hud > div:nth-child(2) b,
+.dragon-hud > div:nth-child(3) b {
+  justify-content: center;
+}
+.dragon-hud > div:last-child b {
+  justify-content: flex-end;
+}
+.dragon-hud .is-combo b {
+  color: #9a4a26;
+}
+.dragon-lives {
+  gap: 3px;
+  color: #c1453a;
+  padding-top: 4px;
+}
+.dragon-lives svg:not(.is-full) {
+  color: #b8bfae;
+}
+.dragon-target {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 84px;
+  background: #fffaf0;
+  border: 1px solid var(--garden-border);
+  border-bottom: 0;
+  padding: 12px 22px;
+}
+.dragon-target > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.dragon-target strong {
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+.dragon-target small {
+  font-size: 13px;
+  color: #6b5a2e;
+}
+.dragon-slots {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-shrink: 0;
+}
+.dragon-slots li {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px dashed #c7b98f;
+  color: #9a8a5c;
+  font-size: 13px;
+  font-weight: 650;
+  background: #fffdf7;
+}
+.dragon-slots li.is-filled {
+  border: 1px solid #d6ad54;
+  background: #fff1c9;
+  color: #173e32;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+}
+.dragon-board {
+  position: relative;
+  container-type: inline-size;
+  overflow: hidden;
+  border: 1px solid #b1c1a8;
+  background: #1b4a3f;
+  touch-action: none;
+  user-select: none;
+}
+.dragon-canvas {
+  position: absolute;
+  inset: 0;
+}
+.dragon-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+.dragon-pearls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.dragon-pearl {
+  position: absolute;
+  display: grid;
+  place-items: center;
+}
+.dragon-pearl i {
+  display: grid;
+  place-items: center;
+  width: 86%;
+  height: 86%;
+  border-radius: 50%;
+  font-style: normal;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  color: #173e32;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #fff4d2 45%, #f0d48a);
+  border: 2px solid #e2b85a;
+  box-shadow: 0 0 12px #ffe39a99;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dragon-pearl i {
+    animation: dragon-pearl-in 0.25s ease-out;
+  }
+}
+@keyframes dragon-pearl-in {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+.dragon-board .garden-overlay {
+  padding: 12px;
+}
+.dragon-intro p b {
+  font-family: 'Noto Sans SC', sans-serif;
+  color: #25483d;
+}
+.dragon-options {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px 14px;
+  text-align: left;
+  margin: 0 auto 20px;
+  max-width: 340px;
+}
+.dragon-options label {
+  font-size: 12px;
+  font-weight: 650;
+}
+.dragon-options .app-select {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+}
+.dragon-options .app-select-trigger {
+  min-height: 42px;
+  font-size: 13px;
+}
+.dragon-result-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+  padding: 14px 0;
+  margin-bottom: 12px;
+  border-top: 1px solid #e6dcc0;
+  border-bottom: 1px solid #e6dcc0;
+}
+.dragon-result-stats span {
+  font-size: 11px;
+  color: #5d6f5f;
+}
+.dragon-result-stats b {
+  display: block;
+  font-size: 22px;
+  color: #25483d;
+  font-variant-numeric: tabular-nums;
+}
+.dragon-review {
+  max-height: 180px;
+  overflow: auto;
+  text-align: left;
+  margin-bottom: 18px;
+}
+.dragon-review > div {
+  display: grid;
+  grid-template-columns: 24px auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 4px;
+  border-bottom: 1px solid #efe6cc;
+}
+.dragon-review > div > span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f4e1d8;
+  color: #9a4a26;
+}
+.dragon-review > div.is-clean > span {
+  background: #e3ecd8;
+  color: #285b48;
+}
+.dragon-review strong {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 18px;
+}
+.dragon-review strong small {
+  display: block;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b5a2e;
+}
+.dragon-review b {
+  font-size: 13px;
+  font-weight: 600;
+}
+.dragon-review em {
+  font-style: normal;
+  font-size: 11px;
+  color: #9a4a26;
+  white-space: nowrap;
+}
+.dragon-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--garden-paper);
+  border: 1px solid var(--garden-border);
+  border-top: 0;
+  border-radius: 0 0 20px 20px;
+  padding: 12px 16px;
+}
+.dragon-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.dragon-actions button,
+.dragon-pad button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #d6d9c8;
+  border-radius: 11px;
+  background: #fffdf7;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.dragon-actions button:hover:not(:disabled),
+.dragon-pad button:hover:not(:disabled) {
+  background: #e7ecd9;
+}
+/* Arrow pad only where there is no keyboard to rely on. */
+.dragon-pad {
+  display: none;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(2, 52px);
+  gap: 6px;
+}
+.dragon-pad button {
+  padding: 0;
+  min-height: 0;
+}
+.dragon-pad-up {
+  grid-column: 2;
+  grid-row: 1;
+}
+.dragon-pad-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+.dragon-pad-down {
+  grid-column: 2;
+  grid-row: 2;
+}
+.dragon-pad-right {
+  grid-column: 3;
+  grid-row: 2;
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .dragon-pad {
+    display: grid;
+  }
+  /* HUD, prompt, board and arrow pad together within one phone screen (667px tall and up). */
+  .dragon-play {
+    max-width: max(280px, calc((100dvh - 300px) * var(--ratio, 0.8)));
+  }
+  /* Icon-only beside the pad: the labels stay as aria-label for screen readers. */
+  .dragon-actions {
+    flex-direction: column;
+  }
+  .dragon-actions button {
+    width: 48px;
+    padding: 0;
+  }
+  .dragon-actions button span {
+    display: none;
+  }
+}
+@media (max-width: 540px) {
+  .dragon-hud {
+    padding: 10px 14px;
+  }
+  .dragon-hud b {
+    font-size: 20px;
+  }
+  .dragon-lives svg {
+    width: 16px;
+    height: 16px;
+  }
+  .dragon-target {
+    padding: 10px 14px;
+    min-height: 72px;
+  }
+  .dragon-target strong {
+    font-size: 20px;
+  }
+  .dragon-slots li {
+    width: 40px;
+    height: 40px;
+  }
+  .dragon-slots li.is-filled {
+    font-size: 22px;
+  }
+  .dragon-options {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .dragon-review > div {
+    grid-template-columns: 22px auto minmax(0, 1fr);
+  }
+  .dragon-review em {
+    grid-column: 2 / -1;
+  }
+}

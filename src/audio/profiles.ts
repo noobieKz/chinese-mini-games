@@ -43,6 +43,36 @@ export const fruitAudioProfile: AudioProfile = {
   ],
 };
 
+export const dragonAudioProfile: AudioProfile = {
+  storageKey: 'hanplay.dragon.audio.v1',
+  description: 'Trống giữ nhịp cho rồng lượn. Mỗi viên ngọc đúng một tiếng ngân.',
+  music: {
+    title: 'Dragon Dance',
+    author: 'BiteMe Games',
+    source: 'https://bitemegames.itch.io/chinese-game-music',
+    url: '/audio/dragon-dance-loop.mp3',
+  },
+  controls: [
+    {
+      channel: 'music',
+      title: 'Nhạc nền',
+      description: 'Dragon Dance · Trống, đàn tranh và sáo dồn dập',
+    },
+    {
+      channel: 'selection',
+      title: 'Ăn ngọc',
+      description: 'Tiếng ngân khi rồng ăn đúng chữ',
+      sample: 'select',
+    },
+    {
+      channel: 'feedback',
+      title: 'Báo đúng / sai',
+      description: 'Ghép xong một từ, hoặc ăn nhầm chữ',
+      sample: 'wrong',
+    },
+  ],
+};
+
 export const gardenAudioProfile: AudioProfile = {
   storageKey: 'hanplay.garden.audio.v1',
   description: 'Thả lỏng, nối từng cặp và khám phá từ mới.',
