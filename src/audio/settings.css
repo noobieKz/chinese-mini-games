@@ -1,0 +1,190 @@
+.game-audio-settings {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(530px, calc(100vw - 28px));
+  max-height: calc(100svh - 32px);
+  padding: 28px;
+  text-align: left;
+  color: #274c3e;
+  background: linear-gradient(145deg, #fff7de, #f0e6c5);
+  border: 2px solid #e3c481;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px #061b2b70;
+  overflow: auto;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.game-audio-close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: #647052;
+  border: 1px solid #a6ac8055;
+  border-radius: 10px;
+  background: #d5d9b344;
+}
+.game-audio-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  color: #6a754f;
+}
+.game-audio-done {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  min-height: 45px;
+  color: #513a23;
+  border: 1px solid #bc8a4e;
+  border-radius: 12px;
+  background: linear-gradient(#e8a966, #d98947);
+  box-shadow: 0 4px 0 #9c6138;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 800;
+}
+.game-audio-settings::backdrop {
+  background: #061f29b8;
+  backdrop-filter: blur(5px);
+}
+.game-audio-settings .game-audio-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-right: 26px;
+  letter-spacing: 1px;
+}
+.game-audio-settings h2 {
+  font-size: 27px;
+  margin: 12px 0 5px;
+}
+.game-audio-description {
+  font-size: 12px;
+  color: #647052;
+  margin: 0 0 20px;
+}
+.game-audio-row {
+  padding: 13px 0;
+  border-top: 1px solid #bda26855;
+}
+.game-audio-row.is-master {
+  border: 1px solid #b49b6355;
+  border-radius: 14px;
+  background: #d5dcb34a;
+  padding: 13px;
+  margin-bottom: 10px;
+}
+.game-audio-row-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.game-audio-symbol {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #62734c;
+  background: #d5d9b366;
+  flex-shrink: 0;
+}
+.game-audio-row-heading > div {
+  flex: 1;
+}
+.game-audio-row-heading label {
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.game-audio-row-heading small {
+  display: block;
+  font-size: 10px;
+  color: #647052;
+  margin-top: 4px;
+}
+.game-audio-switch {
+  width: 43px;
+  height: 26px;
+  border-radius: 20px;
+  border: 1px solid #9a9c7a;
+  padding: 3px;
+  background: #a8ac96;
+  flex-shrink: 0;
+}
+.game-audio-switch span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff8df;
+  box-shadow: 0 1px 3px #29443540;
+  transition: transform 0.15s;
+}
+.game-audio-switch[aria-checked='true'] {
+  background: #476e50;
+  border-color: #476e50;
+}
+.game-audio-switch[aria-checked='true'] span {
+  transform: translateX(16px);
+}
+.game-audio-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.game-audio-range input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 24px;
+  accent-color: #537546;
+  cursor: pointer;
+}
+.game-audio-range input:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.game-audio-range output {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  min-width: 33px;
+  text-align: right;
+}
+.game-audio-preview {
+  padding: 5px 10px;
+  border: 1px solid #9ea575;
+  background: #fff9e0;
+  border-radius: 7px;
+  font-size: 11px;
+  color: #41613e;
+}
+.game-audio-preview:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.game-audio-note {
+  font-size: 10px;
+  line-height: 1.6;
+  color: #6e7657;
+  margin: 9px 0 18px;
+}
+.game-audio-settings .game-audio-done {
+  min-height: 45px;
+}
+.game-audio-settings :focus-visible {
+  outline: 3px solid #b66e32;
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .game-audio-settings {
+    padding: 24px 18px 18px;
+  }
+  .game-audio-settings h2 {
+    font-size: 24px;
+  }
+}

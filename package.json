@@ -5,14 +5,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"tsx watch server/main.ts\" \"vite --host 0.0.0.0\"",
+    "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && tsc -p tsconfig.worker.json && vite build && esbuild cloudflare/worker.ts --bundle --format=esm --platform=browser --target=es2022 --external:cloudflare:workers --outfile=dist/server/index.js",
-    "start": "tsx server/main.ts",
+    "start": "wrangler dev --port 8788",
     "deploy": "npm run build && wrangler deploy",
     "preview": "wrangler dev --port 8788",
     "test": "tsx --test tests/*.test.ts",
     "format": "prettier --write src server shared cloudflare tests docs README.md package.json tsconfig*.json vite.config.ts index.html wrangler.jsonc",
-    "format:check": "prettier --check src server shared cloudflare tests docs README.md package.json tsconfig*.json vite.config.ts index.html wrangler.jsonc"
+    "format:check": "prettier --check src server shared cloudflare tests docs README.md package.json tsconfig*.json vite.config.ts index.html wrangler.jsonc",
+    "dev:legacy": "concurrently -k \"tsx watch server/main.ts\" \"vite --host 0.0.0.0\""
   },
   "keywords": [],
   "author": "",

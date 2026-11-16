@@ -1,0 +1,242 @@
+.app-select {
+  display: inline-flex;
+  position: relative;
+  flex-direction: column;
+  min-width: 155px;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.app-select .app-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 40px;
+  padding: 10px 13px;
+  border: 1px solid #dfe7e2;
+  border-radius: 10px;
+  background: #fff;
+  color: #3e584b;
+  font-size: 11px;
+  font-weight: 450;
+  line-height: 1.5;
+  text-align: left;
+  transition:
+    border-color 0.16s,
+    box-shadow 0.16s,
+    background 0.16s;
+}
+.app-select-trigger > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app-select-trigger > svg {
+  color: #8b9d91;
+  flex-shrink: 0;
+  transition:
+    transform 0.18s,
+    color 0.18s;
+}
+.app-select .app-select-trigger:hover {
+  border-color: #a8beb0;
+  background: #fcfdfc;
+}
+.app-select.is-open .app-select-trigger,
+.app-select .app-select-trigger:focus-visible {
+  border-color: #749e86;
+  box-shadow: 0 0 0 3px #538b6e12;
+  outline: none;
+}
+.app-select.is-open .app-select-trigger > svg {
+  transform: rotate(180deg);
+  color: #3d7758;
+}
+.app-select .app-select-trigger:disabled {
+  background: #f4f6f4;
+  color: #9aa69e;
+  opacity: 0.8;
+}
+.app-select .app-select-trigger.is-placeholder {
+  color: #98a49d;
+}
+.app-select.is-invalid .app-select-trigger {
+  border-color: #cb8a70;
+  box-shadow: 0 0 0 3px #cb8a7010;
+}
+.app-select .app-select-error {
+  font-size: 10px;
+  color: #b66b4b;
+  margin-top: 7px;
+  line-height: 1.6;
+}
+.app-select .app-select-native {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  margin: -1px !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.field > .app-select,
+.grading-file-select > .app-select {
+  width: 100%;
+  min-width: 0;
+}
+.grading-file-select .app-select-trigger {
+  font-size: 12px;
+  min-height: 43px;
+}
+.actions > .app-select {
+  min-width: 170px;
+  max-width: 290px;
+}
+.app-select-menu {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border: 1px solid #e0e8e2;
+  border-radius: 13px;
+  background: #fff;
+  color: #344e40;
+  box-shadow:
+    0 14px 40px #153b2520,
+    0 3px 9px #153b2508;
+  overflow: hidden;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  animation: select-appear 0.12s ease-out;
+}
+.app-select-options {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ccd9cf transparent;
+  padding: 2px;
+}
+.app-select-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
+  padding: 11px 12px;
+  min-height: 40px;
+  font-size: 11px;
+  line-height: 1.6;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 1px 0;
+  overflow-wrap: anywhere;
+}
+.app-select-option > span {
+  min-width: 0;
+}
+.app-select-option > svg {
+  flex-shrink: 0;
+  color: #397859;
+}
+.app-select-option[data-active='true'] {
+  background: #f3f6f3;
+}
+.app-select-option[aria-selected='true'] {
+  background: #edf5ef;
+  color: #286044;
+  font-weight: 550;
+}
+.app-select-option[aria-selected='true'][data-active='true'] {
+  background: #e5f0e8;
+}
+.app-select-search {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 9px;
+  margin: 4px 5px 6px;
+  padding: 0 9px;
+  border: 1px solid #e2e9e4;
+  border-radius: 8px;
+  background: #f8faf8;
+  color: #8b9e90;
+}
+.app-select-search input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 10px 0;
+  border-radius: 0;
+  font-size: 11px;
+  box-shadow: none;
+  color: #385343;
+}
+.app-select-search input:focus {
+  outline: none;
+}
+.app-select-search input::placeholder {
+  color: #9aaa9f;
+}
+.app-select-search button {
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  border-radius: 4px;
+}
+.app-select-empty {
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 11px;
+  color: #99a59d;
+}
+.app-select-hint {
+  display: flex;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-top: 1px solid #edf1ee;
+  padding: 9px 10px 4px;
+  color: #9ca99f;
+  font-size: 9px;
+  margin-top: 4px;
+}
+@keyframes select-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-select-menu {
+    animation: none;
+  }
+  .app-select-trigger,
+  .app-select-trigger > svg {
+    transition: none;
+  }
+}
+@media (max-width: 650px) {
+  .app-select .app-select-trigger {
+    min-height: 43px;
+    font-size: 12px;
+  }
+  .app-select-option {
+    min-height: 45px;
+    font-size: 12px;
+  }
+  .actions > .app-select {
+    max-width: 100%;
+    min-width: 145px;
+  }
+}

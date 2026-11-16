@@ -173,8 +173,12 @@ export class ClassroomHub extends DurableObject<Env> {
 }
 export default {
   fetch(request: Request, env: Env) {
+    // Individual games run entirely in the browser. Former auth/room endpoints are retired.
     if (new URL(request.url).pathname.startsWith('/api/'))
-      return env.HUB.get(env.HUB.idFromName('hanplay-v1')).fetch(request);
+      return Response.json(
+        { error: 'Chế độ lớp học và đăng nhập đã ngừng sử dụng.' },
+        { status: 410 },
+      );
     return env.ASSETS.fetch(request);
   },
 };
