@@ -6,7 +6,7 @@ Chơi cá nhân, mở link là chơi. Không đăng nhập, không phòng, khôn
 
 ## Hướng hình ảnh
 
-Vườn chữ: nền giấy ấm, xanh ngọc, ô ngà nổi, màu vàng cho ô được chọn/được gợi ý. Không đặt chữ học tập trên tranh nền. Bàn chơi được vẽ bằng Phaser Graphics, Text và tween; không phải ảnh nền giả engine. Hoạt ảnh ngắn, có hỗ trợ reduced motion. Âm thanh tùy chọn, mặc định tắt.
+Vườn chữ: nền giấy ấm, xanh ngọc, ô ngà nổi, màu vàng cho ô được chọn/được gợi ý. Không đặt chữ học tập trên tranh nền. Bàn chơi được vẽ bằng Phaser Graphics, Text và tween; không phải ảnh nền giả engine. Hoạt ảnh ngắn, có hỗ trợ reduced motion. Âm thanh mặc định bật (nhạc nền 18%, phát sau lần chạm đầu tiên); người chơi tắt hoặc chỉnh từng kênh trong cài đặt âm thanh (icon loa).
 
 Tham khảo nguyên tắc evondevKit tại https://evondev-uiux.vercel.app/ và `skills/ui-ux/references/principles.md` trong repo evondev/evondevKit: bố cục giữ ổn định khi đổi trạng thái, trạng thái luôn có chữ, điều khiển cùng vai dùng chung mẫu, tương phản dễ đọc. Chỉ tham khảo, không cài skill hoặc thư viện UI từ nguồn đó. Phần bàn game được thiết kế theo nhu cầu riêng, không dùng khung dashboard.
 

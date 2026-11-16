@@ -85,7 +85,7 @@ Kích thước bundle:
    `src/games/word-garden/`, `src/games/fruit-slash/`, `src/audio/`, `src/components/Select.tsx`, `public/audio/`, test mới, docs mới… đều là file _untracked_; `App.tsx`, `worker.ts`, `package.json` đang _modified_. Bản production (đã deploy nhiều version ngày 16/11) không thể tái tạo từ git. Mất máy/ổ đĩa = mất sản phẩm.
    → Commit ngay (có thể tách: game mới / audio / docs), push lên remote.
 
-2. **Luật Ghép chữ phạt cả những từ có thật.**
+2. ✅ **Đã sửa 16/11/2026** (`extra-words.ts`, `knownExtraWord`). **Luật Ghép chữ phạt cả những từ có thật.**
    `matches()` trong `src/games/word-garden/rules.ts` chỉ chấp nhận từ có trong danh sách 18 từ của bàn. Học viên ghép một từ đúng tiếng Trung nhưng không nằm trong danh sách vẫn bị **−2 điểm** và báo "Chưa nối được". Ví dụ với bộ HSK 1 hiện tại:
    - 医 (医院) + 生 (学生) = **医生** (bác sĩ — chính là từ HSK 1)
    - 天 + 天 (từ 今天/明天/昨天/天气) = **天天** (mỗi ngày)
@@ -96,7 +96,7 @@ Kích thước bundle:
    - Khi tạo bàn, loại các tổ hợp chữ có thể tạo từ có nghĩa ngoài danh sách (cần một từ điển nhỏ các từ 2 chữ phổ biến); hoặc
    - Chấp nhận từ có thật nhưng không ghép (thông báo "医生 là từ đúng, nhưng chưa có trong bài này", **không trừ điểm**).
 
-3. **Bấm logo trong game làm mất lượt chơi không cần xác nhận.**
+3. ✅ **Đã sửa 16/11/2026.** **Bấm logo trong game làm mất lượt chơi không cần xác nhận.**
    `src/games/word-garden/WordGarden.tsx:204` — `<a href="/games" className="garden-brand">` không chặn sự kiện, gây **reload toàn trang** và bỏ qua hộp "Rời lượt chơi này?" mà nút Back có. Tương tự ở thư viện (`App.tsx`), các link brand reload trang thay vì dùng `navigate()`.
 
 ### 🟠 P1 — Ảnh hưởng trải nghiệm / chất lượng nội dung
@@ -105,13 +105,13 @@ Kích thước bundle:
 
 5. **Chưa rõ chuẩn HSK.** Code ghi "HSK 1/2" nhưng không nói theo HSK 2.0 (6 cấp) hay HSK 3.0 (9 cấp, 2021). Vài từ có cấp khác nhau giữa hai chuẩn (ví dụ 可以). Cần chốt một chuẩn và đối chiếu danh sách chính thức.
 
-6. **Kỷ lục không công bằng.** `localStorage` key `hanplay-best-${mode}` (`WordGarden.tsx:66`, `:172`) dùng chung cho mọi cấu hình: bàn 18 cặp luôn cho điểm cao hơn bàn 4 cặp, HSK 1 lẫn HSK 2, Thư thả lẫn 4 phút. Nên tách theo `mode + level + pairs + timed`. **Chém hoa quả hoàn toàn không lưu kỷ lục.**
+6. ✅ **Đã sửa 16/11/2026** (kỷ lục theo cấu hình, thêm kỷ lục Chém hoa quả theo bộ + thời gian). **Kỷ lục không công bằng.** `localStorage` key `hanplay-best-${mode}` (`WordGarden.tsx:66`, `:172`) dùng chung cho mọi cấu hình: bàn 18 cặp luôn cho điểm cao hơn bàn 4 cặp, HSK 1 lẫn HSK 2, Thư thả lẫn 4 phút. Nên tách theo `mode + level + pairs + timed`. **Chém hoa quả hoàn toàn không lưu kỷ lục.**
 
-7. **Thời gian cố định 4 phút** (`WordGarden.tsx:61`, `240`) cho mọi kích thước bàn: 4 cặp thì quá dư, 18 cặp thì gắt. Nên tỉ lệ theo số cặp.
+7. ✅ **Đã sửa 16/11/2026** (20 giây mỗi cặp). **Thời gian cố định 4 phút** (`WordGarden.tsx:61`, `240`) cho mọi kích thước bàn: 4 cặp thì quá dư, 18 cặp thì gắt. Nên tỉ lệ theo số cặp.
 
-8. ~~**Nhạc nền nặng và bật mặc định.** `eastern-thought.mp3` 3,6 MB tải ngay lần chạm đầu tiên.~~ **Đã xử lý 16/11/2026:** Pikachu chuyển sang dùng chung Lotus Pond (1 MB, loop 60s, CC0) với Chém hoa quả. File `eastern-thought.mp3` vẫn còn trong `public/audio` nhưng không game nào tải; có thể xoá để giảm kích thước deploy.
+8. ~~**Nhạc nền nặng và bật mặc định.** `eastern-thought.mp3` 3,6 MB tải ngay lần chạm đầu tiên.~~ **Đã xử lý 16/11/2026:** Nối cặp dùng Lotus Pond (1 MB, loop 60s, CC0); Chém hoa quả chuyển sang Dragon Dance (1,1 MB, cùng gói CC0, nhịp nhanh hơn). File `eastern-thought.mp3` vẫn còn trong `public/audio` nhưng không game nào tải; có thể xoá để giảm kích thước deploy.
 
-9. **Không có trang 404.** Mọi đường dẫn sai (`/games/abc`, `/xyz`) đều hiện thư viện; người dùng không biết link hỏng.
+9. ✅ **Đã sửa 16/11/2026** (trang 404 phía client; server vẫn trả 200 do SPA fallback). **Không có trang 404.** Mọi đường dẫn sai (`/games/abc`, `/xyz`) đều hiện thư viện; người dùng không biết link hỏng.
 
 10. **Game chưa có phát âm.** Với app học ngoại ngữ, nghe được cách đọc là giá trị cốt lõi. Có thể dùng Web Speech API (`speechSynthesis`, `lang="zh-CN"`) — không tốn băng thông, không cần server — để đọc từ khi ghép đúng / ở màn ôn tập.
 
@@ -135,7 +135,7 @@ Kích thước bundle:
 
 17. **Mỗi lần đổi tùy chọn/ván mới tạo lại cả `Phaser.Game`** (WordGarden `useLayoutEffect` phụ thuộc `level, round, pairs, lesson, difficulty`). Hoạt động đúng nhưng tạo/huỷ WebGL context liên tục; nên tái sử dụng game và chỉ restart scene.
 
-18. **Tài liệu lệch với code.**
+18. ✅ **Đã sửa 16/11/2026** (FRUIT_SLASH, DESIGN, GAME_ENGINE, CREDITS). **Tài liệu lệch với code.**
     - `docs/FRUIT_SLASH.md` nhắc `audio.ts`, `useFruitAudio.ts` — thực tế là `src/audio/GameAudio.ts`, `useGameSound.ts`.
     - `docs/DESIGN.md` ghi "Âm thanh tùy chọn, **mặc định tắt**" — code (`readAudioSettings`) **mặc định bật** tất cả kênh.
     - `docs/GAME_ENGINE.md` mô tả game Gold Rush legacy (và nhắc Socket.IO, trong khi code dùng `ws`) nhưng không ghi là legacy.

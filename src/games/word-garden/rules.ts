@@ -1,4 +1,5 @@
 import type { MatchMode, Word } from './vocabulary';
+import { extraWords, type ExtraWord } from './extra-words';
 export type Tile = { id: number; word: Word; side: 0 | 1; label: string; removed: boolean };
 export type Cell = { x: number; y: number };
 export const COLS = 6;
@@ -43,6 +44,20 @@ export function matches(
   if (a.id === b.id) return false;
   if (mode === 'meaning') return a.side !== b.side && a.word.id === b.word.id;
   return Boolean(matchingWord(a, b, available, ordered));
+}
+/** A real word outside the board's targets (e.g. 医 + 生 = 医生): correct Chinese, so never a mistake. */
+export function knownExtraWord(
+  a: Tile,
+  b: Tile,
+  mode: MatchMode,
+  ordered = true,
+  words: ExtraWord[] = extraWords,
+): ExtraWord | undefined {
+  if (mode !== 'characters' || a.id === b.id) return undefined;
+  return (
+    words.find((w) => w.hanzi === a.label + b.label) ??
+    (!ordered ? words.find((w) => w.hanzi === b.label + a.label) : undefined)
+  );
 }
 /** Visible glyphs are interchangeable regardless of which word/side generated them. */
 export function reconcileCharacters(tiles: Tile[], a: number, b: number, ordered = true) {

@@ -666,6 +666,20 @@
   color: #6b7350;
   margin-top: -4px;
 }
+/* Record line: a sentence with an icon, not a fourth stat, so the stats row keeps its width. */
+.fruit-best {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 650;
+  color: #5f5530;
+}
+.fruit-best.is-new {
+  color: #9a4a26;
+}
 .fruit-result-stats {
   display: flex;
   justify-content: space-around;

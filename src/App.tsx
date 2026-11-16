@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, Flower2, Gamepad2, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Flower2, Sparkles } from 'lucide-react';
 import { FruitSlash } from './games/fruit-slash/FruitSlash';
 import { WordGarden } from './games/word-garden/WordGarden';
 import type { MatchMode } from './games/word-garden/vocabulary';
@@ -13,18 +13,24 @@ const getMode = (path: string): MatchMode | null => {
     return new URLSearchParams(query).get('mode') === 'meaning' ? 'meaning' : 'characters';
   return null;
 };
+const libraryRoutes = ['/', '/games', '/index.html'];
 export default function App() {
   const [path, setPath] = useState(getPage);
   const mode = getMode(path);
+  const route = path.split('?')[0].replace(/\/+$/, '') || '/';
+  const fruit = route === '/games/chem-hoa-qua';
+  const notFound = !mode && !fruit && !libraryRoutes.includes(route);
   useEffect(() => {
-    document.title = path.startsWith('/games/chem-hoa-qua')
+    document.title = fruit
       ? 'Chém hoa quả · HanPlay'
       : mode
         ? mode === 'meaning'
           ? 'Nối từ với nghĩa · HanPlay'
           : 'Ghép chữ thành từ · HanPlay'
-        : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
-  }, [path, mode]);
+        : notFound
+          ? 'Không tìm thấy trang · HanPlay'
+          : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
+  }, [fruit, mode, notFound]);
   useEffect(() => {
     const changed = () => setPath(getPage());
     window.addEventListener('popstate', changed);
@@ -35,18 +41,41 @@ export default function App() {
     setPath(path);
     window.scrollTo(0, 0);
   };
-  if (path.split('?')[0] === '/games/chem-hoa-qua')
-    return <FruitSlash onBack={() => navigate('/games')} />;
+  if (fruit) return <FruitSlash onBack={() => navigate('/games')} />;
   if (mode) return <WordGarden key={mode} mode={mode} onBack={() => navigate('/games')} />;
+  const home = (event: React.MouseEvent) => {
+    event.preventDefault();
+    navigate('/games');
+  };
+  if (notFound)
+    return (
+      <div className="garden-library">
+        <header className="library-nav">
+          <a className="garden-brand" href="/games" onClick={home}>
+            <span>汉</span>hanplay<span className="brand-dot">.</span>
+          </a>
+        </header>
+        <main className="library-not-found">
+          <div className="garden-dialog-emblem" aria-hidden="true">
+            迷
+          </div>
+          <span className="garden-eyebrow">404 · KHÔNG TÌM THẤY TRANG</span>
+          <h1>Đường này chưa dẫn tới trò chơi nào.</h1>
+          <p>
+            Link có thể đã cũ hoặc gõ nhầm. Các trò chơi đều nằm trong thư viện, mở lại từ đó nhé.
+          </p>
+          <a className="garden-primary" href="/games" onClick={home}>
+            Về thư viện game <ArrowRight size={18} />
+          </a>
+        </main>
+      </div>
+    );
   return (
     <div className="garden-library">
       <header className="library-nav">
-        <a className="garden-brand" href="/games">
+        <a className="garden-brand" href="/games" onClick={home}>
           <span>汉</span>hanplay<span className="brand-dot">.</span>
         </a>
-        <span>
-          <Gamepad2 size={18} /> Góc chơi tiếng Trung
-        </span>
         <a href="#games">
           Khám phá game <ArrowRight size={16} />
         </a>
@@ -115,7 +144,7 @@ export default function App() {
                 <div className="card-art-stars">✧ &nbsp; 电脑 · máy tính &nbsp; ✧</div>
               </div>
               <div className="game-card-copy">
-                <span className="garden-eyebrow">PIKACHU · GHÉP CHỮ</span>
+                <span className="garden-eyebrow">NỐI CẶP · GHÉP CHỮ</span>
                 <h3>Ghép chữ thành từ</h3>
                 <p>
                   Nối hai chữ thành một từ tiếng Trung. Chơi Bình thường hoặc thử đúng thứ tự ở mức
@@ -146,7 +175,7 @@ export default function App() {
                 <div className="card-art-stars">✧ &nbsp; Hán tự · ý nghĩa &nbsp; ✧</div>
               </div>
               <div className="game-card-copy">
-                <span className="garden-eyebrow">PIKACHU · NỐI NGHĨA</span>
+                <span className="garden-eyebrow">NỐI CẶP · NỐI NGHĨA</span>
                 <h3>Nối từ với nghĩa</h3>
                 <p>
                   Tìm cặp từ tiếng Trung và nghĩa tiếng Việt tương ứng. Mỗi đường nối, thêm một từ
@@ -196,7 +225,7 @@ export default function App() {
           </div>
         </section>
         <footer className="library-footer">
-          <a className="garden-brand" href="/games">
+          <a className="garden-brand" href="/games" onClick={home}>
             hanplay<span className="brand-dot">.</span>
           </a>
           <span>Học nhẹ nhàng. Nhớ tự nhiên.</span>

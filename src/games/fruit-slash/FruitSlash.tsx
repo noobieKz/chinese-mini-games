@@ -10,11 +10,11 @@ import {
   Pause,
   Play,
   RotateCcw,
-  Settings2,
   Sparkles,
   Swords,
   Target,
   Trophy,
+  Volume2,
   X,
 } from 'lucide-react';
 import { Select } from '../../components/Select';
@@ -46,6 +46,30 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
   const playing = view.phase === 'playing' || view.phase === 'feedback';
   const blocked = paused || help || soundSettings || Boolean(confirm);
   const result = view.phase === 'feedback' ? view.results.at(-1) : null;
+  const [record, setRecord] = useState<{ best: number; isNew: boolean } | null>(null);
+  useEffect(() => {
+    // Runs once per phase change; config and score are fixed while a round is finished.
+    if (view.phase !== 'finished') {
+      setRecord(null);
+      return;
+    }
+    const key = `hanplay-best-fruit-${config.bank}-${config.seconds}`;
+    let best = 0;
+    try {
+      best = Number(localStorage.getItem(key)) || 0;
+    } catch {
+      /* Storage is optional. */
+    }
+    const isNew = view.results.length > 0 && view.score > best;
+    if (isNew)
+      try {
+        localStorage.setItem(key, String(view.score));
+      } catch {
+        /* Storage is optional. */
+      }
+    setRecord({ best: Math.max(best, view.score), isNew });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view.phase]);
   useEffect(() => {
     let disposed = false,
       owned: FruitHandle | undefined;
@@ -167,7 +191,7 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
             aria-label="Cài đặt âm thanh"
             onClick={() => setSoundSettings(true)}
           >
-            <Settings2 size={19} />
+            <Volume2 size={19} />
           </button>
           <button
             className="fruit-icon"
@@ -471,6 +495,12 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
                 {view.score}
                 <small>ĐIỂM</small>
               </div>
+              {record && (
+                <p className={`fruit-best ${record.isNew ? 'is-new' : ''}`}>
+                  <Trophy size={14} />
+                  {record.isNew ? 'Kỷ lục mới cho bộ này!' : `Kỷ lục bộ này: ${record.best} điểm`}
+                </p>
+              )}
               <div className="fruit-result-stats">
                 <span>
                   <b>

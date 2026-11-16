@@ -12,10 +12,10 @@ import {
   Pause,
   Play,
   RotateCcw,
-  Settings2,
   Shuffle,
   Sparkles,
   Trophy,
+  Volume2,
   X,
 } from 'lucide-react';
 import { vocabulary, type Difficulty, type MatchMode, type Word } from './vocabulary';
@@ -27,6 +27,10 @@ import { AudioSettings } from '../../audio/AudioSettings';
 import { gardenAudioProfile } from '../../audio/profiles';
 
 type Props = { mode: MatchMode; onBack(): void };
+const SECONDS_PER_PAIR = 20;
+/** 240 → "4 phút", 80 → "1 phút 20 giây". */
+const durationLabel = (seconds: number) =>
+  `${Math.floor(seconds / 60)} phút${seconds % 60 ? ` ${seconds % 60} giây` : ''}`;
 const initial: GardenState = {
   tiles: [],
   selected: null,
@@ -58,27 +62,41 @@ export function WordGarden({ mode, onBack }: Props) {
   const [exit, setExit] = useState<'leave' | 'restart' | 'end' | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const [remaining, setRemaining] = useState(240);
+  // Boards smaller than a lesson's word count shrink; the clock scales with the real pair count.
+  const totalPairs = Math.min(pairs, lesson === 'all' ? 18 : 6);
+  const timeLimit = totalPairs * SECONDS_PER_PAIR;
+  const [remaining, setRemaining] = useState(timeLimit);
   const [state, setState] = useState(initial);
   const [collection, setCollection] = useState<Word[]>([]);
-  const [best, setBest] = useState(() => {
+  // One record per configuration, so a 4-pair relaxed board never competes with an 18-pair timed one.
+  const bestKey = [
+    'hanplay-best',
+    mode,
+    mode === 'characters' ? difficulty : null,
+    level.replace(' ', ''),
+    lesson,
+    totalPairs,
+    timed ? 'timed' : 'free',
+  ]
+    .filter((part) => part !== null)
+    .join('-');
+  const [best, setBest] = useState(0);
+  useEffect(() => {
     try {
-      return Number(localStorage.getItem(`hanplay-best-${mode}`)) || 0;
+      setBest(Number(localStorage.getItem(bestKey)) || 0);
     } catch {
-      return 0;
+      setBest(0);
     }
-  });
+  }, [bestKey]);
   const parent = useRef<HTMLDivElement>(null);
+  const playArea = useRef<HTMLElement>(null);
   const engine = useRef<GardenHandle | null>(null);
   const finished =
     playing &&
     ready &&
     (ended || (state.total > 0 && state.matched === state.total) || (timed && remaining === 0));
   const blocked = !playing || paused || help || soundSettings || Boolean(exit) || finished;
-  const boardLayout = getBoardLayout(
-    mobile,
-    state.total || Math.min(pairs, lesson === 'all' ? 18 : 6),
-  );
+  const boardLayout = getBoardLayout(mobile, state.total || totalPairs);
   const audio = useGameSound(gardenAudioProfile);
   const audioRef = useRef(audio);
   audioRef.current = audio;
@@ -95,7 +113,7 @@ export function WordGarden({ mode, onBack }: Props) {
     setReady(false);
     setError(false);
     setState(initial);
-    setRemaining(240);
+    setRemaining(timeLimit);
     setCollection([]);
     previous.current = { matched: 0, mistakes: 0 };
     void Promise.all([import('./GardenScene'), document.fonts.ready])
@@ -169,11 +187,11 @@ export function WordGarden({ mode, onBack }: Props) {
     if (!finished || state.score <= best) return;
     setBest(state.score);
     try {
-      localStorage.setItem(`hanplay-best-${mode}`, String(state.score));
+      localStorage.setItem(bestKey, String(state.score));
     } catch {
       /* Storage is optional. */
     }
-  }, [finished, state.score, best, mode]);
+  }, [finished, state.score, best, bestKey]);
   const restart = () => {
     setPlaying(false);
     setEnded(false);
@@ -190,18 +208,33 @@ export function WordGarden({ mode, onBack }: Props) {
       setHelp(true);
     }
   };
+  const leave = () => (playing && !finished ? setExit('leave') : onBack());
+  const startPlaying = () => {
+    setPlaying(true);
+    audio.play('click');
+    // Bring the whole board, its message and tools into view when the page header pushed them down.
+    const area = playArea.current;
+    if (area && area.getBoundingClientRect().bottom > innerHeight)
+      area.scrollIntoView({
+        block: 'start',
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
+  };
   return (
     <div className="garden-page">
       <header className="garden-nav">
-        <button
-          className="garden-back"
-          aria-label="Về thư viện game"
-          onClick={() => (playing && !finished ? setExit('leave') : onBack())}
-        >
+        <button className="garden-back" aria-label="Về thư viện game" onClick={leave}>
           <ArrowLeft size={19} />
           <span>Thư viện game</span>
         </button>
-        <a href="/games" className="garden-brand">
+        <a
+          href="/games"
+          className="garden-brand"
+          onClick={(event) => {
+            event.preventDefault();
+            leave();
+          }}
+        >
           <span>汉</span>hanplay<span className="brand-dot">.</span>
         </a>
         <div className="garden-nav-actions">
@@ -213,7 +246,7 @@ export function WordGarden({ mode, onBack }: Props) {
             aria-label="Cài đặt âm thanh"
             onClick={() => setSoundSettings(true)}
           >
-            <Settings2 size={20} />
+            <Volume2 size={20} />
           </button>
           <button
             className="garden-icon fullscreen"
@@ -237,10 +270,13 @@ export function WordGarden({ mode, onBack }: Props) {
                 : 'Hai chữ nhỏ ghép lại, thêm một từ mới vào khu vườn.'}
             </p>
           </div>
-          <div className="garden-personal-best">
+          <div
+            className="garden-personal-best"
+            title="Kỷ lục của đúng bộ từ, kích thước bàn và chế độ đang chọn, lưu trên thiết bị này"
+          >
             <Trophy size={20} />
             <div>
-              <small>KỶ LỤC TRÊN MÁY</small>
+              <small>KỶ LỤC</small>
               <b>
                 {best}
                 <span> điểm</span>
@@ -249,7 +285,14 @@ export function WordGarden({ mode, onBack }: Props) {
           </div>
         </div>
         <div className="garden-layout">
-          <section className="garden-play-area" aria-label="Khu vực chơi">
+          <section
+            className="garden-play-area"
+            aria-label="Khu vực chơi"
+            ref={playArea}
+            style={
+              { '--board-ratio': boardLayout.width / boardLayout.height } as React.CSSProperties
+            }
+          >
             <div className="garden-hud">
               <div>
                 <span>
@@ -273,7 +316,7 @@ export function WordGarden({ mode, onBack }: Props) {
                 </span>
                 <b>
                   {state.matched}
-                  <small> / {state.total || Math.min(pairs, lesson === 'all' ? 18 : 6)}</small>
+                  <small> / {state.total || totalPairs}</small>
                 </b>
               </div>
             </div>
@@ -368,17 +411,12 @@ export function WordGarden({ mode, onBack }: Props) {
                       <ArrowRight size={22} />
                       <span>{mode === 'meaning' ? 'bạn bè' : '友'}</span>
                     </div>
-                    <button
-                      className="garden-primary"
-                      onClick={() => {
-                        setPlaying(true);
-                        audio.play('click');
-                      }}
-                    >
+                    <button className="garden-primary" onClick={startPlaying}>
                       Vào vườn chơi <Play size={18} fill="currentColor" />
                     </button>
                     <small>
-                      {state.total} cặp từ · {timed ? '4 phút' : 'Không giới hạn thời gian'}
+                      {state.total} cặp từ ·{' '}
+                      {timed ? durationLabel(timeLimit) : 'Không giới hạn thời gian'}
                     </small>
                   </div>
                 </div>
@@ -510,8 +548,9 @@ export function WordGarden({ mode, onBack }: Props) {
               <button
                 disabled={blocked || !ready || state.locked}
                 onClick={() => engine.current?.pinyin()}
+                title="Gợi ý pinyin của một cặp nối được (miễn phí)"
               >
-                <span className="pinyin-symbol">拼</span> Gợi ý pinyin
+                <span className="pinyin-symbol">拼</span> Pinyin
               </button>
               <button
                 disabled={blocked || !ready || state.locked || state.assistsLeft === 0}
@@ -530,15 +569,12 @@ export function WordGarden({ mode, onBack }: Props) {
                 {paused ? <Play size={18} /> : <Pause size={18} />}
                 {paused ? 'Chơi tiếp' : 'Tạm dừng'}
               </button>
-              <button onClick={() => (playing && !finished ? setExit('restart') : restart())}>
-                <RotateCcw size={18} />
-                Lượt mới
-              </button>
-              <button disabled={!playing || finished} onClick={() => setExit('end')}>
-                <X size={18} /> Kết thúc lượt
-              </button>
-              <button onClick={() => void fullscreen()}>
-                <Maximize2 size={18} /> Toàn màn hình
+              <button
+                disabled={!playing || finished}
+                onClick={() => setExit('end')}
+                title="Kết thúc lượt và xem kết quả"
+              >
+                <X size={18} /> Kết thúc
               </button>
             </div>
           </section>
@@ -612,7 +648,7 @@ export function WordGarden({ mode, onBack }: Props) {
                   Thư thả
                 </button>
                 <button aria-pressed={timed} disabled={playing} onClick={() => setTimed(true)}>
-                  4 phút
+                  {durationLabel(timeLimit)}
                 </button>
               </div>
               <p>
@@ -621,10 +657,10 @@ export function WordGarden({ mode, onBack }: Props) {
                   : 'Không vội. Cứ học theo nhịp của bạn.'}
               </p>
               <button
-                className="garden-primary garden-new-round"
+                className="garden-new-round"
                 onClick={() => (playing && !finished ? setExit('restart') : restart())}
               >
-                <RotateCcw size={16} /> Chơi ván mới
+                <RotateCcw size={16} /> Chơi lượt mới
               </button>
               <p>
                 Đúng +10 · Sai −2 · Gợi ý −3 điểm.

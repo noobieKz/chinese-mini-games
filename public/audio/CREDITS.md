@@ -9,7 +9,13 @@
 - The asset page explicitly permits commercial project use without required attribution; do not resell the standalone pack.
 - Downloaded from the author's free download page on 2026-11-16. Source archive contains `Lotus Pond - Loop.wav` and `about.txt`.
 - Included asset: `lotus-pond-loop.mp3`, converted from the loop WAV to 44.1 kHz stereo MP3, 128 kbit/s, normalized to −18 LUFS / −2 dBTP. Actual source duration: 64 seconds.
-- Used by Fruit Slash and both Pikachu / Word Garden games (since 2026-11-16). Music starts after user interaction and is mixed quietly by default.
+- Used by both Nối cặp / Word Garden games. Music starts after user interaction and is mixed quietly by default.
+
+**Dragon Dance — Loop** by **BiteMe Games**, same pack and license as above (CC0 1.0).
+
+- Downloaded from the author's free download page on 2026-11-16 (`Chinese Game Music v1.0.zip`, 71 MB, contains `Dragon Dance - Loop.wav`, 48 kHz / 24-bit stereo, 68.6 seconds).
+- Included asset: `dragon-dance-loop.mp3`, converted with FFmpeg 9.0.2 to 44.1 kHz stereo MP3, 128 kbit/s, two-pass loudness normalization to −18 LUFS / −2 dBTP (measured −18.4 LUFS, peak −5.3 dBFS). Composition unchanged.
+- Used by Fruit Slash since 2026-11-16: the faster drum-led battle track suits the reflex game better than the calm Lotus Pond.
 
 ## Former Pikachu music (not used)
 

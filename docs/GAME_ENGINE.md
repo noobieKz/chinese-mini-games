@@ -1,8 +1,10 @@
-# Gold Rush — game presentation engine
+# Gold Rush — game presentation engine (legacy)
+
+> **Legacy:** tài liệu của bản lớp học cũ (`src/games/gold-rush`, `server`), không còn được import vào entrypoint hiện tại. Bản cũ dùng WebSocket (`ws` / Durable Object), không phải Socket.IO. Game đang chạy xem `WORD_GARDEN.md` và `FRUIT_SLASH.md`.
 
 ## Công nghệ và ranh giới
 
-Cướp vàng dùng **Phaser 3.90** cho thế giới 2D: canvas WebGL (Canvas fallback), sprite, scene, tương tác con trỏ, tween, flash, coin particles và confetti. React giữ HUD, câu hỏi, nút bàn phím / cảm ứng, sảnh chờ và bảng kết quả. Socket.IO và server vẫn quyết định toàn bộ luật, đáp án và số vàng.
+Cướp vàng dùng **Phaser 3.90** cho thế giới 2D: canvas WebGL (Canvas fallback), sprite, scene, tương tác con trỏ, tween, flash, coin particles và confetti. React giữ HUD, câu hỏi, nút bàn phím / cảm ứng, sảnh chờ và bảng kết quả. WebSocket server quyết định toàn bộ luật, đáp án và số vàng.
 
 Không gửi loại phần thưởng hay số vàng từ engine lên server. Server chọn phần thưởng sau đáp án đúng; ba rương là cách trình bày lựa chọn may mắn cho cùng lượt thưởng đang chờ. Chỉ `claim` hợp lệ mới cộng vàng / cướp / nhận lá chắn.
 

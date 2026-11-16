@@ -23,12 +23,12 @@ Ba bộ thử thách: chọn chữ Hán theo nghĩa tiếng Việt ở HSK 1, HS
 - `FruitScene.ts`: Phaser scene, quỹ đạo bay, swept collision, vệt kiếm, tách hai nửa, nước quả/hạt sáng, confetti, resize và hủy tài nguyên.
 - `FruitSlash.tsx`: HUD, thiết lập dùng Select chung, pause/help/kết quả, input thay thế và điều hướng.
 - `fruit.css`: lớp điều khiển và bố cục responsive của sân game.
-- `audio.ts`: mixer Web Audio, phát loop nhạc Lotus Pond từ asset cùng origin, tổng hợp tiếng gió/vỡ quả và âm báo đúng/sai; mỗi kênh có gain riêng sau gain tổng. Không gọi dịch vụ âm thanh ngoài trong lúc chơi.
-- `useFruitAudio.ts`, `AudioSettings.tsx`: vòng đời mixer, lưu thiết lập có kiểm tra dữ liệu, hộp thoại âm lượng/bật tắt và nghe thử.
+- `src/audio/GameAudio.ts` (dùng chung cho mọi game): mixer Web Audio, phát loop nhạc nền (Dragon Dance cho Chém hoa quả, Lotus Pond cho Nối cặp) từ asset cùng origin, tổng hợp tiếng gió/vỡ quả và âm báo đúng/sai; mỗi kênh có gain riêng sau gain tổng. Không gọi dịch vụ âm thanh ngoài trong lúc chơi.
+- `src/audio/useGameSound.ts`, `src/audio/AudioSettings.tsx`, `src/audio/profiles.ts`: vòng đời mixer, lưu thiết lập có kiểm tra dữ liệu, hộp thoại âm lượng/bật tắt và nghe thử.
 
 Âm thanh mặc định bật tất cả (tổng 80%, nhạc 18%, dao 70%, bổ quả 80%, báo đúng/sai 70%). Trình duyệt chỉ bắt đầu phát sau tương tác pointer/keyboard đầu tiên. Thiết lập được lưu riêng cho game dưới `hanplay.fruit.audio.v1`; lựa chọn cũ được giữ khi tải lại. Mở cài đặt sẽ dừng lượt chơi, nhạc vẫn phát để chỉnh trực tiếp. Đổi tab dừng nguồn âm và suspend context; nhạc tiếp tục đúng vị trí khi quay lại. Rời game hủy nguồn và context. Tiếng vung dao giới hạn một lần mỗi 140ms khi đang nhận đáp án; âm gió có attack tròn, sweep lên/xuống và một lớp sine hạ nhanh để tạo tiếng “vút”. Tiếng bổ quả chỉ phát khi thực sự chọn đáp án. Không lóe sáng/rung camera khi đúng/sai.
 
-Nhạc: Lotus Pond — Loop, BiteMe Games, từ gói Chinese Game Music. Bản WAV 64 giây được nén thành MP3 stereo 128 kbit/s (~1 MB), chuẩn hóa −18 LUFS / −2 dBTP. File được tải/giải mã một lần sau tương tác, không phát chồng loop khi click nhiều lần. Nguồn và giấy phép ghi ở `public/audio/CREDITS.md`; credit cũng hiện trong bảng cài đặt. Nhạc gốc VLTK không được đưa vào dự án.
+Nhạc: Dragon Dance — Loop, BiteMe Games, từ gói Chinese Game Music (CC0): bài "battle" có trống, đàn tranh và sáo, nhịp nhanh hợp game phản xạ hơn Lotus Pond (bài êm, nay dùng cho Nối cặp). Bản WAV 68,6 giây được nén thành MP3 stereo 128 kbit/s (~1,1 MB), chuẩn hóa hai lượt về −18 LUFS / −2 dBTP nên âm lượng tương đương Lotus Pond; thiết lập âm lượng đã lưu của người chơi vẫn giữ. File được tải/giải mã một lần sau tương tác, không phát chồng loop khi click nhiều lần. Nguồn và giấy phép ghi ở `public/audio/CREDITS.md`; credit cũng hiện trong bảng cài đặt. Nhạc gốc VLTK không được đưa vào dự án.
 
 Một đường vuốt chỉ thuộc về câu bắt đầu nó. Khi sang câu, cần một lần nhấn/vuốt mới. Model đóng câu ngay khi nhận đáp án, kiểm ID câu và có khoảng khóa ngắn đầu câu; nhãn đáp án chỉ hiện khi input sẵn sàng. Tránh lỗi click/vuốt xuyên câu cũ.
 

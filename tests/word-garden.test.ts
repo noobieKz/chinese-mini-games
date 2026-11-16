@@ -161,3 +161,24 @@ test('normal accepts reversed character selection while hard requires word order
   assert.ok(matches(meaning[0], meaning[1], 'meaning', meaning, true));
   assert.ok(matches(meaning[1], meaning[0], 'meaning', meaning, true));
 });
+
+test('real words outside the board are recognised without counting as targets', async () => {
+  const { knownExtraWord } = await import('../src/games/word-garden/rules');
+  const { extraWords } = await import('../src/games/word-garden/extra-words');
+  const targets = new Set(vocabulary.map((w) => w.hanzi));
+  for (const word of extraWords) assert.ok(!targets.has(word.hanzi), `${word.hanzi} is a target`);
+  assert.equal(new Set(extraWords.map((w) => w.hanzi)).size, extraWords.length, 'no duplicates');
+  const tile = (id: number, label: string) => ({
+    id,
+    label,
+    side: 0 as const,
+    removed: false,
+    word: vocabulary[0],
+  });
+  // 医 (医院) + 生 (学生) = 医生: accepted in either order on Normal, only in order on Hard.
+  assert.equal(knownExtraWord(tile(1, '医'), tile(2, '生'), 'characters', true)?.hanzi, '医生');
+  assert.equal(knownExtraWord(tile(2, '生'), tile(1, '医'), 'characters', false)?.hanzi, '医生');
+  assert.equal(knownExtraWord(tile(2, '生'), tile(1, '医'), 'characters', true), undefined);
+  assert.equal(knownExtraWord(tile(1, '天'), tile(1, '天'), 'characters', false), undefined);
+  assert.equal(knownExtraWord(tile(1, '医'), tile(2, '生'), 'meaning', false), undefined);
+});

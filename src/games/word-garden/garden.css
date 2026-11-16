@@ -68,6 +68,10 @@ h3,
 p {
   margin-top: 0;
 }
+p,
+li {
+  text-wrap: pretty;
+}
 button {
   color: inherit;
 }
@@ -248,7 +252,7 @@ button {
 .garden-hud b small {
   font-size: 16px;
   letter-spacing: 0;
-  color: #718373;
+  color: #5d6f5f;
   font-weight: 500;
 }
 .garden-hud .garden-clock {
@@ -951,7 +955,7 @@ button {
 .card-art-stars {
   position: absolute;
   bottom: 24px;
-  color: #607653;
+  color: #4a5f40;
   font-size: 12px;
   letter-spacing: 3px;
 }
@@ -1202,9 +1206,6 @@ button {
   .garden-icon svg {
     width: 18px;
   }
-  .fullscreen {
-    display: none;
-  }
   .garden-title-row {
     gap: 10px;
     margin-bottom: 19px;
@@ -1358,16 +1359,12 @@ button {
   .garden-tools {
     gap: 6px;
     margin: 12px 0 22px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
   }
   .garden-tools button {
     font-size: 10px;
     padding: 9px 4px;
     gap: 4px;
     min-height: 44px;
-    flex-wrap: wrap;
-    align-content: center;
   }
   .garden-tools button svg {
     width: 15px;
@@ -1644,8 +1641,22 @@ button {
   font-family: 'Be Vietnam Pro', sans-serif;
   font-weight: 600;
 }
+/* Six tools on an even grid: 3 × 2 in narrow play areas, one row when the board is wide. */
+.garden-play-area {
+  container: garden-play / inline-size;
+}
 .garden-tools {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+@container garden-play (min-width: 720px) {
+  .garden-tools {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+.garden-tools button {
+  white-space: nowrap;
 }
 .garden-tools button b {
   background: #e8edda;
@@ -1662,13 +1673,25 @@ button {
   font-size: 17px;
   color: inherit;
 }
+/* Secondary action: the board (or the intro dialog) owns the one primary button on screen. */
 .garden-new-round {
   margin-top: 16px;
   width: 100%;
   min-height: 44px;
   font-size: 12px;
+  font-weight: 650;
   padding: 10px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
+  border: 1px solid #ccd2bc;
+  border-radius: 12px;
+  background: #fffdf7;
+  color: var(--garden-green);
+}
+.garden-new-round:hover {
+  background: #e7ecd9;
 }
 @media (max-width: 540px) {
   .garden-tile-grid button {
@@ -1676,13 +1699,11 @@ button {
     padding: 3px;
   }
   .garden-tools {
-    display: flex;
     gap: 7px;
   }
   .garden-tools button {
     min-height: 44px;
-    padding: 10px 11px;
-    flex-wrap: nowrap;
+    padding: 10px 6px;
     font-size: 11px;
   }
   .garden-tools .pinyin-symbol {
@@ -1725,8 +1746,61 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+/* Two columns: an odd last card spans the row as a wide card instead of leaving an empty cell. */
+@media (min-width: 651px) and (max-width: 1100px) {
+  .library-card-grid > .library-game-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .library-card-grid > .library-game-card:last-child:nth-child(odd) > :first-child {
+    height: auto;
+    min-height: 220px;
+  }
+  .library-card-grid > .library-game-card:last-child:nth-child(odd) > .game-card-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
 @media (max-width: 650px) {
   .library-card-grid {
     grid-template-columns: 1fr;
   }
+}
+/* Desktop: keep HUD, board, message and tools within one screen height on short laptops. */
+@media (min-width: 851px) {
+  .garden-play-area {
+    width: 100%;
+    max-width: max(480px, calc((100dvh - 250px) * var(--board-ratio, 1.45)));
+    justify-self: center;
+  }
+}
+/* 404: same shell as the library, one message and one way back. */
+.library-not-found {
+  min-height: calc(100dvh - 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 16px 80px;
+}
+.library-not-found .garden-eyebrow {
+  justify-content: center;
+}
+.library-not-found h1 {
+  font-size: clamp(26px, 4vw, 38px);
+  letter-spacing: -1px;
+  line-height: 1.25;
+  margin: 14px 0 12px;
+  max-width: 560px;
+  text-wrap: balance;
+}
+.library-not-found p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--garden-muted);
+  max-width: 440px;
+  margin-bottom: 28px;
 }

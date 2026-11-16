@@ -9,15 +9,19 @@ export type AudioProfile = {
 
 export const fruitAudioProfile: AudioProfile = {
   storageKey: 'hanplay.fruit.audio.v1',
-  description: 'Nhạc vừa đủ nhẹ. Đường chém thật đã tay.',
+  description: 'Trống dồn nhịp. Đường chém thật đã tay.',
   music: {
-    title: 'Lotus Pond',
+    title: 'Dragon Dance',
     author: 'BiteMe Games',
     source: 'https://bitemegames.itch.io/chinese-game-music',
-    url: '/audio/lotus-pond-loop.mp3',
+    url: '/audio/dragon-dance-loop.mp3',
   },
   controls: [
-    { channel: 'music', title: 'Nhạc nền', description: 'Lotus Pond · Đàn tranh và sáo nhẹ' },
+    {
+      channel: 'music',
+      title: 'Nhạc nền',
+      description: 'Dragon Dance · Trống, đàn tranh và sáo dồn dập',
+    },
     {
       channel: 'swing',
       title: 'Vung dao',

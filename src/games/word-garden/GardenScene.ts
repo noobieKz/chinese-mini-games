@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import {
   findPair,
   findPath,
+  knownExtraWord,
   makeTiles,
   matches,
   matchingWord,
@@ -222,6 +223,24 @@ class GardenScene extends Phaser.Scene {
         this.config.difficulty === 'hard',
       ) && findPath(this.tiles, a, b, this.layout.cols);
     this.locked = true;
+    const extra =
+      !path &&
+      knownExtraWord(
+        this.tiles[a],
+        this.tiles[b],
+        this.config.mode,
+        this.config.difficulty === 'hard',
+      );
+    if (extra) {
+      // Correct Chinese that this board does not ask for: explain, keep score and combo.
+      this.message = `${extra.hanzi} · ${extra.pinyin} · ${extra.meaning} là từ đúng, nhưng chưa có trong bàn này. Thử ghép từ khác nhé!`;
+      this.selected = null;
+      this.locked = false;
+      this.paint(a);
+      this.paint(b);
+      this.publish();
+      return;
+    }
     if (!path) {
       this.mistakes++;
       this.combo = 0;

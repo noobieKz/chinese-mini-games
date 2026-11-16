@@ -19,7 +19,7 @@ Website chính: https://hanplay-classroom.giathe-bk.workers.dev.
 2. `/games/noi-tu`: **Nối từ với nghĩa**, nối từ Hán với nghĩa tiếng Việt; không yêu cầu thứ tự chọn.
 3. `/games/chem-hoa-qua`: **Chém hoa quả**, sân Phaser với vuốt/chuột/phím 1–2–3, ba bộ thử thách, 12 câu mỗi lượt, combo và ôn từ sau lượt.
 
-Hai trò nối dùng chung engine và luật Pikachu để dễ bảo trì, nhưng được chọn riêng từ thư viện; không có dropdown chuyển kiểu bên trong. Alias `/games/pikachu` và `/games/pikachu?mode=meaning` vẫn hoạt động cho link cũ.
+Hai trò nối (hiển thị là **Nối cặp**) dùng chung engine và luật nối kiểu Onet để dễ bảo trì, nhưng được chọn riêng từ thư viện; không có dropdown chuyển kiểu bên trong. Alias `/games/pikachu` và `/games/pikachu?mode=meaning` vẫn hoạt động cho link cũ.
 
 `/` và `/games` hiện cùng là thư viện. Sau này thay `/` bằng landing page khóa học mà giữ nguyên các link game.
 
