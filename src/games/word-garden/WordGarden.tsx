@@ -22,7 +22,7 @@ import type { Difficulty, MatchMode, Word } from './vocabulary';
 import { useContent, useScope } from '../../content/useContent';
 import { ScopePicker } from '../../components/ScopePicker';
 import { levelSlug, scopeKey } from '../../../shared/content';
-import type { GardenHandle, GardenState } from './GardenScene';
+import type { GardenConfig, GardenHandle, GardenState } from './GardenScene';
 import { Select } from '../../components/Select';
 import { getBoardLayout, STEP_X, STEP_Y, type PairCount } from './layout';
 import { useGameSound } from '../../audio/useGameSound';
@@ -112,30 +112,35 @@ export function WordGarden({ mode, onBack }: Props) {
     query.addEventListener('change', changed);
     return () => query.removeEventListener('change', changed);
   }, []);
+  // Latest options, read when the engine finishes loading and when the board is dealt again.
+  const configKey = `${wordsKey}|${round}|${pairs}|${difficulty}`;
+  const latest = useRef({ key: configKey, round, config: {} as GardenConfig });
+  latest.current = {
+    key: configKey,
+    round,
+    config: {
+      words,
+      pairs,
+      difficulty,
+      mode,
+      mobile,
+      reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    },
+  };
+  const dealt = useRef({ key: '', round });
+  const hasWords = words.length > 0;
+  // Create the engine once, as soon as there are words to deal (content may still be loading).
   useLayoutEffect(() => {
+    if (!hasWords) return;
     let disposed = false;
     let owned: GardenHandle | undefined;
-    setReady(false);
-    setError(false);
-    setState(initial);
-    setRemaining(timeLimit);
-    setCollection([]);
-    previous.current = { matched: 0, mistakes: 0 };
-    // Content still loading: keep the loading overlay until the words arrive.
-    if (!words.length) return;
     void Promise.all([import('./GardenScene'), document.fonts.ready])
       .then(([{ createGarden }]) => {
         if (disposed || !parent.current) return;
+        dealt.current = { key: latest.current.key, round: latest.current.round };
         owned = createGarden(
           parent.current,
-          {
-            words,
-            pairs,
-            difficulty,
-            mode,
-            mobile,
-            reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
-          },
+          latest.current.config,
           (next) => {
             if (disposed) return;
             setState(next);
@@ -161,9 +166,19 @@ export function WordGarden({ mode, onBack }: Props) {
       engine.current = null;
       owned?.destroy();
     };
-    // Rebuild only when the chosen words change, not on every render of the same selection.
+  }, [hasWords]);
+  // Options changed or a new round: deal a new board on the same canvas, without the loading
+  // screen, so the intro dialog stays still. Tiles animate in only for a new round.
+  useLayoutEffect(() => {
+    if (!ready || !engine.current || dealt.current.key === configKey) return;
+    const newRound = dealt.current.round !== round;
+    dealt.current = { key: configKey, round };
+    setRemaining(timeLimit);
+    setCollection([]);
+    previous.current = { matched: 0, mistakes: 0 };
+    engine.current.restart(latest.current.config, newRound);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, wordsKey, round, pairs, difficulty]);
+  }, [configKey, ready]);
   useEffect(() => {
     if (ready) engine.current?.resize(mobile);
   }, [mobile, ready]);

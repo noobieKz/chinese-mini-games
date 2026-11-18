@@ -12,7 +12,16 @@ import {
   type Tile,
 } from './rules';
 import type { Difficulty, MatchMode, Word } from './vocabulary';
-import { getBoardLayout, routePoint, STEP_X, STEP_Y, type PairCount } from './layout';
+import {
+  getBoardLayout,
+  routePoint,
+  STEP_X,
+  STEP_Y,
+  type BoardLayout,
+  type PairCount,
+} from './layout';
+
+const DEFAULT_MESSAGE = 'Chọn hai ô tương ứng. Đường nối được rẽ tối đa hai lần.';
 
 export type GardenState = {
   tiles: Tile[];
@@ -37,6 +46,7 @@ export type GardenHandle = {
   shuffle(): void;
   pause(value: boolean): void;
   resize(mobile: boolean): void;
+  restart(config: GardenConfig, animate: boolean): void;
   destroy(): void;
 };
 export type GardenConfig = {
@@ -49,8 +59,8 @@ export type GardenConfig = {
 };
 
 class GardenScene extends Phaser.Scene {
-  private tiles: Tile[];
-  private layout;
+  private tiles!: Tile[];
+  private layout!: BoardLayout;
   private pieces: Phaser.GameObjects.Container[] = [];
   private faces: Phaser.GameObjects.Graphics[] = [];
   private selected: number | null = null;
@@ -61,12 +71,12 @@ class GardenScene extends Phaser.Scene {
   private mistakes = 0;
   private combo = 0;
   private latest: Word | null = null;
-  private message = 'Chọn hai ô tương ứng. Đường nối được rẽ tối đa hai lần.';
+  private message = DEFAULT_MESSAGE;
   private route?: Phaser.GameObjects.Graphics;
   private hintIndices: number[] = [];
   private hintsLeft = 3;
   private assistsLeft = 1;
-  private total: number;
+  private total!: number;
   private transitionTimers = new Set<ReturnType<typeof setTimeout>>();
   constructor(
     private config: GardenConfig,
@@ -74,6 +84,10 @@ class GardenScene extends Phaser.Scene {
     private onReady: () => void,
   ) {
     super('word-garden');
+    this.deal(config);
+  }
+  /** Pick the words for a round and lay them out as a board that always has a move. */
+  private deal(config: GardenConfig) {
     this.total = Math.min(config.pairs, config.words.length);
     this.layout = getBoardLayout(config.mobile, this.total);
     this.tiles = playableShuffle(
@@ -82,6 +96,37 @@ class GardenScene extends Phaser.Scene {
       this.layout.cols,
       config.difficulty === 'hard',
     );
+  }
+  /**
+   * New board on the same canvas. Changing options while the intro dialog is open must not tear the
+   * game down and show the loading screen again (that flashed the dialog); tiles only animate in
+   * when the player asks for a new round.
+   */
+  restart(config: GardenConfig, animate: boolean) {
+    this.transitionTimers.forEach((timer) => clearTimeout(timer));
+    this.transitionTimers.clear();
+    this.config = config;
+    this.deal(config);
+    this.selected = null;
+    this.locked = false;
+    this.score = 0;
+    this.matched = 0;
+    this.mistakes = 0;
+    this.combo = 0;
+    this.latest = null;
+    this.message = DEFAULT_MESSAGE;
+    this.hintIndices = [];
+    this.hintsLeft = 3;
+    this.assistsLeft = 1;
+    this.tweens.killAll();
+    this.children.removeAll(true);
+    this.pieces = [];
+    this.faces = [];
+    this.scale.setGameSize(this.layout.width, this.layout.height);
+    this.drawGarden();
+    this.route = this.add.graphics().setDepth(12);
+    this.drawTiles(animate);
+    this.publish();
   }
   create() {
     this.events.once('shutdown', () => {
@@ -142,7 +187,7 @@ class GardenScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
   }
-  private drawTiles() {
+  private drawTiles(animate = true) {
     this.pieces.forEach((piece) => piece.destroy());
     this.pieces = [];
     this.faces = [];
@@ -154,7 +199,7 @@ class GardenScene extends Phaser.Scene {
       this.pieces.push(piece);
       this.faces.push(face);
       this.paint(index);
-      if (!this.config.reducedMotion && !tile.removed) {
+      if (animate && !this.config.reducedMotion && !tile.removed) {
         piece.setAlpha(0).setY(y + 12);
         this.tweens.add({
           targets: piece,
@@ -487,6 +532,7 @@ export function createGarden(
     shuffle: () => scene.rearrange(),
     pause: (value) => scene.pause(value),
     resize: (mobile) => scene.resize(mobile),
+    restart: (config, animate) => scene.restart(config, animate),
     destroy: () => game.destroy(true),
   };
 }
