@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { makeFruitQuestions, type FruitQuestion } from '../src/games/fruit-slash/questions';
+import {
+  makeCollocationQuestions,
+  makeWordQuestions,
+  type FruitQuestion,
+} from '../src/games/fruit-slash/questions';
+import { sampleBundle } from '../src/content/sample';
 import { FruitRound, segmentCircle } from '../src/games/fruit-slash/round';
 const fixture: FruitQuestion[] = Array.from({ length: 12 }, (_, index) => ({
   id: `q-${index}`,
@@ -75,8 +80,12 @@ test('fast swipes intersect whole swept segments and contact order is measurable
 });
 
 test('all challenge banks have twelve unique questions with one valid answer among three options', () => {
-  for (const bank of ['hsk1', 'hsk2', 'collocations'] as const) {
-    const questions = makeFruitQuestions(bank);
+  const words = (level: string) => sampleBundle.words.filter((w) => w.level === level);
+  for (const questions of [
+    makeWordQuestions(words('HSK 1')),
+    makeWordQuestions(words('HSK 2')),
+    makeCollocationQuestions(sampleBundle.collocations),
+  ]) {
     assert.equal(questions.length, 12);
     assert.equal(new Set(questions.map((question) => question.id)).size, 12);
     for (const question of questions) {
@@ -85,4 +94,17 @@ test('all challenge banks have twelve unique questions with one valid answer amo
       assert.ok(question.hanzi && question.pinyin && question.meaning);
     }
   }
+});
+
+test('a single lesson makes a shorter round from its own words; too few words make none', () => {
+  const lesson = sampleBundle.words.filter((w) => w.level === 'HSK 1' && w.lesson === 2);
+  const questions = makeWordQuestions(lesson);
+  assert.equal(questions.length, 6);
+  for (const q of questions)
+    for (const option of q.options)
+      assert.ok(
+        lesson.some((w) => w.hanzi === option),
+        'distractors come from the same lesson',
+      );
+  assert.deepEqual(makeWordQuestions(lesson.slice(0, 2)), []);
 });

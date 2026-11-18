@@ -4,6 +4,7 @@ import { createRoomHub, GamePeer, type Room } from '../server/room-hub';
 
 export type Env = {
   ASSETS: Fetcher;
+  CONTENT: KVNamespace;
   HUB: DurableObjectNamespace<ClassroomHub>;
   GOOGLE_CLIENT_ID?: string;
   TEACHER_EMAILS?: string;
@@ -172,9 +173,22 @@ export class ClassroomHub extends DurableObject<Env> {
   }
 }
 export default {
-  fetch(request: Request, env: Env) {
+  async fetch(request: Request, env: Env) {
+    const { pathname } = new URL(request.url);
+    // Course content uploaded from Excel; games fall back to their bundled sample when it is absent.
+    if (pathname === '/api/content' && request.method === 'GET') {
+      const content = await env.CONTENT.get('content');
+      if (!content) return Response.json({ error: 'Chưa có dữ liệu khóa học.' }, { status: 404 });
+      return new Response(content, {
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          // Short cache: an upload reaches players within about a minute.
+          'cache-control': 'public, max-age=60',
+        },
+      });
+    }
     // Individual games run entirely in the browser. Former auth/room endpoints are retired.
-    if (new URL(request.url).pathname.startsWith('/api/'))
+    if (pathname.startsWith('/api/'))
       return Response.json(
         { error: 'Chế độ lớp học và đăng nhập đã ngừng sử dụng.' },
         { status: 410 },

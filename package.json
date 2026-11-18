@@ -13,7 +13,8 @@
     "test": "tsx --test tests/*.test.ts",
     "format": "prettier --write src server shared cloudflare tests docs README.md package.json tsconfig*.json vite.config.ts index.html wrangler.jsonc",
     "format:check": "prettier --check src server shared cloudflare tests docs README.md package.json tsconfig*.json vite.config.ts index.html wrangler.jsonc",
-    "dev:legacy": "concurrently -k \"tsx watch server/main.ts\" \"vite --host 0.0.0.0\""
+    "dev:legacy": "concurrently -k \"tsx watch server/main.ts\" \"vite --host 0.0.0.0\"",
+    "content": "tsx scripts/content.ts"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +39,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "concurrently": "^10.0.7",
     "esbuild": "^0.28.2",
+    "exceljs": "^4.4.0",
     "prettier": "^3.10.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",

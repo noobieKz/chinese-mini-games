@@ -1,12 +1,12 @@
 import Phaser from 'phaser';
 import { fruitColors, paintFruit, paintOrchard } from './art';
-import { makeFruitQuestions, type FruitConfig } from './questions';
+import type { FruitQuestion, FruitSeconds } from './questions';
 import { FruitRound, segmentCircle, type FruitResult, type FruitView } from './round';
 import type { GameSound } from '../../audio/GameAudio';
 
 export type FruitPosition = { option: number; x: number; y: number; visible: boolean };
 export type FruitHandle = {
-  start(config: FruitConfig): void;
+  start(round: { questions: FruitQuestion[]; seconds: FruitSeconds }): void;
   choose(questionId: string, option: number): void;
   pause(paused: boolean): void;
   finish(): void;
@@ -133,9 +133,9 @@ class FruitScene extends Phaser.Scene {
     this.waveAt = 0;
     this.trail = [];
   }
-  start(config: FruitConfig) {
+  start(config: { questions: FruitQuestion[]; seconds: FruitSeconds }) {
     this.clearFruits();
-    this.round = new FruitRound(makeFruitQuestions(config.bank), config.seconds);
+    this.round = new FruitRound(config.questions, config.seconds);
     this.paused = false;
     this.pausedAt = null;
     this.pressed = false;

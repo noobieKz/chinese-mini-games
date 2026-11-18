@@ -18,7 +18,10 @@ import {
   Volume2,
   X,
 } from 'lucide-react';
-import { vocabulary, type Difficulty, type MatchMode, type Word } from './vocabulary';
+import type { Difficulty, MatchMode, Word } from './vocabulary';
+import { useContent, useScope } from '../../content/useContent';
+import { ScopePicker } from '../../components/ScopePicker';
+import { levelSlug, scopeKey } from '../../../shared/content';
 import type { GardenHandle, GardenState } from './GardenScene';
 import { Select } from '../../components/Select';
 import { getBoardLayout, STEP_X, STEP_Y, type PairCount } from './layout';
@@ -47,11 +50,14 @@ const initial: GardenState = {
   total: 0,
 };
 export function WordGarden({ mode, onBack }: Props) {
-  const [level, setLevel] = useState<Word['level']>('HSK 1');
+  const content = useContent();
+  const game = mode === 'meaning' ? 'noi-tu' : 'ghep-chu';
+  const { scope, set: setScope, words } = useScope(content?.bundle ?? null, game);
+  const level = scope?.level ?? '';
+  const wordsKey = words.map((w) => w.id).join(',');
   const [mobile, setMobile] = useState(() => matchMedia('(max-width: 540px)').matches);
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   const [pairs, setPairs] = useState<PairCount>(12);
-  const [lesson, setLesson] = useState('all');
   const [ended, setEnded] = useState(false);
   const [timed, setTimed] = useState(false);
   const [round, setRound] = useState(0);
@@ -63,7 +69,7 @@ export function WordGarden({ mode, onBack }: Props) {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
   // Boards smaller than a lesson's word count shrink; the clock scales with the real pair count.
-  const totalPairs = Math.min(pairs, lesson === 'all' ? 18 : 6);
+  const totalPairs = Math.min(pairs, words.length || pairs);
   const timeLimit = totalPairs * SECONDS_PER_PAIR;
   const [remaining, setRemaining] = useState(timeLimit);
   const [state, setState] = useState(initial);
@@ -73,8 +79,7 @@ export function WordGarden({ mode, onBack }: Props) {
     'hanplay-best',
     mode,
     mode === 'characters' ? difficulty : null,
-    level.replace(' ', ''),
-    lesson,
+    scope ? `${levelSlug(scope.level)}-${scopeKey(scope)}` : 'loading',
     totalPairs,
     timed ? 'timed' : 'free',
   ]
@@ -116,15 +121,15 @@ export function WordGarden({ mode, onBack }: Props) {
     setRemaining(timeLimit);
     setCollection([]);
     previous.current = { matched: 0, mistakes: 0 };
+    // Content still loading: keep the loading overlay until the words arrive.
+    if (!words.length) return;
     void Promise.all([import('./GardenScene'), document.fonts.ready])
       .then(([{ createGarden }]) => {
         if (disposed || !parent.current) return;
         owned = createGarden(
           parent.current,
           {
-            words: vocabulary
-              .filter((w) => w.level === level)
-              .filter((_, i) => lesson === 'all' || Math.floor(i / 6) === Number(lesson)),
+            words,
             pairs,
             difficulty,
             mode,
@@ -156,7 +161,9 @@ export function WordGarden({ mode, onBack }: Props) {
       engine.current = null;
       owned?.destroy();
     };
-  }, [mode, level, round, pairs, lesson, difficulty]);
+    // Rebuild only when the chosen words change, not on every render of the same selection.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, wordsKey, round, pairs, difficulty]);
   useEffect(() => {
     if (ready) engine.current?.resize(mobile);
   }, [mobile, ready]);
@@ -602,33 +609,19 @@ export function WordGarden({ mode, onBack }: Props) {
                   </p>
                 </>
               )}
-              <label htmlFor="garden-level">Bộ từ vựng</label>
-              <Select
-                id="garden-level"
-                aria-label="Bộ từ vựng"
-                value={level}
-                disabled={playing}
-                onValueChange={(value) => {
-                  setLevel(value as Word['level']);
-                  setPlaying(false);
-                }}
-              >
-                <option>HSK 1</option>
-                <option>HSK 2</option>
-              </Select>
-              <label htmlFor="garden-lesson">Bài luyện</label>
-              <Select
-                id="garden-lesson"
-                aria-label="Bài luyện"
-                value={lesson}
-                disabled={playing}
-                onValueChange={setLesson}
-              >
-                <option value="all">Tổng hợp · 18 từ mẫu</option>
-                <option value="0">Nhóm 1 · 6 từ</option>
-                <option value="1">Nhóm 2 · 6 từ</option>
-                <option value="2">Nhóm 3 · 6 từ</option>
-              </Select>
+              {content && scope && (
+                <ScopePicker
+                  bundle={content.bundle}
+                  game={game}
+                  scope={scope}
+                  disabled={playing}
+                  idPrefix="garden"
+                  onChange={(nextLevel, key) => {
+                    setScope(nextLevel, key);
+                    setPlaying(false);
+                  }}
+                />
+              )}
               <label htmlFor="garden-size">Kích thước bàn</label>
               <Select
                 id="garden-size"

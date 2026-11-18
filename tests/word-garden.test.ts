@@ -11,6 +11,9 @@ import {
 import { vocabulary, type MatchMode } from '../src/games/word-garden/vocabulary';
 import { getBoardLayout, routePoint } from '../src/games/word-garden/layout';
 
+/** Word ids come from the content (level, lesson, hanzi); tests address words by their characters. */
+const id = (hanzi: string) => vocabulary.find((w) => w.hanzi === hanzi)!.id;
+
 test('outer Pikachu routes remain inside the visible board at every supported size', () => {
   for (const mobile of [false, true])
     for (const pairs of [4, 6, 8, 12, 18]) {
@@ -61,10 +64,10 @@ test('Pikachu routes use at most two bends and never cross occupied cells', () =
 });
 
 test('identical first glyphs are interchangeable without stranding the remaining word', () => {
-  const words = vocabulary.filter((w) => ['student', 'school'].includes(w.id));
+  const words = vocabulary.filter((w) => [id('学生'), id('学校')].includes(w.id));
   const tiles = makeTiles(words, 'characters');
-  const a = tiles.findIndex((t) => t.word.id === 'school' && t.side === 0);
-  const b = tiles.findIndex((t) => t.word.id === 'student' && t.side === 1);
+  const a = tiles.findIndex((t) => t.word.id === id('学校') && t.side === 0);
+  const b = tiles.findIndex((t) => t.word.id === id('学生') && t.side === 1);
   assert.ok(matches(tiles[a], tiles[b], 'characters'));
   assert.equal(matches(tiles[b], tiles[a], 'characters'), false, 'character order matters');
   reconcileCharacters(tiles, a, b);
@@ -119,9 +122,9 @@ test('all board sizes and levels stay completable after shuffling and interchang
 
 test('matching uses visible characters, including identical glyphs from opposite word positions', () => {
   for (const [ids, firstId, firstSide, lastId, lastSide, result] of [
-    [['today', 'weather'], 'today', 1, 'weather', 1, '天气'],
-    [['school', 'student', 'birthday'], 'school', 0, 'birthday', 0, '学生'],
-    [['thanks'], 'thanks', 1, 'thanks', 0, '谢谢'],
+    [[id('今天'), id('天气')], id('今天'), 1, id('天气'), 1, '天气'],
+    [[id('学校'), id('学生'), id('生日')], id('学校'), 0, id('生日'), 0, '学生'],
+    [[id('谢谢')], id('谢谢'), 1, id('谢谢'), 0, '谢谢'],
   ] as const) {
     const tiles = makeTiles(
       vocabulary.filter((w) => (ids as readonly string[]).includes(w.id)),
@@ -145,7 +148,7 @@ test('matching uses visible characters, including identical glyphs from opposite
 
 test('normal accepts reversed character selection while hard requires word order', () => {
   const tiles = makeTiles(
-    vocabulary.filter((w) => ['computer', 'school'].includes(w.id)),
+    vocabulary.filter((w) => [id('电脑'), id('学校')].includes(w.id)),
     'characters',
   );
   const first = tiles.findIndex((t) => t.label === '电');

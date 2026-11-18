@@ -21,12 +21,14 @@ import { Select } from '../../components/Select';
 import { useGameSound } from '../../audio/useGameSound';
 import { AudioSettings } from '../../audio/AudioSettings';
 import { dragonAudioProfile } from '../../audio/profiles';
-import { vocabulary, type Word } from '../word-garden/vocabulary';
+import { useContent, useScope } from '../../content/useContent';
+import { ScopePicker } from '../../components/ScopePicker';
+import { levelSlug, scopeKey, type Scope } from '../../../shared/content';
 import { charsOf, LIVES, type Dir, type DragonSpeed } from './model';
 import type { DragonHandle, DragonView } from './DragonScene';
 import './dragon.css';
 
-type Settings = { level: Word['level']; speed: DragonSpeed; pinyin: boolean };
+type Settings = { speed: DragonSpeed; pinyin: boolean };
 const speedLabel: Record<DragonSpeed, string> = { slow: 'Chậm', normal: 'Vừa', fast: 'Nhanh' };
 const keys: Record<string, Dir> = {
   ArrowUp: 'up',
@@ -43,7 +45,8 @@ const boardSize = () =>
   matchMedia('(max-width: 640px)').matches || innerHeight > innerWidth * 1.1
     ? { cols: 12, rows: 15 }
     : { cols: 18, rows: 12 };
-const recordKey = (s: Settings) => `hanplay-best-dragon-${s.level.replace(' ', '')}-${s.speed}`;
+const recordKey = (scope: Scope | null, s: Settings) =>
+  `hanplay-best-dragon-${scope ? `${levelSlug(scope.level)}-${scopeKey(scope)}` : 'sample'}-${s.speed}`;
 const readRecord = (key: string) => {
   try {
     return Number(localStorage.getItem(key)) || 0;
@@ -53,8 +56,10 @@ const readRecord = (key: string) => {
 };
 
 export function DragonWords({ onBack }: { onBack(): void }) {
+  const content = useContent();
+  const { scope, set: setScope, words } = useScope(content?.bundle ?? null, 'rong-san-chu');
+  const level = scope?.level ?? '';
   const [settings, setSettings] = useState<Settings>({
-    level: 'HSK 1',
     speed: 'normal',
     pinyin: true,
   });
@@ -78,7 +83,7 @@ export function DragonWords({ onBack }: { onBack(): void }) {
   const [setup, setSetup] = useState(false);
   const [soundSettings, setSoundSettings] = useState(false);
   const [confirm, setConfirm] = useState<'leave' | 'end' | null>(null);
-  const [best, setBest] = useState(() => readRecord(recordKey(settings)));
+  const [best, setBest] = useState(0);
   const [newRecord, setNewRecord] = useState(false);
   const parent = useRef<HTMLDivElement>(null);
   const playArea = useRef<HTMLElement>(null);
@@ -127,11 +132,11 @@ export function DragonWords({ onBack }: { onBack(): void }) {
   useEffect(() => {
     if (ready) arena.current?.pause(blocked);
   }, [ready, blocked]);
-  useEffect(() => setBest(readRecord(recordKey(settings))), [settings]);
+  useEffect(() => setBest(readRecord(recordKey(scope, settings))), [scope, settings]);
   useEffect(() => {
     // Runs once per phase change; settings cannot change while a round is over and unopened.
     if (view.phase !== 'over') return;
-    const key = recordKey(settings);
+    const key = recordKey(scope, settings);
     const previous = readRecord(key);
     const isNew = view.score > previous;
     setNewRecord(isNew);
@@ -185,9 +190,10 @@ export function DragonWords({ onBack }: { onBack(): void }) {
     setHelp(false);
     setConfirm(null);
     setNewRecord(false);
+    if (words.length < 2) return;
     audio.play('click');
     arena.current?.start({
-      words: vocabulary.filter((w) => w.level === settings.level),
+      words,
       speed: settings.speed,
       ...size,
     });
@@ -255,7 +261,7 @@ export function DragonWords({ onBack }: { onBack(): void }) {
         <div className="garden-title-row">
           <div>
             <div className="garden-eyebrow">
-              <Sparkles size={15} /> RỒNG SĂN CHỮ <span>/</span> {settings.level}
+              <Sparkles size={15} /> RỒNG SĂN CHỮ <span>/</span> {level}
             </div>
             <h1>Rồng săn chữ</h1>
             <p>Lượn quanh bàn, ăn đúng chữ theo thứ tự để ghép thành từ.</p>
@@ -410,18 +416,15 @@ export function DragonWords({ onBack }: { onBack(): void }) {
                     <b lang="zh-Hans">朋 → 友</b> cho “bạn bè”.
                   </p>
                   <div className="dragon-options">
-                    <label htmlFor="dragon-level">Bộ từ vựng</label>
-                    <Select
-                      id="dragon-level"
-                      aria-label="Bộ từ vựng"
-                      value={settings.level}
-                      onValueChange={(level) =>
-                        setSettings((s) => ({ ...s, level: level as Word['level'] }))
-                      }
-                    >
-                      <option>HSK 1</option>
-                      <option>HSK 2</option>
-                    </Select>
+                    {content && scope && (
+                      <ScopePicker
+                        bundle={content.bundle}
+                        game="rong-san-chu"
+                        scope={scope}
+                        idPrefix="dragon"
+                        onChange={setScope}
+                      />
+                    )}
                     <label htmlFor="dragon-speed">Tốc độ</label>
                     <Select
                       id="dragon-speed"
@@ -451,7 +454,7 @@ export function DragonWords({ onBack }: { onBack(): void }) {
                       </button>
                     </div>
                   </div>
-                  <button className="garden-primary" onClick={start}>
+                  <button className="garden-primary" onClick={start} disabled={words.length < 2}>
                     Thả rồng <Play size={18} fill="currentColor" />
                   </button>
                   <small>Phím mũi tên / WASD · Vuốt trên bàn · Nút điều hướng</small>
@@ -622,8 +625,7 @@ export function DragonWords({ onBack }: { onBack(): void }) {
         <footer className="garden-footer">
           <span>HỌC NHẸ NHÀNG. NHỚ TỰ NHIÊN.</span>
           <span>
-            Tốc độ {speedLabel[settings.speed].toLowerCase()} · {settings.level} · Không cần tài
-            khoản
+            Tốc độ {speedLabel[settings.speed].toLowerCase()} · {level} · Không cần tài khoản
           </span>
         </footer>
       </main>

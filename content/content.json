@@ -1,0 +1,524 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-18T04:22:53.604Z",
+  "levels": [
+    {
+      "name": "HSK 1",
+      "lessons": [
+        {
+          "number": 1,
+          "title": "Trường lớp & bạn bè"
+        },
+        {
+          "number": 2,
+          "title": "Chào hỏi & thời gian"
+        },
+        {
+          "number": 3,
+          "title": "Nơi chốn & sở thích"
+        }
+      ]
+    },
+    {
+      "name": "HSK 2",
+      "lessons": [
+        {
+          "number": 1,
+          "title": "Hoạt động & cảm xúc"
+        },
+        {
+          "number": 2,
+          "title": "Thời gian & sinh hoạt"
+        },
+        {
+          "number": 3,
+          "title": "Giao tiếp"
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "id": "hsk-1-1-朋友",
+      "level": "HSK 1",
+      "lesson": 1,
+      "hanzi": "朋友",
+      "pinyin": "péngyou",
+      "meaning": "bạn bè",
+      "games": []
+    },
+    {
+      "id": "hsk-1-1-学生",
+      "level": "HSK 1",
+      "lesson": 1,
+      "hanzi": "学生",
+      "pinyin": "xuésheng",
+      "meaning": "học sinh",
+      "games": []
+    },
+    {
+      "id": "hsk-1-1-老师",
+      "level": "HSK 1",
+      "lesson": 1,
+      "hanzi": "老师",
+      "pinyin": "lǎoshī",
+      "meaning": "giáo viên",
+      "games": []
+    },
+    {
+      "id": "hsk-1-1-学校",
+      "level": "HSK 1",
+      "lesson": 1,
+      "hanzi": "学校",
+      "pinyin": "xuéxiào",
+      "meaning": "trường học",
+      "games": []
+    },
+    {
+      "id": "hsk-1-1-中国",
+      "level": "HSK 1",
+      "lesson": 1,
+      "hanzi": "中国",
+      "pinyin": "Zhōngguó",
+      "meaning": "Trung Quốc",
+      "games": []
+    },
+    {
+      "id": "hsk-1-1-电脑",
+      "level": "HSK 1",
+      "lesson": 1,
+      "hanzi": "电脑",
+      "pinyin": "diànnǎo",
+      "meaning": "máy tính",
+      "games": []
+    },
+    {
+      "id": "hsk-1-2-你好",
+      "level": "HSK 1",
+      "lesson": 2,
+      "hanzi": "你好",
+      "pinyin": "nǐ hǎo",
+      "meaning": "xin chào",
+      "games": []
+    },
+    {
+      "id": "hsk-1-2-谢谢",
+      "level": "HSK 1",
+      "lesson": 2,
+      "hanzi": "谢谢",
+      "pinyin": "xièxie",
+      "meaning": "cảm ơn",
+      "games": []
+    },
+    {
+      "id": "hsk-1-2-明天",
+      "level": "HSK 1",
+      "lesson": 2,
+      "hanzi": "明天",
+      "pinyin": "míngtiān",
+      "meaning": "ngày mai",
+      "games": []
+    },
+    {
+      "id": "hsk-1-2-今天",
+      "level": "HSK 1",
+      "lesson": 2,
+      "hanzi": "今天",
+      "pinyin": "jīntiān",
+      "meaning": "hôm nay",
+      "games": []
+    },
+    {
+      "id": "hsk-1-2-水果",
+      "level": "HSK 1",
+      "lesson": 2,
+      "hanzi": "水果",
+      "pinyin": "shuǐguǒ",
+      "meaning": "trái cây",
+      "games": []
+    },
+    {
+      "id": "hsk-1-2-天气",
+      "level": "HSK 1",
+      "lesson": 2,
+      "hanzi": "天气",
+      "pinyin": "tiānqì",
+      "meaning": "thời tiết",
+      "games": []
+    },
+    {
+      "id": "hsk-1-3-医院",
+      "level": "HSK 1",
+      "lesson": 3,
+      "hanzi": "医院",
+      "pinyin": "yīyuàn",
+      "meaning": "bệnh viện",
+      "games": []
+    },
+    {
+      "id": "hsk-1-3-商店",
+      "level": "HSK 1",
+      "lesson": 3,
+      "hanzi": "商店",
+      "pinyin": "shāngdiàn",
+      "meaning": "cửa hàng",
+      "games": []
+    },
+    {
+      "id": "hsk-1-3-电影",
+      "level": "HSK 1",
+      "lesson": 3,
+      "hanzi": "电影",
+      "pinyin": "diànyǐng",
+      "meaning": "phim",
+      "games": []
+    },
+    {
+      "id": "hsk-1-3-喜欢",
+      "level": "HSK 1",
+      "lesson": 3,
+      "hanzi": "喜欢",
+      "pinyin": "xǐhuan",
+      "meaning": "thích",
+      "games": []
+    },
+    {
+      "id": "hsk-1-3-漂亮",
+      "level": "HSK 1",
+      "lesson": 3,
+      "hanzi": "漂亮",
+      "pinyin": "piàoliang",
+      "meaning": "xinh đẹp",
+      "games": []
+    },
+    {
+      "id": "hsk-1-3-昨天",
+      "level": "HSK 1",
+      "lesson": 3,
+      "hanzi": "昨天",
+      "pinyin": "zuótiān",
+      "meaning": "hôm qua",
+      "games": []
+    },
+    {
+      "id": "hsk-2-1-快乐",
+      "level": "HSK 2",
+      "lesson": 1,
+      "hanzi": "快乐",
+      "pinyin": "kuàilè",
+      "meaning": "vui vẻ",
+      "games": []
+    },
+    {
+      "id": "hsk-2-1-旅游",
+      "level": "HSK 2",
+      "lesson": 1,
+      "hanzi": "旅游",
+      "pinyin": "lǚyóu",
+      "meaning": "du lịch",
+      "games": []
+    },
+    {
+      "id": "hsk-2-1-运动",
+      "level": "HSK 2",
+      "lesson": 1,
+      "hanzi": "运动",
+      "pinyin": "yùndòng",
+      "meaning": "vận động",
+      "games": []
+    },
+    {
+      "id": "hsk-2-1-准备",
+      "level": "HSK 2",
+      "lesson": 1,
+      "hanzi": "准备",
+      "pinyin": "zhǔnbèi",
+      "meaning": "chuẩn bị",
+      "games": []
+    },
+    {
+      "id": "hsk-2-1-帮助",
+      "level": "HSK 2",
+      "lesson": 1,
+      "hanzi": "帮助",
+      "pinyin": "bāngzhù",
+      "meaning": "giúp đỡ",
+      "games": []
+    },
+    {
+      "id": "hsk-2-1-因为",
+      "level": "HSK 2",
+      "lesson": 1,
+      "hanzi": "因为",
+      "pinyin": "yīnwèi",
+      "meaning": "bởi vì",
+      "games": []
+    },
+    {
+      "id": "hsk-2-2-希望",
+      "level": "HSK 2",
+      "lesson": 2,
+      "hanzi": "希望",
+      "pinyin": "xīwàng",
+      "meaning": "hy vọng",
+      "games": []
+    },
+    {
+      "id": "hsk-2-2-时间",
+      "level": "HSK 2",
+      "lesson": 2,
+      "hanzi": "时间",
+      "pinyin": "shíjiān",
+      "meaning": "thời gian",
+      "games": []
+    },
+    {
+      "id": "hsk-2-2-早上",
+      "level": "HSK 2",
+      "lesson": 2,
+      "hanzi": "早上",
+      "pinyin": "zǎoshang",
+      "meaning": "buổi sáng",
+      "games": []
+    },
+    {
+      "id": "hsk-2-2-房间",
+      "level": "HSK 2",
+      "lesson": 2,
+      "hanzi": "房间",
+      "pinyin": "fángjiān",
+      "meaning": "căn phòng",
+      "games": []
+    },
+    {
+      "id": "hsk-2-2-生日",
+      "level": "HSK 2",
+      "lesson": 2,
+      "hanzi": "生日",
+      "pinyin": "shēngrì",
+      "meaning": "sinh nhật",
+      "games": []
+    },
+    {
+      "id": "hsk-2-2-一起",
+      "level": "HSK 2",
+      "lesson": 2,
+      "hanzi": "一起",
+      "pinyin": "yìqǐ",
+      "meaning": "cùng nhau",
+      "games": []
+    },
+    {
+      "id": "hsk-2-3-已经",
+      "level": "HSK 2",
+      "lesson": 3,
+      "hanzi": "已经",
+      "pinyin": "yǐjīng",
+      "meaning": "đã",
+      "games": []
+    },
+    {
+      "id": "hsk-2-3-介绍",
+      "level": "HSK 2",
+      "lesson": 3,
+      "hanzi": "介绍",
+      "pinyin": "jièshào",
+      "meaning": "giới thiệu",
+      "games": []
+    },
+    {
+      "id": "hsk-2-3-问题",
+      "level": "HSK 2",
+      "lesson": 3,
+      "hanzi": "问题",
+      "pinyin": "wèntí",
+      "meaning": "câu hỏi",
+      "games": []
+    },
+    {
+      "id": "hsk-2-3-知道",
+      "level": "HSK 2",
+      "lesson": 3,
+      "hanzi": "知道",
+      "pinyin": "zhīdào",
+      "meaning": "biết",
+      "games": []
+    },
+    {
+      "id": "hsk-2-3-觉得",
+      "level": "HSK 2",
+      "lesson": 3,
+      "hanzi": "觉得",
+      "pinyin": "juéde",
+      "meaning": "cảm thấy",
+      "games": []
+    },
+    {
+      "id": "hsk-2-3-可以",
+      "level": "HSK 2",
+      "lesson": 3,
+      "hanzi": "可以",
+      "pinyin": "kěyǐ",
+      "meaning": "có thể",
+      "games": []
+    }
+  ],
+  "collocations": [
+    {
+      "id": "cl-hsk-1-1-打篮球",
+      "level": "HSK 1",
+      "lesson": 1,
+      "noun": "篮球",
+      "verb": "打",
+      "wrong": [
+        "喝",
+        "读"
+      ],
+      "pinyin": "dǎ lánqiú",
+      "meaning": "chơi bóng rổ"
+    },
+    {
+      "id": "cl-hsk-1-1-踢足球",
+      "level": "HSK 1",
+      "lesson": 1,
+      "noun": "足球",
+      "verb": "踢",
+      "wrong": [
+        "喝",
+        "写"
+      ],
+      "pinyin": "tī zúqiú",
+      "meaning": "đá bóng"
+    },
+    {
+      "id": "cl-hsk-1-1-看电视",
+      "level": "HSK 1",
+      "lesson": 1,
+      "noun": "电视",
+      "verb": "看",
+      "wrong": [
+        "吃",
+        "写"
+      ],
+      "pinyin": "kàn diànshì",
+      "meaning": "xem tivi"
+    },
+    {
+      "id": "cl-hsk-1-1-听音乐",
+      "level": "HSK 1",
+      "lesson": 1,
+      "noun": "音乐",
+      "verb": "听",
+      "wrong": [
+        "吃",
+        "写"
+      ],
+      "pinyin": "tīng yīnyuè",
+      "meaning": "nghe nhạc"
+    },
+    {
+      "id": "cl-hsk-1-2-写汉字",
+      "level": "HSK 1",
+      "lesson": 2,
+      "noun": "汉字",
+      "verb": "写",
+      "wrong": [
+        "喝",
+        "踢"
+      ],
+      "pinyin": "xiě Hànzì",
+      "meaning": "viết chữ Hán"
+    },
+    {
+      "id": "cl-hsk-1-2-吃米饭",
+      "level": "HSK 1",
+      "lesson": 2,
+      "noun": "米饭",
+      "verb": "吃",
+      "wrong": [
+        "看",
+        "听"
+      ],
+      "pinyin": "chī mǐfàn",
+      "meaning": "ăn cơm"
+    },
+    {
+      "id": "cl-hsk-1-2-喝茶",
+      "level": "HSK 1",
+      "lesson": 2,
+      "noun": "茶",
+      "verb": "喝",
+      "wrong": [
+        "写",
+        "踢"
+      ],
+      "pinyin": "hē chá",
+      "meaning": "uống trà"
+    },
+    {
+      "id": "cl-hsk-1-2-打电话",
+      "level": "HSK 1",
+      "lesson": 2,
+      "noun": "电话",
+      "verb": "打",
+      "wrong": [
+        "吃",
+        "读"
+      ],
+      "pinyin": "dǎ diànhuà",
+      "meaning": "gọi điện thoại"
+    },
+    {
+      "id": "cl-hsk-1-3-穿衣服",
+      "level": "HSK 1",
+      "lesson": 3,
+      "noun": "衣服",
+      "verb": "穿",
+      "wrong": [
+        "喝",
+        "听"
+      ],
+      "pinyin": "chuān yīfu",
+      "meaning": "mặc quần áo"
+    },
+    {
+      "id": "cl-hsk-1-3-拍照片",
+      "level": "HSK 1",
+      "lesson": 3,
+      "noun": "照片",
+      "verb": "拍",
+      "wrong": [
+        "喝",
+        "踢"
+      ],
+      "pinyin": "pāi zhàopiàn",
+      "meaning": "chụp ảnh"
+    },
+    {
+      "id": "cl-hsk-1-3-做作业",
+      "level": "HSK 1",
+      "lesson": 3,
+      "noun": "作业",
+      "verb": "做",
+      "wrong": [
+        "喝",
+        "踢"
+      ],
+      "pinyin": "zuò zuòyè",
+      "meaning": "làm bài tập"
+    },
+    {
+      "id": "cl-hsk-1-3-打扫房间",
+      "level": "HSK 1",
+      "lesson": 3,
+      "noun": "房间",
+      "verb": "打扫",
+      "wrong": [
+        "喝",
+        "听"
+      ],
+      "pinyin": "dǎsǎo fángjiān",
+      "meaning": "dọn phòng"
+    }
+  ]
+}

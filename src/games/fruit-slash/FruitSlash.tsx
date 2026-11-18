@@ -22,13 +22,26 @@ import { useGameSound } from '../../audio/useGameSound';
 import { AudioSettings } from '../../audio/AudioSettings';
 import { fruitAudioProfile } from '../../audio/profiles';
 import { FruitRound, type FruitView } from './round';
-import type { FruitConfig } from './questions';
+import { makeCollocationQuestions, makeWordQuestions, type FruitConfig } from './questions';
 import type { FruitHandle } from './FruitScene';
+import { useContent, useScope } from '../../content/useContent';
+import { ScopePicker } from '../../components/ScopePicker';
+import { levelSlug, scopeKey } from '../../../shared/content';
 import './fruit.css';
 
 const empty = new FruitRound([], 15).view(0);
 export function FruitSlash({ onBack }: { onBack(): void }) {
-  const [config, setConfig] = useState<FruitConfig>({ bank: 'hsk1', seconds: 15 });
+  const content = useContent();
+  const {
+    scope,
+    set: setScope,
+    words,
+    collocations,
+  } = useScope(content?.bundle ?? null, 'chem-hoa-qua');
+  const [config, setConfig] = useState<FruitConfig>({ kind: 'words', seconds: 15 });
+  // Collocations exist only for some lessons; fall back to vocabulary where there are none.
+  const kind = config.kind === 'collocations' && collocations.length ? 'collocations' : 'words';
+  const canStart = kind === 'words' ? words.length >= 3 : collocations.length > 0;
   const [view, setView] = useState<FruitView>(empty);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
@@ -53,7 +66,12 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
       setRecord(null);
       return;
     }
-    const key = `hanplay-best-fruit-${config.bank}-${config.seconds}`;
+    const key = [
+      'hanplay-best-fruit',
+      kind,
+      scope ? `${levelSlug(scope.level)}-${scopeKey(scope)}` : 'sample',
+      config.seconds,
+    ].join('-');
     let best = 0;
     try {
       best = Number(localStorage.getItem(key)) || 0;
@@ -153,8 +171,13 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
     setPaused(false);
     setHelp(false);
     setConfirm(null);
+    if (!canStart) return;
     audio.play('click');
-    arena.current?.start(config);
+    arena.current?.start({
+      questions:
+        kind === 'collocations' ? makeCollocationQuestions(collocations) : makeWordQuestions(words),
+      seconds: config.seconds,
+    });
   };
   const preview = () => {
     setPaused(false);
@@ -237,9 +260,7 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
           <>
             <section className="fruit-question" key={view.question?.id} aria-live="polite">
               <span>{view.question?.instruction}</span>
-              <h1 lang={config.bank === 'collocations' ? 'zh-Hans' : 'vi'}>
-                {view.question?.prompt}
-              </h1>
+              <h1 lang={kind === 'collocations' ? 'zh-Hans' : 'vi'}>{view.question?.prompt}</h1>
               <div className="fruit-time-track">
                 <i
                   style={{
@@ -365,20 +386,33 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
               </p>
               <div className="fruit-options">
                 <div>
-                  <label htmlFor="fruit-bank">Bộ thử thách</label>
+                  <label htmlFor="fruit-kind">Loại câu hỏi</label>
                   <Select
-                    id="fruit-bank"
-                    aria-label="Bộ thử thách"
-                    value={config.bank}
-                    onValueChange={(bank) =>
-                      setConfig((value) => ({ ...value, bank: bank as FruitConfig['bank'] }))
+                    id="fruit-kind"
+                    aria-label="Loại câu hỏi"
+                    value={kind}
+                    onValueChange={(value) =>
+                      setConfig((c) => ({ ...c, kind: value as FruitConfig['kind'] }))
                     }
                   >
-                    <option value="hsk1">Từ vựng · HSK 1</option>
-                    <option value="hsk2">Từ vựng · HSK 2</option>
-                    <option value="collocations">Ghép từ · Động từ</option>
+                    <option value="words">Từ vựng · nghĩa → chữ Hán</option>
+                    <option value="collocations" disabled={!collocations.length}>
+                      {collocations.length
+                        ? `Ghép động từ · ${collocations.length} cụm`
+                        : 'Ghép động từ · bài này chưa có'}
+                    </option>
                   </Select>
                 </div>
+                {content && scope && (
+                  <ScopePicker
+                    bundle={content.bundle}
+                    game="chem-hoa-qua"
+                    scope={scope}
+                    idPrefix="fruit"
+                    wrapFields
+                    onChange={setScope}
+                  />
+                )}
                 <div>
                   <label htmlFor="fruit-time">Thời gian mỗi câu</label>
                   <Select
@@ -400,7 +434,7 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
                   </Select>
                 </div>
               </div>
-              <button className="fruit-primary" onClick={start}>
+              <button className="fruit-primary" onClick={start} disabled={!canStart}>
                 BẮT ĐẦU CHÉM <Swords size={21} />
               </button>
               <div className="fruit-intro-meta">
