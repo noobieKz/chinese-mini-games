@@ -28,6 +28,7 @@ import { getBoardLayout, STEP_X, STEP_Y, type PairCount } from './layout';
 import { useGameSound } from '../../audio/useGameSound';
 import { AudioSettings } from '../../audio/AudioSettings';
 import { gardenAudioProfile } from '../../audio/profiles';
+import { useLeaveWarning } from '../../lib/useLeaveWarning';
 
 type Props = { mode: MatchMode; onBack(): void };
 const SECONDS_PER_PAIR = 20;
@@ -101,6 +102,10 @@ export function WordGarden({ mode, onBack }: Props) {
     ready &&
     (ended || (state.total > 0 && state.matched === state.total) || (timed && remaining === 0));
   const blocked = !playing || paused || help || soundSettings || Boolean(exit) || finished;
+  useLeaveWarning(playing && !finished, () => {
+    setPaused(true);
+    engine.current?.pause(true);
+  });
   const boardLayout = getBoardLayout(mobile, state.total || totalPairs);
   const audio = useGameSound(gardenAudioProfile);
   const audioRef = useRef(audio);

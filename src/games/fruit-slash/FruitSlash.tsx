@@ -28,6 +28,7 @@ import { useContent, useScope } from '../../content/useContent';
 import { ScopePicker } from '../../components/ScopePicker';
 import { levelSlug, scopeKey } from '../../../shared/content';
 import './fruit.css';
+import { useLeaveWarning } from '../../lib/useLeaveWarning';
 
 const empty = new FruitRound([], 15).view(0);
 export function FruitSlash({ onBack }: { onBack(): void }) {
@@ -57,6 +58,10 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
   const audioRef = useRef(audio);
   audioRef.current = audio;
   const playing = view.phase === 'playing' || view.phase === 'feedback';
+  useLeaveWarning(playing, () => {
+    setPaused(true);
+    arena.current?.pause(true);
+  });
   const blocked = paused || help || soundSettings || Boolean(confirm);
   const result = view.phase === 'feedback' ? view.results.at(-1) : null;
   const [record, setRecord] = useState<{ best: number; isNew: boolean } | null>(null);

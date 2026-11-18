@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { confirmLeave } from './lib/useLeaveWarning';
 import { ArrowRight, BookOpen, Flower2, Sparkles } from 'lucide-react';
 import { FruitSlash } from './games/fruit-slash/FruitSlash';
 import { DragonWords } from './games/dragon-words/DragonWords';
@@ -17,6 +18,8 @@ const getMode = (path: string): MatchMode | null => {
 const libraryRoutes = ['/', '/games', '/index.html'];
 export default function App() {
   const [path, setPath] = useState(getPage);
+  const position = useRef<number>(history.state?.hanplayPosition ?? 0);
+  const restoring = useRef(false);
   const mode = getMode(path);
   const route = path.split('?')[0].replace(/\/+$/, '') || '/';
   const fruit = route === '/games/chem-hoa-qua';
@@ -36,12 +39,27 @@ export default function App() {
             : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
   }, [fruit, dragon, mode, notFound]);
   useEffect(() => {
-    const changed = () => setPath(getPage());
+    history.replaceState({ ...history.state, hanplayPosition: position.current }, '');
+    const changed = (event: PopStateEvent) => {
+      if (restoring.current) {
+        restoring.current = false;
+        return;
+      }
+      const next = event.state?.hanplayPosition;
+      if (typeof next === 'number' && next !== position.current && !confirmLeave()) {
+        restoring.current = true;
+        history.go(position.current - next);
+        return;
+      }
+      if (typeof next === 'number') position.current = next;
+      setPath(getPage());
+    };
     window.addEventListener('popstate', changed);
     return () => window.removeEventListener('popstate', changed);
   }, []);
   const navigate = (path: string) => {
-    history.pushState({}, '', path);
+    position.current++;
+    history.pushState({ hanplayPosition: position.current }, '', path);
     setPath(path);
     window.scrollTo(0, 0);
   };

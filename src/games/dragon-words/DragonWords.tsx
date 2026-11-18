@@ -27,6 +27,7 @@ import { levelSlug, scopeKey, type Scope } from '../../../shared/content';
 import { charsOf, LIVES, type Dir, type DragonSpeed } from './model';
 import type { DragonHandle, DragonView } from './DragonScene';
 import './dragon.css';
+import { useLeaveWarning } from '../../lib/useLeaveWarning';
 
 type Settings = { speed: DragonSpeed; pinyin: boolean };
 const speedLabel: Record<DragonSpeed, string> = { slow: 'Chậm', normal: 'Vừa', fast: 'Nhanh' };
@@ -93,6 +94,10 @@ export function DragonWords({ onBack }: { onBack(): void }) {
   const audioRef = useRef(audio);
   audioRef.current = audio;
   const playing = view.phase === 'playing';
+  useLeaveWarning(playing, () => {
+    setPaused(true);
+    arena.current?.pause(true);
+  });
   const showIntro = ready && (view.phase === 'ready' || setup);
   const blocked = paused || help || soundSettings || Boolean(confirm) || setup;
 
