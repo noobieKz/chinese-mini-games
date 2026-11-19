@@ -71,12 +71,12 @@ class DragonScene extends Phaser.Scene {
     const w = this.cols * CELL,
       h = this.rows * CELL;
     g.clear();
-    g.fillStyle(0x1b4a3f).fillRect(0, 0, w, h);
+    g.fillStyle(0xdce8df).fillRect(0, 0, w, h);
     // Checker of very close greens: enough to read the grid while steering, never louder than the pearls.
     for (let y = 0; y < this.rows; y++)
       for (let x = 0; x < this.cols; x++)
-        if ((x + y) % 2) g.fillStyle(0x1f5145).fillRect(x * CELL, y * CELL, CELL, CELL);
-    g.lineStyle(2, 0x3d7563, 0.8).strokeRect(1, 1, w - 2, h - 2);
+        if ((x + y) % 2) g.fillStyle(0xe9f1eb).fillRect(x * CELL, y * CELL, CELL, CELL);
+    g.lineStyle(2, 0xa9c0ae, 0.8).strokeRect(1, 1, w - 2, h - 2);
   }
   start(config: DragonConfig) {
     this.model = createDragon(config.words, config);

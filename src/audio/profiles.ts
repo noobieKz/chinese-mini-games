@@ -9,18 +9,18 @@ export type AudioProfile = {
 
 export const fruitAudioProfile: AudioProfile = {
   storageKey: 'hanplay.fruit.audio.v1',
-  description: 'Trống dồn nhịp. Đường chém thật đã tay.',
+  description: 'Giai điệu Trung Hoa, beat điện tử rõ nhịp. Chém đúng, nối combo.',
   music: {
-    title: 'Dragon Dance',
-    author: 'BiteMe Games',
-    source: 'https://bitemegames.itch.io/chinese-game-music',
-    url: '/audio/dragon-dance-loop.mp3',
+    title: 'China-E',
+    author: '徐梦圆 · Xu MengYuan',
+    source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=739s',
+    url: '/audio/china-e.mp3',
   },
   controls: [
     {
       channel: 'music',
       title: 'Nhạc nền',
-      description: 'Dragon Dance · Trống, đàn tranh và sáo dồn dập',
+      description: 'China-E · Bản nhạc từ video China EDM đã chọn',
     },
     {
       channel: 'swing',
@@ -45,18 +45,18 @@ export const fruitAudioProfile: AudioProfile = {
 
 export const dragonAudioProfile: AudioProfile = {
   storageKey: 'hanplay.dragon.audio.v1',
-  description: 'Trống giữ nhịp cho rồng lượn. Mỗi viên ngọc đúng một tiếng ngân.',
+  description: 'Beat điện tử giữ nhịp cho rồng lượn. Mỗi viên ngọc đúng một tiếng ngân.',
   music: {
-    title: 'Dragon Dance',
-    author: 'BiteMe Games',
-    source: 'https://bitemegames.itch.io/chinese-game-music',
-    url: '/audio/dragon-dance-loop.mp3',
+    title: 'China-P',
+    author: '徐梦圆 · Xu MengYuan',
+    source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=2675s',
+    url: '/audio/china-p.mp3',
   },
   controls: [
     {
       channel: 'music',
       title: 'Nhạc nền',
-      description: 'Dragon Dance · Trống, đàn tranh và sáo dồn dập',
+      description: 'China-P · Bản nhạc từ video China EDM đã chọn',
     },
     {
       channel: 'selection',
@@ -77,16 +77,16 @@ export const gardenAudioProfile: AudioProfile = {
   storageKey: 'hanplay.garden.audio.v1',
   description: 'Thả lỏng, nối từng cặp và khám phá từ mới.',
   music: {
-    title: 'Lotus Pond',
-    author: 'BiteMe Games',
-    source: 'https://bitemegames.itch.io/chinese-game-music',
-    url: '/audio/lotus-pond-loop.mp3',
+    title: 'China-PiPa',
+    author: '徐梦圆 · Xu MengYuan',
+    source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=2890s',
+    url: '/audio/china-pipa.mp3',
   },
   controls: [
     {
       channel: 'music',
       title: 'Nhạc nền',
-      description: 'Lotus Pond · Đàn tranh và sáo nhẹ nhàng',
+      description: 'China-PiPa · Bản nhạc từ video China EDM đã chọn',
     },
     {
       channel: 'selection',

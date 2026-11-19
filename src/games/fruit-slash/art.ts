@@ -76,9 +76,9 @@ export function paintFruit(ctx: CanvasRenderingContext2D, kind: number) {
 export function paintOrchard(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.clearRect(0, 0, w, h);
   const sky = ctx.createLinearGradient(0, 0, 0, h);
-  sky.addColorStop(0, '#102d3a');
-  sky.addColorStop(0.48, '#28615c');
-  sky.addColorStop(1, '#6d9a78');
+  sky.addColorStop(0, '#83b6ae');
+  sky.addColorStop(0.48, '#9fc8b2');
+  sky.addColorStop(1, '#cee0b1');
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, w, h);
   const glow = ctx.createRadialGradient(w * 0.76, h * 0.28, 0, w * 0.76, h * 0.28, w * 0.5);
@@ -100,7 +100,7 @@ export function paintOrchard(ctx: CanvasRenderingContext2D, w: number, h: number
       ctx.lineTo(x, h * (0.57 + layer * 0.08) + Math.sin(x * 0.008 + layer * 3) * h * 0.08);
     ctx.lineTo(w, h);
     ctx.closePath();
-    ctx.fillStyle = ['#315f58', '#28524c', '#20453e'][layer];
+    ctx.fillStyle = ['#89ad88', '#6f9a7a', '#59856d'][layer];
     ctx.fill();
   }
   // A wooden practice deck gives the arena a tangible foreground and perspective.
@@ -190,7 +190,7 @@ export function paintOrchard(ctx: CanvasRenderingContext2D, w: number, h: number
     }
   const vignette = ctx.createRadialGradient(w / 2, h * 0.5, w * 0.15, w / 2, h * 0.5, w * 0.85);
   vignette.addColorStop(0, '#061b2300');
-  vignette.addColorStop(1, '#061b23b0');
+  vignette.addColorStop(1, '#335b4930');
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, w, h);
 }

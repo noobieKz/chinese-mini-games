@@ -1,12 +1,10 @@
+import { GameTopbar } from '../../arcade/GameTopbar';
 import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowLeft,
   ArrowRight,
   Check,
   Clock3,
   Flame,
-  HelpCircle,
-  Maximize2,
   Pause,
   Play,
   RotateCcw,
@@ -14,7 +12,6 @@ import {
   Swords,
   Target,
   Trophy,
-  Volume2,
   X,
 } from 'lucide-react';
 import { Select } from '../../components/Select';
@@ -191,45 +188,14 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
   };
   return (
     <div className="fruit-page">
-      <header className="fruit-nav">
-        <button
-          className="fruit-back"
-          aria-label="Về thư viện game"
-          onClick={() => (playing ? setConfirm('leave') : onBack())}
-        >
-          <ArrowLeft size={19} />
-          <span>Thư viện</span>
-        </button>
-        <div className="fruit-wordmark">
-          <span>切</span>
-          <b>
-            FRUIT SLASH<small>HANPLAY ARCADE · 词语切切乐</small>
-          </b>
-        </div>
-        <div className="fruit-nav-tools">
-          <button
-            className="fruit-icon"
-            aria-label="Hướng dẫn chém hoa quả"
-            onClick={() => setHelp(true)}
-          >
-            <HelpCircle size={19} />
-          </button>
-          <button
-            className="fruit-icon"
-            aria-label="Cài đặt âm thanh"
-            onClick={() => setSoundSettings(true)}
-          >
-            <Volume2 size={19} />
-          </button>
-          <button
-            className="fruit-icon"
-            aria-label="Toàn màn hình"
-            onClick={() => void fullscreen()}
-          >
-            <Maximize2 size={18} />
-          </button>
-        </div>
-      </header>
+      <GameTopbar
+        title="Chém hoa quả"
+        subtitle="FRUIT SLASH"
+        onBack={() => (playing ? setConfirm('leave') : onBack())}
+        onHelp={() => setHelp(true)}
+        onSound={() => setSoundSettings(true)}
+        onFullscreen={() => void fullscreen()}
+      />
       <main
         className={`fruit-stage phase-${view.phase} ${blocked ? 'is-paused' : ''}`}
         aria-label="Sân chơi chém hoa quả"
@@ -575,7 +541,7 @@ export function FruitSlash({ onBack }: { onBack(): void }) {
                 CHƠI LƯỢT MỚI <ArrowRight size={19} />
               </button>
               <button className="fruit-text-button" onClick={onBack}>
-                Về thư viện game
+                Về sảnh game
               </button>
             </div>
           </div>

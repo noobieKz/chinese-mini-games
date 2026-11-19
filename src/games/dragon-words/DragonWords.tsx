@@ -1,3 +1,4 @@
+import { GameTopbar } from '../../arcade/GameTopbar';
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowDown,
@@ -7,14 +8,10 @@ import {
   Check,
   Flame,
   Heart,
-  HelpCircle,
-  Maximize2,
   Pause,
   Play,
   RotateCcw,
-  Sparkles,
   Trophy,
-  Volume2,
   X,
 } from 'lucide-react';
 import { Select } from '../../components/Select';
@@ -87,7 +84,6 @@ export function DragonWords({ onBack }: { onBack(): void }) {
   const [best, setBest] = useState(0);
   const [newRecord, setNewRecord] = useState(false);
   const parent = useRef<HTMLDivElement>(null);
-  const playArea = useRef<HTMLElement>(null);
   const arena = useRef<DragonHandle | null>(null);
   const swipe = useRef<{ x: number; y: number } | null>(null);
   const audio = useGameSound(dragonAudioProfile);
@@ -202,13 +198,6 @@ export function DragonWords({ onBack }: { onBack(): void }) {
       speed: settings.speed,
       ...size,
     });
-    // Steering needs the whole board on screen: bring it up when the page header pushed it down.
-    const area = playArea.current;
-    if (area && area.getBoundingClientRect().bottom > innerHeight)
-      area.scrollIntoView({
-        block: 'end',
-        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      });
   };
   const steer = (dir: Dir) => {
     if (playing && !blocked) arena.current?.turn(dir);
@@ -227,69 +216,19 @@ export function DragonWords({ onBack }: { onBack(): void }) {
 
   return (
     <div className="garden-page dragon-page">
-      <header className="garden-nav">
-        <button className="garden-back" aria-label="Về thư viện game" onClick={leave}>
-          <ArrowLeft size={19} />
-          <span>Thư viện game</span>
-        </button>
-        <a
-          href="/games"
-          className="garden-brand"
-          onClick={(event) => {
-            event.preventDefault();
-            leave();
-          }}
-        >
-          <span>汉</span>hanplay<span className="brand-dot">.</span>
-        </a>
-        <div className="garden-nav-actions">
-          <button className="garden-icon" aria-label="Hướng dẫn" onClick={() => setHelp(true)}>
-            <HelpCircle size={20} />
-          </button>
-          <button
-            className="garden-icon"
-            aria-label="Cài đặt âm thanh"
-            onClick={() => setSoundSettings(true)}
-          >
-            <Volume2 size={20} />
-          </button>
-          <button
-            className="garden-icon"
-            aria-label="Toàn màn hình"
-            onClick={() => void fullscreen()}
-          >
-            <Maximize2 size={19} />
-          </button>
-        </div>
-      </header>
+      <GameTopbar
+        title="Rồng săn chữ"
+        subtitle={`${level} · ${speedLabel[settings.speed]}`}
+        best={best}
+        onBack={leave}
+        onHelp={() => setHelp(true)}
+        onSound={() => setSoundSettings(true)}
+        onFullscreen={() => void fullscreen()}
+      />
       <main className="garden-main dragon-main">
-        <div className="garden-title-row">
-          <div>
-            <div className="garden-eyebrow">
-              <Sparkles size={15} /> RỒNG SĂN CHỮ <span>/</span> {level}
-            </div>
-            <h1>Rồng săn chữ</h1>
-            <p>Lượn quanh bàn, ăn đúng chữ theo thứ tự để ghép thành từ.</p>
-          </div>
-          <div
-            className="garden-personal-best"
-            title="Kỷ lục của bộ từ và tốc độ đang chọn, lưu trên thiết bị này"
-          >
-            <Trophy size={20} />
-            <div>
-              <small>KỶ LỤC</small>
-              <b>
-                {best}
-                <span> điểm</span>
-              </b>
-            </div>
-          </div>
-        </div>
-
         <section
           className="dragon-play"
           aria-label="Khu vực chơi"
-          ref={playArea}
           style={{ '--ratio': view.cols / view.rows } as React.CSSProperties}
         >
           <div className="dragon-hud">
@@ -627,12 +566,6 @@ export function DragonWords({ onBack }: { onBack(): void }) {
             </div>
           </div>
         </section>
-        <footer className="garden-footer">
-          <span>HỌC NHẸ NHÀNG. NHỚ TỰ NHIÊN.</span>
-          <span>
-            Tốc độ {speedLabel[settings.speed].toLowerCase()} · {level} · Không cần tài khoản
-          </span>
-        </footer>
       </main>
       {soundSettings && (
         <AudioSettings

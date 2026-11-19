@@ -148,10 +148,10 @@ class GardenScene extends Phaser.Scene {
   private drawGarden() {
     const { width: W, height: H } = this.layout;
     const g = this.add.graphics();
-    g.fillStyle(0x193f3b).fillRoundedRect(18, 18, W - 36, H - 28, 38);
-    g.fillStyle(0x487d67).fillRoundedRect(18, 12, W - 36, H - 36, 38);
+    g.fillStyle(0xabbfb0).fillRoundedRect(18, 18, W - 36, H - 28, 38);
+    g.fillStyle(0xdce8df).fillRoundedRect(18, 12, W - 36, H - 36, 38);
     g.lineStyle(2, 0x91b798, 0.6).strokeRoundedRect(27, 21, W - 54, H - 54, 31);
-    g.fillStyle(0x285b50).fillRoundedRect(40, 40, W - 80, H - 80, 24);
+    g.fillStyle(0xeaf1eb).fillRoundedRect(40, 40, W - 80, H - 80, 24);
     // Corner leaves, pond ripples and fireflies are engine objects, independent of reading surfaces.
     for (const [x, y, sign] of [
       [20, 25, 1],
@@ -161,7 +161,7 @@ class GardenScene extends Phaser.Scene {
     ]) {
       for (let j = 0; j < 4; j++) {
         this.add
-          .ellipse(x + sign * j * 14, y + (j % 2 ? 9 : -7), 45, 18, j % 2 ? 0x8cb787 : 0x628e69)
+          .ellipse(x + sign * j * 14, y + (j % 2 ? 9 : -7), 45, 18, j % 2 ? 0xa8bca3 : 0x91ab95)
           .setAngle(sign * (j % 2 ? 35 : -25))
           .setDepth(15);
       }
@@ -182,7 +182,7 @@ class GardenScene extends Phaser.Scene {
       .text(W / 2, H - 46, '✦   一点一滴，每天进步   ✦', {
         fontFamily: '"Noto Sans SC", sans-serif',
         fontSize: '16px',
-        color: '#d8e5ce',
+        color: '#6f8a76',
         letterSpacing: 4,
       })
       .setOrigin(0.5);
@@ -218,14 +218,14 @@ class GardenScene extends Phaser.Scene {
     const g = this.faces[index];
     g.clear();
     g.fillStyle(0x113b32, 0.65).fillRoundedRect(-62, -48, 124, 108, 14);
-    g.fillStyle(selected ? 0xd6ad54 : error ? 0xba7972 : 0xc8c7a9).fillRoundedRect(
+    g.fillStyle(selected ? 0x43856b : error ? 0xba7972 : 0xd4dfd6).fillRoundedRect(
       -62,
       -54,
       124,
       108,
       14,
     );
-    g.fillStyle(selected ? 0xffe4a0 : error ? 0xffe2d9 : 0xfff8e7).fillRoundedRect(
+    g.fillStyle(selected ? 0xe5f2e9 : error ? 0xffe2d9 : 0xffffff).fillRoundedRect(
       -62,
       -54,
       124,
@@ -234,7 +234,7 @@ class GardenScene extends Phaser.Scene {
     );
     g.lineStyle(
       selected || hint ? 4 : 1,
-      error ? 0xac554c : selected ? 0xf3c05c : hint ? 0xffdc87 : 0xffeac1,
+      error ? 0xac554c : selected ? 0x43856b : hint ? 0xffdc87 : 0xe2e9e3,
       1,
     ).strokeRoundedRect(-58, -50, 116, 92, 11);
     g.lineStyle(1, 0xffffff, 0.6).lineBetween(-45, -43, 45, -43);

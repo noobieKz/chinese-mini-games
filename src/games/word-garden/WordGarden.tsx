@@ -1,21 +1,20 @@
+import { ArcadeDialog } from '../../arcade/ArcadeDialog';
+import { GameTopbar } from '../../arcade/GameTopbar';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
-  ArrowLeft,
   ArrowRight,
   BookOpen,
   Check,
   Clock3,
   Flower2,
-  HelpCircle,
   Lightbulb,
-  Maximize2,
   Pause,
   Play,
   RotateCcw,
   Shuffle,
+  Settings2,
   Sparkles,
   Trophy,
-  Volume2,
   X,
 } from 'lucide-react';
 import type { Difficulty, MatchMode, Word } from './vocabulary';
@@ -65,6 +64,8 @@ export function WordGarden({ mode, onBack }: Props) {
   const [playing, setPlaying] = useState(false);
   const [paused, setPaused] = useState(false);
   const [help, setHelp] = useState(false);
+  const [setup, setSetup] = useState(false);
+  const [notebook, setNotebook] = useState(false);
   const [soundSettings, setSoundSettings] = useState(false);
   const [exit, setExit] = useState<'leave' | 'restart' | 'end' | null>(null);
   const [ready, setReady] = useState(false);
@@ -95,13 +96,13 @@ export function WordGarden({ mode, onBack }: Props) {
     }
   }, [bestKey]);
   const parent = useRef<HTMLDivElement>(null);
-  const playArea = useRef<HTMLElement>(null);
   const engine = useRef<GardenHandle | null>(null);
   const finished =
     playing &&
     ready &&
     (ended || (state.total > 0 && state.matched === state.total) || (timed && remaining === 0));
-  const blocked = !playing || paused || help || soundSettings || Boolean(exit) || finished;
+  const blocked =
+    !playing || paused || help || setup || notebook || soundSettings || Boolean(exit) || finished;
   useLeaveWarning(playing && !finished, () => {
     setPaused(true);
     engine.current?.pause(true);
@@ -239,83 +240,29 @@ export function WordGarden({ mode, onBack }: Props) {
   const startPlaying = () => {
     setPlaying(true);
     audio.play('click');
-    // Bring the whole board, its message and tools into view when the page header pushed them down.
-    const area = playArea.current;
-    if (area && area.getBoundingClientRect().bottom > innerHeight)
-      area.scrollIntoView({
-        block: 'start',
-        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      });
   };
   return (
     <div className="garden-page">
-      <header className="garden-nav">
-        <button className="garden-back" aria-label="Về thư viện game" onClick={leave}>
-          <ArrowLeft size={19} />
-          <span>Thư viện game</span>
-        </button>
-        <a
-          href="/games"
-          className="garden-brand"
-          onClick={(event) => {
-            event.preventDefault();
-            leave();
-          }}
-        >
-          <span>汉</span>hanplay<span className="brand-dot">.</span>
-        </a>
-        <div className="garden-nav-actions">
-          <button className="garden-icon" aria-label="Hướng dẫn" onClick={() => setHelp(true)}>
-            <HelpCircle size={20} />
-          </button>
-          <button
-            className="garden-icon"
-            aria-label="Cài đặt âm thanh"
-            onClick={() => setSoundSettings(true)}
-          >
-            <Volume2 size={20} />
-          </button>
-          <button
-            className="garden-icon fullscreen"
-            aria-label="Toàn màn hình"
-            onClick={() => void fullscreen()}
-          >
-            <Maximize2 size={19} />
-          </button>
-        </div>
-      </header>
+      <GameTopbar
+        title={mode === 'meaning' ? 'Nối từ với nghĩa' : 'Ghép chữ thành từ'}
+        subtitle={level}
+        best={best}
+        onBack={leave}
+        onHelp={() => setHelp(true)}
+        onSound={() => setSoundSettings(true)}
+        onFullscreen={() => void fullscreen()}
+        onSettings={() => {
+          if (finished) restart();
+          setSetup(true);
+        }}
+        settingsDisabled={playing && !finished}
+        onNotebook={() => setNotebook(true)}
+      />
       <main className="garden-main">
-        <div className="garden-title-row">
-          <div>
-            <div className="garden-eyebrow">
-              <Flower2 size={15} /> WORD GARDEN <span>/</span> {level}
-            </div>
-            <h1>{mode === 'meaning' ? 'Nối từ với nghĩa' : 'Ghép chữ thành từ'}</h1>
-            <p>
-              {mode === 'meaning'
-                ? 'Một từ tiếng Trung. Một ý nghĩa mới được khám phá.'
-                : 'Hai chữ nhỏ ghép lại, thêm một từ mới vào khu vườn.'}
-            </p>
-          </div>
-          <div
-            className="garden-personal-best"
-            title="Kỷ lục của đúng bộ từ, kích thước bàn và chế độ đang chọn, lưu trên thiết bị này"
-          >
-            <Trophy size={20} />
-            <div>
-              <small>KỶ LỤC</small>
-              <b>
-                {best}
-                <span> điểm</span>
-              </b>
-            </div>
-          </div>
-        </div>
         <div className="garden-layout">
           <section
             className="garden-play-area"
             aria-label="Khu vực chơi"
-            ref={playArea}
             style={
               { '--board-ratio': boardLayout.width / boardLayout.height } as React.CSSProperties
             }
@@ -438,6 +385,12 @@ export function WordGarden({ mode, onBack }: Props) {
                       <ArrowRight size={22} />
                       <span>{mode === 'meaning' ? 'bạn bè' : '友'}</span>
                     </div>
+                    <button
+                      className="garden-text-button arcade-setup-link"
+                      onClick={() => setSetup(true)}
+                    >
+                      Chọn bài & độ khó <Settings2 size={16} />
+                    </button>
                     <button className="garden-primary" onClick={startPlaying}>
                       Vào vườn chơi <Play size={18} fill="currentColor" />
                     </button>
@@ -481,13 +434,16 @@ export function WordGarden({ mode, onBack }: Props) {
                     <p>
                       Đã khám phá {state.matched} từ mới với {state.score} điểm.
                       <br />
-                      Xem lại các từ trong sổ tay bên cạnh nhé.
+                      Mở sổ tay để xem lại những từ vừa ghép nhé.
                     </p>
+                    <button className="garden-text-button" onClick={() => setNotebook(true)}>
+                      Xem từ vừa ghép <BookOpen size={16} />
+                    </button>
                     <button className="garden-primary" onClick={restart}>
                       Chơi lượt mới <RotateCcw size={18} />
                     </button>
                     <button className="garden-text-button" onClick={onBack}>
-                      Về thư viện game
+                      Về sảnh game
                     </button>
                   </div>
                 </div>
@@ -605,136 +561,128 @@ export function WordGarden({ mode, onBack }: Props) {
               </button>
             </div>
           </section>
-          <aside className="garden-sidebar">
-            <section className="garden-options">
-              <span className="garden-eyebrow">CHỌN GÓC VƯỜN</span>
-              <h2>Chơi theo cách của bạn</h2>
-              {mode === 'characters' && (
-                <>
-                  <label htmlFor="garden-difficulty">Độ khó</label>
-                  <Select
-                    id="garden-difficulty"
-                    aria-label="Độ khó"
-                    value={difficulty}
-                    disabled={playing}
-                    onValueChange={(value) => setDifficulty(value as Difficulty)}
-                  >
-                    <option value="normal">Bình thường</option>
-                    <option value="hard">Khó</option>
-                  </Select>
-                  <p>
-                    {difficulty === 'normal'
-                      ? 'Chọn hai chữ theo thứ tự nào cũng được.'
-                      : 'Chọn đúng thứ tự chữ trước → chữ sau.'}
-                  </p>
-                </>
-              )}
-              {content && scope && (
-                <ScopePicker
-                  bundle={content.bundle}
-                  game={game}
-                  scope={scope}
-                  disabled={playing}
-                  idPrefix="garden"
-                  onChange={(nextLevel, key) => {
-                    setScope(nextLevel, key);
-                    setPlaying(false);
-                  }}
-                />
-              )}
-              <label htmlFor="garden-size">Kích thước bàn</label>
-              <Select
-                id="garden-size"
-                aria-label="Kích thước bàn"
-                value={String(pairs)}
-                disabled={playing}
-                onValueChange={(value) => setPairs(Number(value) as PairCount)}
-              >
-                <option value="4">Làm quen · 4 cặp</option>
-                <option value="8">Khởi động · 8 cặp</option>
-                <option value="12">Luyện tập · 12 cặp</option>
-                <option value="18">Thử thách · 18 cặp</option>
-              </Select>
-              <label>Chế độ chơi</label>
-              <div className="garden-segment">
-                <button aria-pressed={!timed} disabled={playing} onClick={() => setTimed(false)}>
-                  Thư thả
-                </button>
-                <button aria-pressed={timed} disabled={playing} onClick={() => setTimed(true)}>
-                  {durationLabel(timeLimit)}
-                </button>
-              </div>
-              <p>
-                {playing && !finished
-                  ? 'Đổi bộ từ và nhịp chơi ở lượt mới.'
-                  : 'Không vội. Cứ học theo nhịp của bạn.'}
-              </p>
-              <button
-                className="garden-new-round"
-                onClick={() => (playing && !finished ? setExit('restart') : restart())}
-              >
-                <RotateCcw size={16} /> Chơi lượt mới
-              </button>
-              <p>
-                Đúng +10 · Sai −2 · Gợi ý −3 điểm.
-                <br />
-                Nối giúp không cộng điểm. Đảo ô miễn phí.
-                <br />
-                Bài ít từ sẽ tự giảm số cặp.
-              </p>
-            </section>
-            <section className="garden-notebook">
-              <div className="notebook-heading">
-                <BookOpen size={20} />
-                <h2>Sổ tay khám phá</h2>
-                <span>{collection.length}</span>
-              </div>
-              {state.latest ? (
-                <div className="garden-latest">
-                  <span className="garden-eyebrow">TỪ VỪA GHÉP</span>
-                  <strong lang="zh">{state.latest.hanzi}</strong>
-                  <span className="garden-pinyin">{state.latest.pinyin}</span>
-                  <b>{state.latest.meaning}</b>
-                </div>
-              ) : (
-                <div className="garden-empty">
-                  <div>词</div>
-                  <p>
-                    Mỗi cặp ghép đúng sẽ
-                    <br />
-                    nở thành một từ ở đây.
-                  </p>
-                </div>
-              )}
-              <div className="garden-word-list">
-                {collection
-                  .slice()
-                  .reverse()
-                  .map((w) => (
-                    <div key={w.id}>
-                      <span lang="zh">
-                        {w.hanzi}
-                        <small>{w.pinyin}</small>
-                      </span>
-                      <b>{w.meaning}</b>
-                      <Check size={14} />
-                    </div>
-                  ))}
-              </div>
-            </section>
-            <div className="garden-note">
-              <Flower2 size={24} />
-              <p>
-                一点一滴，每天进步<small>Từng chút mỗi ngày, thêm một bước tiến.</small>
-              </p>
-            </div>
-          </aside>
         </div>
-        <footer className="garden-footer">
-          <span>HỌC NHẸ NHÀNG. NHỚ TỰ NHIÊN.</span>
-          <span>Chuột, cảm ứng hoặc Tab + Enter · Không cần tài khoản</span>
-        </footer>
       </main>
+      {setup && (
+        <ArcadeDialog title="Thiết lập lượt chơi" close={() => setSetup(false)}>
+          <section className="garden-options">
+            {mode === 'characters' && (
+              <>
+                <label htmlFor="garden-difficulty">Độ khó</label>
+                <Select
+                  id="garden-difficulty"
+                  aria-label="Độ khó"
+                  value={difficulty}
+                  disabled={playing}
+                  onValueChange={(value) => setDifficulty(value as Difficulty)}
+                >
+                  <option value="normal">Bình thường</option>
+                  <option value="hard">Khó</option>
+                </Select>
+                <p>
+                  {difficulty === 'normal'
+                    ? 'Chọn hai chữ theo thứ tự nào cũng được.'
+                    : 'Chọn đúng thứ tự chữ trước → chữ sau.'}
+                </p>
+              </>
+            )}
+            {content && scope && (
+              <ScopePicker
+                bundle={content.bundle}
+                game={game}
+                scope={scope}
+                disabled={playing}
+                idPrefix="garden"
+                onChange={(nextLevel, key) => {
+                  setScope(nextLevel, key);
+                  setPlaying(false);
+                }}
+              />
+            )}
+            <label htmlFor="garden-size">Kích thước bàn</label>
+            <Select
+              id="garden-size"
+              aria-label="Kích thước bàn"
+              value={String(pairs)}
+              disabled={playing}
+              onValueChange={(value) => setPairs(Number(value) as PairCount)}
+            >
+              <option value="4">Làm quen · 4 cặp</option>
+              <option value="8">Khởi động · 8 cặp</option>
+              <option value="12">Luyện tập · 12 cặp</option>
+              <option value="18">Thử thách · 18 cặp</option>
+            </Select>
+            <label>Chế độ chơi</label>
+            <div className="garden-segment">
+              <button aria-pressed={!timed} disabled={playing} onClick={() => setTimed(false)}>
+                Thư thả
+              </button>
+              <button aria-pressed={timed} disabled={playing} onClick={() => setTimed(true)}>
+                {durationLabel(timeLimit)}
+              </button>
+            </div>
+            <p>
+              {playing && !finished
+                ? 'Đổi bộ từ và nhịp chơi ở lượt mới.'
+                : 'Không vội. Cứ học theo nhịp của bạn.'}
+            </p>
+
+            <p>
+              Đúng +10 · Sai −2 · Gợi ý −3 điểm.
+              <br />
+              Nối giúp không cộng điểm. Đảo ô miễn phí.
+              <br />
+              Bài ít từ sẽ tự giảm số cặp.
+            </p>
+          </section>
+          <button className="garden-primary" onClick={() => setSetup(false)}>
+            Sẵn sàng <Check size={18} />
+          </button>
+        </ArcadeDialog>
+      )}
+      {notebook && (
+        <ArcadeDialog title="Từ vựng vừa khám phá" close={() => setNotebook(false)}>
+          <section className="garden-notebook">
+            <div className="notebook-heading">
+              <BookOpen size={20} />
+              <h2>Sổ tay khám phá</h2>
+              <span>{collection.length}</span>
+            </div>
+            {state.latest ? (
+              <div className="garden-latest">
+                <span className="garden-eyebrow">TỪ VỪA GHÉP</span>
+                <strong lang="zh">{state.latest.hanzi}</strong>
+                <span className="garden-pinyin">{state.latest.pinyin}</span>
+                <b>{state.latest.meaning}</b>
+              </div>
+            ) : (
+              <div className="garden-empty">
+                <div>词</div>
+                <p>
+                  Mỗi cặp ghép đúng sẽ
+                  <br />
+                  nở thành một từ ở đây.
+                </p>
+              </div>
+            )}
+            <div className="garden-word-list">
+              {collection
+                .slice()
+                .reverse()
+                .map((w) => (
+                  <div key={w.id}>
+                    <span lang="zh">
+                      {w.hanzi}
+                      <small>{w.pinyin}</small>
+                    </span>
+                    <b>{w.meaning}</b>
+                    <Check size={14} />
+                  </div>
+                ))}
+            </div>
+          </section>
+        </ArcadeDialog>
+      )}
       {soundSettings && (
         <AudioSettings
           profile={gardenAudioProfile}
