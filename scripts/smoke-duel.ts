@@ -71,7 +71,7 @@ console.log(
 );
 await new Promise((r) => setTimeout(r, Math.max(0, started.startAt! - Date.now()) + 100));
 const [x, y] = findPair(started.tiles, 'meaning', DUEL_COLS, false)!;
-a.send({ type: 'attempt', a: x, b: y }); // An wins the race…
+a.send({ type: 'attempt', a: x, b: y }); // usually An wins the race…
 b.send({ type: 'attempt', a: x, b: y }); // …Bình's identical attempt arrives second
 const afterA = await b.until((s) => s.event?.kind === 'taken', 'taken event');
 const [pa, pb] = afterA.players;
@@ -85,7 +85,9 @@ console.log(
   '| removed',
   afterA.tiles.filter((t) => t.removed).length,
 );
-if (pa.score !== 10 || pb.score !== 0) throw new Error('unexpected scores');
+// Over a real network either attempt may arrive first: exactly one player gets the pair.
+const scores = [pa.score, pb.score].sort((x, y) => x - y);
+if (scores[0] !== 0 || scores[1] !== 10) throw new Error('unexpected scores');
 a.close();
 const forfeitWait = await b.until(
   (s) => !s.players.find((p) => p.name === 'An')?.connected,
