@@ -27,5 +27,10 @@ const localContent: Plugin = {
 export default defineConfig({
   plugins: [react(), localContent],
   build: { outDir: 'dist/client' },
-  server: { port: 5173, strictPort: true },
+  server: {
+    port: 5173,
+    strictPort: true,
+    // Duel rooms are Durable Objects: in development they run under `wrangler dev` on 8788.
+    proxy: { '/api/duel': { target: 'http://localhost:8788', ws: true } },
+  },
 });

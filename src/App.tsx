@@ -4,6 +4,7 @@ import { Lobby } from './arcade/Lobby';
 import { FruitSlash } from './games/fruit-slash/FruitSlash';
 import { DragonWords } from './games/dragon-words/DragonWords';
 import { WordGarden } from './games/word-garden/WordGarden';
+import { DuelPage } from './games/duel/DuelPage';
 import type { MatchMode } from './games/word-garden/vocabulary';
 import './games/word-garden/garden.css';
 import './arcade/arcade.css';
@@ -26,20 +27,23 @@ export default function App() {
   const route = path.split('?')[0].replace(/\/+$/, '') || '/';
   const fruit = route === '/games/chem-hoa-qua';
   const dragon = route === '/games/rong-san-chu';
-  const notFound = !mode && !fruit && !dragon && !libraryRoutes.includes(route);
+  const duel = route === '/games/solo';
+  const notFound = !mode && !fruit && !dragon && !duel && !libraryRoutes.includes(route);
   useEffect(() => {
     document.title = fruit
       ? 'Chém hoa quả · HanPlay'
       : dragon
         ? 'Rồng săn chữ · HanPlay'
-        : mode
-          ? mode === 'meaning'
-            ? 'Nối từ với nghĩa · HanPlay'
-            : 'Ghép chữ thành từ · HanPlay'
-          : notFound
-            ? 'Không tìm thấy trang · HanPlay'
-            : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
-  }, [fruit, dragon, mode, notFound]);
+        : duel
+          ? 'Solo 2 người · HanPlay'
+          : mode
+            ? mode === 'meaning'
+              ? 'Nối từ với nghĩa · HanPlay'
+              : 'Ghép chữ thành từ · HanPlay'
+            : notFound
+              ? 'Không tìm thấy trang · HanPlay'
+              : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
+  }, [fruit, dragon, duel, mode, notFound]);
   useEffect(() => {
     history.replaceState({ ...history.state, hanplayPosition: position.current }, '');
     const changed = (event: PopStateEvent) => {
@@ -75,6 +79,12 @@ export default function App() {
     return (
       <div className="arcade-app">
         <DragonWords onBack={() => navigate('/games')} />
+      </div>
+    );
+  if (duel)
+    return (
+      <div className="arcade-app">
+        <DuelPage onBack={() => navigate('/games')} />
       </div>
     );
   if (mode)

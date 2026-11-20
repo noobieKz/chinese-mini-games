@@ -10,9 +10,16 @@
   },
   "compatibility_date": "2026-11-13",
   "durable_objects": {
-    "bindings": [{ "name": "HUB", "class_name": "ClassroomHub" }],
+    "bindings": [
+      { "name": "HUB", "class_name": "ClassroomHub" },
+      { "name": "DUEL", "class_name": "DuelRoom" },
+    ],
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ClassroomHub"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["ClassroomHub"] },
+    // Two-player duel rooms (one object per invite code).
+    { "tag": "v2", "new_sqlite_classes": ["DuelRoom"] },
+  ],
   // Course content (key "content"), uploaded with `npm run content -- upload`, served at /api/content.
   "kv_namespaces": [{ "binding": "CONTENT", "id": "247b1ad66b3c4171901454a4b1feb181" }],
   "vars": {

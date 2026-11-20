@@ -1,0 +1,550 @@
+/* Solo 2 người: only duel-* classes; the page reuses the garden/arcade shell untouched. */
+.duel-hud .duel-me b {
+  color: #2f7a5c;
+}
+.duel-hud .duel-them b {
+  color: #b2475e;
+}
+.duel-hud span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Setup + lobby dialogs. `.arcade-app .garden-dialog.duel-*` outranks the shared dialog rules. */
+.arcade-app .garden-dialog.duel-setup,
+.arcade-app .garden-dialog.duel-lobby {
+  width: min(520px, 100%);
+  padding: 26px 28px 22px;
+  text-align: left;
+}
+.duel-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.duel-badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  color: #b2475e;
+  background: #fbecef;
+  border: 1px solid #f3d6dc;
+}
+.duel-head .garden-eyebrow {
+  display: block;
+  margin: 0 0 2px;
+}
+.arcade-app .garden-dialog .duel-head h2 {
+  margin: 0;
+  line-height: 1.15;
+}
+.arcade-app .garden-dialog p.duel-lead {
+  margin: 12px 0 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--arcade-muted);
+}
+/* Label above control, full width. */
+.duel-field,
+.duel-fields > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.duel-setup label,
+.duel-lobby label {
+  font-size: 12px;
+  font-weight: 650;
+  color: #4b6358;
+}
+.duel-fields .app-select {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+}
+.duel-fields .app-select .app-select-trigger {
+  min-height: 44px;
+  font-size: 14px;
+}
+.duel-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #dfe7e2;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--arcade-ink);
+  font: inherit;
+  font-size: 15px;
+  transition:
+    border-color 0.16s,
+    box-shadow 0.16s;
+}
+.duel-input:focus {
+  outline: none;
+  border-color: var(--arcade-primary);
+  box-shadow: 0 0 0 3px #1d594822;
+}
+/* Tạo phòng | Vào phòng */
+.duel-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 18px 0 16px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #f1f4f2;
+}
+.duel-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--arcade-muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.16s,
+    color 0.16s;
+}
+.duel-tabs button[aria-selected='true'] {
+  background: #fff;
+  color: var(--arcade-primary);
+  box-shadow: 0 1px 4px #233c351f;
+}
+.duel-panels {
+  display: grid;
+}
+.duel-panels > .duel-panel {
+  grid-area: 1 / 1;
+}
+.duel-panel.is-hidden {
+  visibility: hidden;
+}
+.duel-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.duel-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 12px;
+}
+/* Kiểu chơi takes the first row; a lone last field takes the whole row instead of leaving a hole. */
+.duel-fields > div:first-child,
+.duel-fields > div:last-child:nth-child(even) {
+  grid-column: 1 / -1;
+}
+.arcade-app .garden-dialog .garden-primary.duel-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.arcade-app .garden-primary.duel-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.duel-join {
+  align-items: stretch;
+  justify-content: center;
+}
+.duel-join label {
+  text-align: center;
+}
+.duel-input.duel-code-input {
+  min-height: 60px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 10px;
+  text-indent: 10px; /* balances the trailing letter-spacing so the code sits centered */
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.duel-code-input::placeholder {
+  color: #c9d3ce;
+  font-weight: 700;
+}
+.arcade-app .garden-dialog p.duel-problem {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fdf0f0;
+  color: #a33b3b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Lobby */
+.duel-lobby .garden-eyebrow {
+  display: block;
+  text-align: center;
+}
+.duel-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 10px 0 4px;
+}
+.duel-code {
+  font-size: clamp(34px, 7vw, 46px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 6px;
+  color: var(--arcade-ink);
+  font-variant-numeric: tabular-nums;
+}
+.duel-copy {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #d5e3da;
+  border-radius: 999px;
+  background: #eef6f1;
+  color: var(--arcade-primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.duel-copy:hover {
+  background: #e2efe7;
+}
+.duel-copy svg {
+  flex: none;
+}
+.arcade-app .garden-dialog p.duel-label {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--arcade-muted);
+}
+.duel-seats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.duel-seat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e3e9e5;
+  border-radius: 14px;
+  background: #fafbfa;
+}
+.duel-seat > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.duel-seat b {
+  overflow: hidden;
+  font-size: 14px;
+  color: var(--arcade-ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.duel-seat b em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--arcade-muted);
+}
+.duel-seat small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--arcade-muted);
+}
+.duel-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e4ece7;
+  color: #4b6358;
+  font-size: 16px;
+  font-weight: 750;
+}
+.duel-seat.is-me .duel-avatar {
+  background: #dcefe5;
+  color: #2f7a5c;
+}
+.duel-seat:not(.is-me):not(.is-empty) .duel-avatar {
+  background: #fbe5ea;
+  color: #b2475e;
+}
+.duel-seat.is-ready {
+  border-color: #9fd0b5;
+  background: #f0f8f3;
+}
+.duel-seat.is-ready small {
+  color: #2f7a5c;
+  font-weight: 650;
+}
+.duel-seat.is-empty {
+  border-style: dashed;
+  border-color: #cfd9d3;
+  background: transparent;
+}
+.duel-seat.is-empty .duel-avatar {
+  background: transparent;
+  border: 1px dashed #c3cfc8;
+  color: #a9b6af;
+}
+.duel-seat.is-empty b {
+  font-weight: 600;
+  color: var(--arcade-muted);
+}
+.duel-lobby-name {
+  margin-bottom: 16px;
+}
+.arcade-app .garden-primary.duel-cta.is-undo {
+  background: #fff;
+  color: var(--arcade-primary);
+}
+.duel-lobby .duel-note {
+  display: block;
+  margin: 10px 0 4px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--arcade-muted);
+}
+.duel-lobby .garden-text-button {
+  display: block;
+  margin: 0 auto;
+}
+@media (max-width: 560px) {
+  .arcade-app .garden-dialog.duel-setup,
+  .arcade-app .garden-dialog.duel-lobby {
+    padding: 20px 18px 16px;
+  }
+  .duel-badge {
+    width: 42px;
+    height: 42px;
+  }
+  .duel-code-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+@media (max-width: 420px) {
+  .duel-fields {
+    gap: 12px 10px;
+  }
+  .duel-fields .app-select .app-select-trigger {
+    gap: 6px;
+    padding: 9px 10px;
+    font-size: 13px;
+  }
+  .duel-seats {
+    grid-template-columns: 1fr;
+  }
+  .arcade-app .garden-dialog p.duel-lead {
+    margin: 10px 0 14px;
+  }
+  .duel-tabs {
+    margin: 14px 0 12px;
+  }
+}
+.duel-countdown {
+  background: #143b3299;
+}
+.duel-countdown b {
+  font-size: clamp(72px, 18vw, 140px);
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 6px 30px #0006;
+  font-variant-numeric: tabular-nums;
+}
+.duel-result {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 8px 0 18px;
+}
+.duel-result > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  border: 1px solid #dfe6dc;
+  border-radius: 14px;
+}
+.duel-result > div.is-winner {
+  border-color: #d6ad54;
+  background: #fff6df;
+}
+.duel-result span {
+  font-size: 13px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.duel-result b {
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+}
+.duel-result small {
+  font-size: 11px;
+  color: #6b7a70;
+}
+/* Lobby mode choice: 1 người / Solo 2 người. */
+.mode-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.mode-choice-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 18px;
+  border: 1px solid #d6dccb;
+  border-radius: 16px;
+  background: #fffdf7;
+  color: #25483d;
+  text-align: left;
+}
+.mode-choice-option b {
+  font-size: 17px;
+}
+.mode-choice-option span {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5d6f5f;
+}
+.mode-choice-option:hover:not(:disabled) {
+  border-color: #43856b;
+  background: #eef6f0;
+}
+.mode-choice-option.is-duel:not(:disabled) svg {
+  color: #b2475e;
+}
+.mode-choice-option:disabled {
+  opacity: 0.55;
+}
+.mode-choice-join {
+  display: block;
+  margin: 14px auto 0;
+}
+@media (max-width: 480px) {
+  .mode-choice {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Chém hoa quả solo: four fruits, two score boxes in the players' colours. */
+.fruit-answer-3 {
+  border-color: #c9a6f2a0;
+}
+.duel-fruit-hud .duel-fruit-me strong {
+  color: #ffe09e;
+}
+.duel-fruit-hud .duel-fruit-them strong {
+  color: #bfe9ff;
+}
+.duel-fruit-hud .duel-fruit-them {
+  min-width: 145px;
+}
+.duel-fruit-hud span {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Locked out of a question: the labels stay readable but clearly not for you. */
+.fruit-answer-labels.is-locked .fruit-answer {
+  filter: grayscale(0.7);
+  opacity: 0.5;
+}
+.duel-fruit-footer > span > b {
+  letter-spacing: 0;
+  font-size: 12px;
+}
+
+/*
+ * Rồng săn chữ solo: the board is square (the arcade layout sizes boards for 18×12), so its width
+ * is the height left after the score, the word and the controls.
+ */
+.arcade-app .duel-dragon .dragon-play {
+  width: min(100%, calc(100dvh - 300px));
+}
+@media (max-width: 600px) {
+  .arcade-app .duel-dragon .dragon-play {
+    width: min(100%, calc(100dvh - 360px));
+  }
+}
+/* Short landscape screens put score and word beside the board, as the one-player game does. */
+@media (min-width: 601px) and (max-height: 540px) {
+  .arcade-app .duel-dragon .dragon-play {
+    width: 100%;
+  }
+}
+.duel-dragon-hud {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+.duel-dragon-hud span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.duel-dragon-hud .duel-me b {
+  color: #b3362a;
+}
+.duel-dragon-hud .duel-them b {
+  color: #23598c;
+}
+.duel-dragon-message {
+  margin: 0;
+  min-height: 2.8em;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #4b6358;
+}
+/* Four labels across a phone: smaller than the one-player game's three. */
+@media (max-width: 600px) {
+  .duel-fruit .fruit-answer {
+    min-width: 0;
+    max-width: 23vw;
+    padding: 5px 6px;
+    gap: 3px;
+  }
+  .duel-fruit .fruit-answer strong {
+    font-size: 19px;
+    letter-spacing: 0;
+  }
+  .duel-fruit .fruit-answer kbd {
+    display: none;
+  }
+}

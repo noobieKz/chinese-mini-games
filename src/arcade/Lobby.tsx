@@ -1,7 +1,19 @@
 import { useState } from 'react';
-import { ArrowRight, Expand, Gamepad2, Keyboard, MousePointer2, Sparkles, X } from 'lucide-react';
+import {
+  ArrowRight,
+  Expand,
+  Gamepad2,
+  Keyboard,
+  MousePointer2,
+  Sparkles,
+  Swords,
+  User,
+  X,
+} from 'lucide-react';
 import { ArcadeDialog } from './ArcadeDialog';
 
+/** Games with a two-player duel (Solo 2 người); the others show it as coming soon. */
+const duelGames = new Set(['ghep-chu', 'noi-tu', 'chem-hoa-qua', 'rong-san-chu']);
 const games = [
   {
     route: 'ghep-chu',
@@ -57,6 +69,7 @@ export function Lobby({
   notFound?: boolean;
 }) {
   const [help, setHelp] = useState(false);
+  const [choice, setChoice] = useState<(typeof games)[number] | null>(null);
   const [notice, setNotice] = useState('');
   const fullscreen = async () => {
     try {
@@ -136,7 +149,8 @@ export function Lobby({
               onClick={(event) => {
                 if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
                 event.preventDefault();
-                navigate(`/games/${game.route}`);
+                // Every game opens with a mode choice; the one-player page is unchanged.
+                setChoice(game);
               }}
             >
               <div className="lobby-game-scene" aria-hidden="true">
@@ -178,6 +192,48 @@ export function Lobby({
             <X size={16} />
           </button>
         </div>
+      )}
+      {choice && (
+        <ArcadeDialog title={choice.name} close={() => setChoice(null)}>
+          <div className="mode-choice">
+            <button
+              className="mode-choice-option"
+              onClick={() => {
+                setChoice(null);
+                navigate(`/games/${choice.route}`);
+              }}
+            >
+              <User size={26} />
+              <b>1 người</b>
+              <span>Chơi một mình, theo nhịp của bạn.</span>
+            </button>
+            <button
+              className="mode-choice-option is-duel"
+              disabled={!duelGames.has(choice.route)}
+              onClick={() => {
+                setChoice(null);
+                navigate(`/games/solo?tro=${choice.route}`);
+              }}
+            >
+              <Swords size={26} />
+              <b>Solo 2 người</b>
+              <span>
+                {duelGames.has(choice.route)
+                  ? 'Đối kháng trên cùng một bàn. Tạo phòng, gửi mã mời.'
+                  : 'Sắp có cho game này.'}
+              </span>
+            </button>
+          </div>
+          <button
+            className="garden-text-button mode-choice-join"
+            onClick={() => {
+              setChoice(null);
+              navigate('/games/solo');
+            }}
+          >
+            Đã có mã phòng? Vào phòng solo
+          </button>
+        </ArcadeDialog>
       )}
       {help && (
         <ArcadeDialog title="Sẵn sàng vào cuộc?" close={() => setHelp(false)}>

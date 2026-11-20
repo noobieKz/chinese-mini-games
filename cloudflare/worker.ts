@@ -1,10 +1,15 @@
 import { DurableObject } from 'cloudflare:workers';
 import { AuthService, DEFAULT_TEACHERS, readCookie, sessionCookie } from '../server/auth';
 import { createRoomHub, GamePeer, type Room } from '../server/room-hub';
+import { codePattern, makeCode } from '../src/games/duel/core';
+import { DuelRoom } from './duel-room';
+
+export { DuelRoom };
 
 export type Env = {
   ASSETS: Fetcher;
   CONTENT: KVNamespace;
+  DUEL: DurableObjectNamespace<DuelRoom>;
   HUB: DurableObjectNamespace<ClassroomHub>;
   GOOGLE_CLIENT_ID?: string;
   TEACHER_EMAILS?: string;
@@ -186,6 +191,26 @@ export default {
           'cache-control': 'public, max-age=60',
         },
       });
+    }
+    // Two-player duels: create a room (POST) and join it by invite code (WebSocket).
+    if (pathname === '/api/duel' && request.method === 'POST') {
+      const body = await request.text();
+      if (body.length > 60000) return Response.json({ error: 'Quá lớn.' }, { status: 413 });
+      for (let i = 0; i < 5; i++) {
+        const code = makeCode();
+        const room = env.DUEL.get(env.DUEL.idFromName(code));
+        const response = await room.fetch(`https://duel/create?code=${code}`, {
+          method: 'POST',
+          body,
+        });
+        if (response.status !== 409) return response;
+      }
+      return Response.json({ error: 'Không tạo được phòng, thử lại nhé.' }, { status: 503 });
+    }
+    const duel = pathname.match(/^\/api\/duel\/([A-Z0-9]{6})$/);
+    if (duel) {
+      if (!codePattern.test(duel[1])) return new Response('Mã phòng không hợp lệ', { status: 400 });
+      return env.DUEL.get(env.DUEL.idFromName(duel[1])).fetch(request);
     }
     // Individual games run entirely in the browser. Former auth/room endpoints are retired.
     if (pathname.startsWith('/api/'))
