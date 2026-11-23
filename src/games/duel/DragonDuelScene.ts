@@ -8,14 +8,16 @@ type Palette = { body: [number, number]; belly: number; head: number };
 const MINE: Palette = { body: [0xc8452f, 0xd65a36], belly: 0xf2c14e, head: 0xb3362a };
 const THEIRS: Palette = { body: [0x2f6fa8, 0x3a82bf], belly: 0xa9e2f2, head: 0x23598c };
 
-export type DrawnSnake = { body: Point[]; dir: Dir; heading: Dir; safe: number; mine: boolean };
-export type DragonFrame = {
-  snakes: DrawnSnake[];
-  /** Local time the last step arrived, and the step length: segments slide in between. */
-  stepAt: number;
-  stepMs: number;
-  moving: boolean;
+/** One dragon to draw; `t` is how far (0–1, a little more when a step is late) it has slid on. */
+export type DrawnSnake = {
+  body: Point[];
+  dir: Dir;
+  heading: Dir;
+  safe: number;
+  mine: boolean;
+  t: number;
 };
+export type DragonFrame = { snakes: DrawnSnake[] };
 export type DragonDuelHandle = {
   effect(
     kind: 'eat' | 'word' | 'mistake' | 'crash',
@@ -58,12 +60,11 @@ class DragonDuelScene extends Phaser.Scene {
   update() {
     const frame = this.frame();
     const now = Date.now();
-    const t = frame.moving ? Phaser.Math.Clamp((now - frame.stepAt) / frame.stepMs, 0, 1) : 0;
     const g = this.bodies!;
     g.clear();
     // The opponent first, so your own dragon is always drawn on top.
     for (const snake of [...frame.snakes].sort((a, b) => Number(a.mine) - Number(b.mine)))
-      this.drawSnake(g, snake, t, now);
+      this.drawSnake(g, snake, snake.t, now);
   }
   private drawSnake(g: Phaser.GameObjects.Graphics, snake: DrawnSnake, t: number, now: number) {
     const colors = snake.mine ? MINE : THEIRS;

@@ -27,6 +27,7 @@ export function useDuelRoom(code: string | null, name: string) {
   const [offset, setOffset] = useState(0);
   const socket = useRef<WebSocket | null>(null);
   const seen = useRef(false);
+  const samples = useRef<number[]>([]);
   const me = code ? playerId(code) : '';
   const nameRef = useRef(name);
   nameRef.current = name;
@@ -36,6 +37,7 @@ export function useDuelRoom(code: string | null, name: string) {
     // or its result screen would stay over the create/join form.
     setState(null);
     seen.current = false;
+    samples.current = [];
     setStatus('idle');
     if (!code) return;
     let closed = false,
@@ -61,7 +63,12 @@ export function useDuelRoom(code: string | null, name: string) {
         if (message.type === 'state' && message.state) {
           seen.current = true;
           setState(message.state);
-          if (message.now) setOffset(message.now - Date.now());
+          if (message.now) {
+            // Each sample is the clock offset minus that message's travel time. The largest recent
+            // one is the least delayed, so the estimate stays steady instead of jumping with jitter.
+            samples.current = [...samples.current.slice(-39), message.now - Date.now()];
+            setOffset(Math.max(...samples.current));
+          }
         }
       };
       ws.onclose = (event) => {

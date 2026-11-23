@@ -22,6 +22,8 @@ export class DuelRoom extends DurableObject<RoomEnv> {
   private timer: ReturnType<typeof setTimeout> | undefined;
   private alarmAt = 0;
   private savedAt = 0;
+  /** The last state sent to players, to skip wake-ups that changed nothing. */
+  private sent = '';
   constructor(ctx: DurableObjectState, env: RoomEnv) {
     super(ctx, env);
     ctx.blockConcurrencyWhile(async () => {
@@ -153,14 +155,14 @@ export class DuelRoom extends DurableObject<RoomEnv> {
   /** Persist (now or soon), broadcast, and schedule the next deadline. */
   private async commit(frequent = false) {
     if (!this.state) return;
+    const body = JSON.stringify(this.engine.publicState(this.state));
+    // A timer that fired a moment early changes nothing: no message, no write, just wait again.
+    if (frequent && body === this.sent) return this.schedule();
+    this.sent = body;
     // Steps of a running game are frequent: write them every couple of seconds, not each time.
     if (!frequent || Date.now() - this.savedAt >= SAVE_MS || this.state.phase !== 'playing')
       await this.save();
-    const payload = JSON.stringify({
-      type: 'state',
-      now: Date.now(),
-      state: this.engine.publicState(this.state),
-    });
+    const payload = `{"type":"state","now":${Date.now()},"state":${body}}`;
     for (const ws of this.ctx.getWebSockets())
       try {
         ws.send(payload);
@@ -178,7 +180,8 @@ export class DuelRoom extends DurableObject<RoomEnv> {
     this.timer =
       deadline === null
         ? undefined
-        : setTimeout(() => void this.wake(), Math.max(0, deadline - now));
+        : // One millisecond past the deadline, so the wake-up never lands just before it.
+          setTimeout(() => void this.wake(), Math.max(1, deadline - now + 1));
     // Backup alarm: early is harmless (it just ticks), late is not. Only rewrite it when needed.
     const backup = deadline === null ? now + IDLE_MS : Math.max(deadline, now + BACKUP_MS);
     if (!this.alarmAt || this.alarmAt <= now || this.alarmAt > backup) {
