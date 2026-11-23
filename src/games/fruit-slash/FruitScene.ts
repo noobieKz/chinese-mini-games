@@ -25,6 +25,9 @@ type FlyingFruit = {
   exited: boolean;
 };
 
+/** How far the pointer must travel (px) for a swipe to whoosh. */
+const SWIPE_PX = 24;
+
 class FruitScene extends Phaser.Scene {
   private round: FruitRound | null = null;
   private fruits: FlyingFruit[] = [];
@@ -36,6 +39,8 @@ class FruitScene extends Phaser.Scene {
   private strokeQuestion = -1;
   private pressed = false;
   private previous = { x: 0, y: 0 };
+  /** Where the blade was at the last whoosh: it sounds again only after a real swipe from there. */
+  private swingFrom = { x: 0, y: 0 };
   private lastSwingAt = -Infinity;
   private waveAt = 0;
   private waveStartedAt = 0;
@@ -177,14 +182,18 @@ class FruitScene extends Phaser.Scene {
     this.pressed = true;
     this.strokeQuestion = this.round.index;
     this.previous = { x: pointer.x, y: pointer.y };
+    this.swingFrom = { ...this.previous };
     this.trail = [{ ...this.previous, time: performance.now() }];
-    this.swing();
+    // A plain click makes no whoosh; cutting a fruit with it still plays the slice.
     this.hit(pointer.x, pointer.y, pointer.x, pointer.y);
   }
   private pointerMove(pointer: Phaser.Input.Pointer) {
     if (!this.pressed || !pointer.isDown || this.paused) return;
     const now = performance.now();
-    if (Math.hypot(pointer.x - this.previous.x, pointer.y - this.previous.y) > 18) this.swing();
+    if (Math.hypot(pointer.x - this.swingFrom.x, pointer.y - this.swingFrom.y) > SWIPE_PX) {
+      this.swing();
+      this.swingFrom = { x: pointer.x, y: pointer.y };
+    }
     this.trail.push({ x: pointer.x, y: pointer.y, time: now });
     if (this.round?.index === this.strokeQuestion)
       this.hit(this.previous.x, this.previous.y, pointer.x, pointer.y);

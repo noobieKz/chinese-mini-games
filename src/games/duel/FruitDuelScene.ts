@@ -18,6 +18,8 @@ export type FruitDuelHandle = {
   destroy(): void;
 };
 const colors = [...fruitColors, 0x9b6bd6];
+/** How far the pointer must travel (px) for a swipe to whoosh. */
+const SWIPE_PX = 24;
 const lanes = [0.14, 0.38, 0.62, 0.86];
 
 /** The duel's fourth fruit, a plum, in the same style as the three of the one-player game. */
@@ -88,6 +90,8 @@ class FruitDuelScene extends Phaser.Scene {
   private trail: { x: number; y: number; time: number }[] = [];
   private pressed = false;
   private previous = { x: 0, y: 0 };
+  /** Where the blade was at the last whoosh: it sounds again only after a real swipe from there. */
+  private swingFrom = { x: 0, y: 0 };
   private lastSwingAt = -Infinity;
   private key = '';
   private launchAt = Infinity;
@@ -161,13 +165,17 @@ class FruitDuelScene extends Phaser.Scene {
   private pointerDown(pointer: Phaser.Input.Pointer) {
     this.pressed = true;
     this.previous = { x: pointer.x, y: pointer.y };
+    this.swingFrom = { ...this.previous };
     this.trail = [{ ...this.previous, time: Date.now() }];
-    this.swing();
+    // A plain click makes no whoosh; cutting a fruit with it still plays the slice.
     this.hit(pointer.x, pointer.y, pointer.x, pointer.y);
   }
   private pointerMove(pointer: Phaser.Input.Pointer) {
     if (!this.pressed || !pointer.isDown) return;
-    if (Math.hypot(pointer.x - this.previous.x, pointer.y - this.previous.y) > 18) this.swing();
+    if (Math.hypot(pointer.x - this.swingFrom.x, pointer.y - this.swingFrom.y) > SWIPE_PX) {
+      this.swing();
+      this.swingFrom = { x: pointer.x, y: pointer.y };
+    }
     this.trail.push({ x: pointer.x, y: pointer.y, time: Date.now() });
     this.hit(this.previous.x, this.previous.y, pointer.x, pointer.y);
     this.previous = { x: pointer.x, y: pointer.y };
