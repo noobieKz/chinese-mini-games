@@ -850,6 +850,82 @@ body,
   line-height: 1.9;
   color: #4a6653;
 }
+.lobby-banner-layout {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr) 160px;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1852px;
+  margin-inline: auto;
+}
+.lobby-banner-rail {
+  height: 600px;
+}
+.lobby-banner {
+  display: block;
+  border: 0;
+}
+/* Development only: where a banner goes when no ad URL is set. */
+.ad-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 1px dashed #b8c7bd;
+  border-radius: 10px;
+  background: #ffffffa0;
+  color: var(--arcade-muted);
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+/*
+ * Game screens on PC: a 160px banner in each side margin, below the top bar. The game (and its
+ * dialogs) is narrowed by --ad-rail on each side; the top bar keeps the full width.
+ */
+.arcade-app.has-ad-rails {
+  --ad-rail: 192px;
+}
+.arcade-app.has-ad-rails .garden-main {
+  padding-inline: calc(var(--ad-rail) + 4px);
+}
+.arcade-app.has-ad-rails .fruit-stage {
+  margin-inline: var(--ad-rail);
+}
+.arcade-app.has-ad-rails .garden-overlay,
+.arcade-app.has-ad-rails .fruit-overlay {
+  left: var(--ad-rail);
+  right: var(--ad-rail);
+}
+.ad-rail {
+  position: fixed;
+  top: 64px;
+  bottom: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+}
+.ad-rail-left {
+  left: 16px;
+}
+.ad-rail-right {
+  right: 16px;
+}
+.arcade-lobby:has(.lobby-banner-bottom) {
+  overflow-y: auto;
+}
+.arcade-lobby:has(.lobby-banner-bottom) .lobby-content {
+  flex: 1 0 auto;
+}
+.lobby-banner-bottom {
+  align-self: center;
+  flex: none;
+  padding-bottom: env(safe-area-inset-bottom);
+}
 .lobby-help .garden-primary {
   width: 100%;
 }

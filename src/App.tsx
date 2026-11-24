@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { confirmLeave } from './lib/useLeaveWarning';
 import { Lobby } from './arcade/Lobby';
+import { GameAdRails, useDesktopAds } from './arcade/LobbyAds';
 import { FruitSlash } from './games/fruit-slash/FruitSlash';
 import { DragonWords } from './games/dragon-words/DragonWords';
 import { WordGarden } from './games/word-garden/WordGarden';
@@ -29,6 +30,15 @@ export default function App() {
   const dragon = route === '/games/rong-san-chu';
   const duel = route === '/games/solo';
   const notFound = !mode && !fruit && !dragon && !duel && !libraryRoutes.includes(route);
+  const game = Boolean(mode || fruit || dragon || duel);
+  // On PC, game screens keep a banner in each side margin (the game is narrowed to make room).
+  const ads = useDesktopAds(game);
+  const shell = (page: React.ReactNode) => (
+    <div className={`arcade-app${ads ? ' has-ad-rails' : ''}`}>
+      {page}
+      {ads && <GameAdRails />}
+    </div>
+  );
   useEffect(() => {
     document.title = fruit
       ? 'Chém hoa quả · HanPlay'
@@ -69,29 +79,9 @@ export default function App() {
     setPath(path);
     window.scrollTo(0, 0);
   };
-  if (fruit)
-    return (
-      <div className="arcade-app">
-        <FruitSlash onBack={() => navigate('/games')} />
-      </div>
-    );
-  if (dragon)
-    return (
-      <div className="arcade-app">
-        <DragonWords onBack={() => navigate('/games')} />
-      </div>
-    );
-  if (duel)
-    return (
-      <div className="arcade-app">
-        <DuelPage onBack={() => navigate('/games')} />
-      </div>
-    );
-  if (mode)
-    return (
-      <div className="arcade-app">
-        <WordGarden key={mode} mode={mode} onBack={() => navigate('/games')} />
-      </div>
-    );
+  if (fruit) return shell(<FruitSlash onBack={() => navigate('/games')} />);
+  if (dragon) return shell(<DragonWords onBack={() => navigate('/games')} />);
+  if (duel) return shell(<DuelPage onBack={() => navigate('/games')} />);
+  if (mode) return shell(<WordGarden key={mode} mode={mode} onBack={() => navigate('/games')} />);
   return <Lobby navigate={navigate} notFound={notFound} />;
 }

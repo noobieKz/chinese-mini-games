@@ -11,6 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import { ArcadeDialog } from './ArcadeDialog';
+import { LobbyDesktopAds, LobbyMobileAd } from './LobbyAds';
 
 /** Games with a two-player duel (Solo 2 người); the others show it as coming soon. */
 const duelGames = new Set(['ghep-chu', 'noi-tu', 'chem-hoa-qua', 'rong-san-chu']);
@@ -114,70 +115,72 @@ export function Lobby({
           </button>
         </div>
       </header>
-      <main className="lobby-content">
-        <div className="lobby-heading">
-          <div>
-            <span className="arcade-kicker">
-              <Sparkles size={14} /> MỖI LƯỢT CHƠI, MỘT KHÁM PHÁ
+      <LobbyDesktopAds enabled={!notFound}>
+        <main className="lobby-content">
+          <div className="lobby-heading">
+            <div>
+              <span className="arcade-kicker">
+                <Sparkles size={14} /> MỖI LƯỢT CHƠI, MỘT KHÁM PHÁ
+              </span>
+              <h1>
+                {notFound ? (
+                  'Lạc đường một chút?'
+                ) : (
+                  <>
+                    Chọn một game.
+                    <br className="lobby-mobile-break" /> <em>Bắt đầu thôi.</em>
+                  </>
+                )}
+              </h1>
+              <p>
+                {notFound
+                  ? 'Game này chưa có trong sảnh. Chọn một cuộc chơi bên dưới nhé.'
+                  : 'Tiếng Trung đang chờ bạn ở màn tiếp theo.'}
+              </p>
+            </div>
+            <span className="lobby-chapter">
+              CHỌN MÀN CHƠI<span>01 — 04</span>
             </span>
-            <h1>
-              {notFound ? (
-                'Lạc đường một chút?'
-              ) : (
-                <>
-                  Chọn một game.
-                  <br className="lobby-mobile-break" /> <em>Bắt đầu thôi.</em>
-                </>
-              )}
-            </h1>
-            <p>
-              {notFound
-                ? 'Game này chưa có trong sảnh. Chọn một cuộc chơi bên dưới nhé.'
-                : 'Tiếng Trung đang chờ bạn ở màn tiếp theo.'}
-            </p>
           </div>
-          <span className="lobby-chapter">
-            CHỌN MÀN CHƠI<span>01 — 04</span>
-          </span>
-        </div>
-        <div className="lobby-games">
-          {games.map((game) => (
-            <a
-              className={`lobby-game theme-${game.color}`}
-              href={`/games/${game.route}`}
-              key={game.route}
-              onClick={(event) => {
-                if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-                event.preventDefault();
-                // Every game opens with a mode choice; the one-player page is unchanged.
-                setChoice(game);
-              }}
-            >
-              <div className="lobby-game-scene" aria-hidden="true">
-                <span className="lobby-game-number">{game.number}</span>
-                <div className="lobby-glyph">{game.glyph}</div>
-                <div className="lobby-mini-tiles">
-                  {game.tiles.map((tile) => (
-                    <span key={tile}>{tile}</span>
-                  ))}
+          <div className="lobby-games">
+            {games.map((game) => (
+              <a
+                className={`lobby-game theme-${game.color}`}
+                href={`/games/${game.route}`}
+                key={game.route}
+                onClick={(event) => {
+                  if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault();
+                  // Every game opens with a mode choice; the one-player page is unchanged.
+                  setChoice(game);
+                }}
+              >
+                <div className="lobby-game-scene" aria-hidden="true">
+                  <span className="lobby-game-number">{game.number}</span>
+                  <div className="lobby-glyph">{game.glyph}</div>
+                  <div className="lobby-mini-tiles">
+                    {game.tiles.map((tile) => (
+                      <span key={tile}>{tile}</span>
+                    ))}
+                  </div>
+                  <i className="lobby-scene-orbit" />
                 </div>
-                <i className="lobby-scene-orbit" />
-              </div>
-              <div className="lobby-game-copy">
-                <span className="arcade-kicker">{game.tag}</span>
-                <h2>{game.name}</h2>
-                <p>{game.description}</p>
-                <div className="lobby-game-bottom">
-                  <small>{game.meta}</small>
-                  <span className="lobby-play">
-                    CHƠI <ArrowRight size={18} />
-                  </span>
+                <div className="lobby-game-copy">
+                  <span className="arcade-kicker">{game.tag}</span>
+                  <h2>{game.name}</h2>
+                  <p>{game.description}</p>
+                  <div className="lobby-game-bottom">
+                    <small>{game.meta}</small>
+                    <span className="lobby-play">
+                      CHƠI <ArrowRight size={18} />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </a>
-          ))}
-        </div>
-      </main>
+              </a>
+            ))}
+          </div>
+        </main>
+      </LobbyDesktopAds>
       <footer className="lobby-footer">
         <span>
           <MousePointer2 size={14} /> Chuột & cảm ứng <i /> <Keyboard size={15} /> Bàn phím
@@ -185,6 +188,7 @@ export function Lobby({
         <span>KHÔNG TÀI KHOẢN. VÀO LÀ CHƠI.</span>
         <b>玩中学 · 学中玩</b>
       </footer>
+      <LobbyMobileAd enabled={!notFound} />
       {notice && (
         <div className="arcade-notice" role="status">
           {notice}
