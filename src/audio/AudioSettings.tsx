@@ -107,21 +107,6 @@ export function AudioSettings({
         );
       })}
       <p className="game-audio-note">Tự lưu trên thiết bị này · Chuyển tab sẽ ngừng âm thanh.</p>
-      <p className="game-audio-note">
-        Nhạc:{' '}
-        <a href={profile.music.source} target="_blank" rel="noreferrer">
-          {profile.music.title} — {profile.music.author}
-        </a>
-        {profile.music.license && (
-          <>
-            {' '}
-            ·{' '}
-            <a href={profile.music.license} target="_blank" rel="noreferrer">
-              CC BY 4.0
-            </a>
-          </>
-        )}
-      </p>
       <button className="game-audio-done" onClick={close}>
         XONG RỒI
       </button>

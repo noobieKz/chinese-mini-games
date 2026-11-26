@@ -7,20 +7,23 @@ export type AudioProfile = {
   controls: { channel: AudioChannel; title: string; description: string; sample?: GameSound }[];
 };
 
+/** Every game plays the same background track (China-P). */
+const backgroundMusic: AudioProfile['music'] = {
+  title: 'China-P',
+  author: '徐梦圆 · Xu MengYuan',
+  source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=2675s',
+  url: '/audio/china-p.mp3',
+};
+
 export const fruitAudioProfile: AudioProfile = {
   storageKey: 'hanplay.fruit.audio.v1',
   description: 'Giai điệu Trung Hoa, beat điện tử rõ nhịp. Chém đúng, nối combo.',
-  music: {
-    title: 'China-E',
-    author: '徐梦圆 · Xu MengYuan',
-    source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=739s',
-    url: '/audio/china-e.mp3',
-  },
+  music: backgroundMusic,
   controls: [
     {
       channel: 'music',
       title: 'Nhạc nền',
-      description: 'China-E · Bản nhạc từ video China EDM đã chọn',
+      description: 'Bật hoặc tắt nhạc nền',
     },
     {
       channel: 'swing',
@@ -46,17 +49,12 @@ export const fruitAudioProfile: AudioProfile = {
 export const dragonAudioProfile: AudioProfile = {
   storageKey: 'hanplay.dragon.audio.v1',
   description: 'Beat điện tử giữ nhịp cho rồng lượn. Mỗi viên ngọc đúng một tiếng ngân.',
-  music: {
-    title: 'China-P',
-    author: '徐梦圆 · Xu MengYuan',
-    source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=2675s',
-    url: '/audio/china-p.mp3',
-  },
+  music: backgroundMusic,
   controls: [
     {
       channel: 'music',
       title: 'Nhạc nền',
-      description: 'China-P · Bản nhạc từ video China EDM đã chọn',
+      description: 'Bật hoặc tắt nhạc nền',
     },
     {
       channel: 'selection',
@@ -76,17 +74,12 @@ export const dragonAudioProfile: AudioProfile = {
 export const gardenAudioProfile: AudioProfile = {
   storageKey: 'hanplay.garden.audio.v1',
   description: 'Thả lỏng, nối từng cặp và khám phá từ mới.',
-  music: {
-    title: 'China-PiPa',
-    author: '徐梦圆 · Xu MengYuan',
-    source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=2890s',
-    url: '/audio/china-pipa.mp3',
-  },
+  music: backgroundMusic,
   controls: [
     {
       channel: 'music',
       title: 'Nhạc nền',
-      description: 'China-PiPa · Bản nhạc từ video China EDM đã chọn',
+      description: 'Bật hoặc tắt nhạc nền',
     },
     {
       channel: 'selection',

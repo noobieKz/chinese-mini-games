@@ -26,13 +26,14 @@ const row = (n: number, values: Partial<WordRow>): WordRow => ({
 test('the bundled sample is valid, complete and survives a JSON round trip', () => {
   const { issues } = buildBundle(sampleWordRows, sampleCollocationRows);
   assert.deepEqual(issues, []);
-  assert.equal(sampleBundle.words.length, 36);
+  assert.equal(sampleBundle.words.length, 44);
   assert.equal(sampleBundle.collocations.length, 12);
   assert.deepEqual(
     sampleBundle.levels.map((l) => [l.name, l.lessons.length]),
     [
       ['HSK 1', 3],
       ['HSK 2', 3],
+      ['Chào hỏi', 1],
     ],
   );
   assert.deepEqual(parseBundle(JSON.parse(JSON.stringify(sampleBundle))), sampleBundle);
@@ -81,7 +82,7 @@ test('lessons keep their first title and are listed in order', () => {
 });
 
 test('scopes pick one lesson, every lesson up to one, or the whole level', () => {
-  const pick = (key: string, game: Parameters<typeof selectWords>[2] = 'noi-tu') =>
+  const pick = (key: string, game: Parameters<typeof selectWords>[2] = 'rong-san-chu') =>
     selectWords(sampleBundle, parseScopeKey('HSK 1', key), game).length;
   assert.equal(pick('lesson:2'), 6);
   assert.equal(pick('upto:2'), 12);
