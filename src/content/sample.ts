@@ -81,6 +81,9 @@ const collocations: [
   [3, '房间', '打扫', '喝', '听', 'dǎsǎo fángjiān', 'dọn phòng'],
 ];
 
+/** The two Nối cặp games (Ghép chữ, Nối từ) play only the greetings level; HSK words go elsewhere. */
+const PAIR_GAMES_LEVEL = 'Chào hỏi';
+
 export const sampleWordRows: WordRow[] = words.map(
   ([level, lesson, lessonTitle, hanzi, pinyin, meaning], i) => ({
     row: i + 2,
@@ -90,7 +93,7 @@ export const sampleWordRows: WordRow[] = words.map(
     hanzi,
     pinyin,
     meaning,
-    games: '',
+    games: level === PAIR_GAMES_LEVEL ? '' : 'chem-hoa-qua, rong-san-chu',
   }),
 );
 export const sampleCollocationRows: CollocationRow[] = collocations.map(

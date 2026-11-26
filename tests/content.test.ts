@@ -82,7 +82,7 @@ test('lessons keep their first title and are listed in order', () => {
 });
 
 test('scopes pick one lesson, every lesson up to one, or the whole level', () => {
-  const pick = (key: string, game: Parameters<typeof selectWords>[2] = 'noi-tu') =>
+  const pick = (key: string, game: Parameters<typeof selectWords>[2] = 'rong-san-chu') =>
     selectWords(sampleBundle, parseScopeKey('HSK 1', key), game).length;
   assert.equal(pick('lesson:2'), 6);
   assert.equal(pick('upto:2'), 12);
