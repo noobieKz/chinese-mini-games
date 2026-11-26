@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-18T04:22:53.604Z",
+  "updatedAt": "2026-11-26T12:20:39.247Z",
   "levels": [
     {
       "name": "HSK 1",
@@ -33,6 +33,15 @@
         {
           "number": 3,
           "title": "Giao tiếp"
+        }
+      ]
+    },
+    {
+      "name": "Chào hỏi",
+      "lessons": [
+        {
+          "number": 1,
+          "title": "Chào hỏi & lớp học"
         }
       ]
     }
@@ -360,6 +369,78 @@
       "hanzi": "可以",
       "pinyin": "kěyǐ",
       "meaning": "có thể",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-你好",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "你好",
+      "pinyin": "nǐ hǎo",
+      "meaning": "xin chào",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-再见",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "再见",
+      "pinyin": "zàijiàn",
+      "meaning": "tạm biệt",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-请问",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "请问",
+      "pinyin": "qǐngwèn",
+      "meaning": "xin hỏi",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-什么",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "什么",
+      "pinyin": "shénme",
+      "meaning": "cái gì",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-名字",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "名字",
+      "pinyin": "míngzi",
+      "meaning": "tên",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-老师",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "老师",
+      "pinyin": "lǎoshī",
+      "meaning": "giáo viên",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-同学",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "同学",
+      "pinyin": "tóngxué",
+      "meaning": "bạn học",
+      "games": []
+    },
+    {
+      "id": "chao-hoi-1-大家",
+      "level": "Chào hỏi",
+      "lesson": 1,
+      "hanzi": "大家",
+      "pinyin": "dàjiā",
+      "meaning": "mọi người",
       "games": []
     }
   ],
