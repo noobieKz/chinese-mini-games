@@ -109,7 +109,7 @@ Kích thước bundle:
 
 7. ✅ **Đã sửa 16/11/2026** (20 giây mỗi cặp). **Thời gian cố định 4 phút** (`WordGarden.tsx:61`, `240`) cho mọi kích thước bàn: 4 cặp thì quá dư, 18 cặp thì gắt. Nên tỉ lệ theo số cặp.
 
-8. ~~**Nhạc nền nặng và bật mặc định.** `eastern-thought.mp3` 3,6 MB tải ngay lần chạm đầu tiên.~~ **Đã xử lý 16/11/2026:** Nối cặp dùng Lotus Pond (1 MB, loop 60s, CC0); Chém hoa quả chuyển sang Dragon Dance (1,1 MB, cùng gói CC0, nhịp nhanh hơn). File `eastern-thought.mp3` vẫn còn trong `public/audio` nhưng không game nào tải; có thể xoá để giảm kích thước deploy.
+8. ~~**Nhạc nền nặng và bật mặc định.** `eastern-thought.mp3` 3,6 MB tải ngay lần chạm đầu tiên.~~ **Đã xử lý 16/11/2026:** Nối cặp dùng Lotus Pond (1 MB, loop 60s, CC0); Chém hoa quả chuyển sang Dragon Dance (1,1 MB, cùng gói CC0, nhịp nhanh hơn). File `eastern-thought.mp3` vẫn còn trong `public/audio` nhưng không game nào tải; có thể xoá để giảm kích thước deploy. **Cập nhật 27/11/2026:** mọi game dùng China-P; các file nhạc không dùng (China-E, China-PiPa, Lotus Pond, Dragon Dance, Eastern Thought) đã xoá khỏi `public/audio`.
 
 9. ✅ **Đã sửa 16/11/2026** (trang 404 phía client; server vẫn trả 200 do SPA fallback). **Không có trang 404.** Mọi đường dẫn sai (`/games/abc`, `/xyz`) đều hiện thư viện; người dùng không biết link hỏng.
 

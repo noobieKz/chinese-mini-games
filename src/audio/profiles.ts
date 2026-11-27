@@ -3,17 +3,12 @@ import type { AudioChannel, GameSound } from './GameAudio';
 export type AudioProfile = {
   storageKey: string;
   description: string;
-  music: { title: string; author: string; source: string; url: string; license?: string };
+  music: { url: string };
   controls: { channel: AudioChannel; title: string; description: string; sample?: GameSound }[];
 };
 
-/** Every game plays the same background track (China-P). */
-const backgroundMusic: AudioProfile['music'] = {
-  title: 'China-P',
-  author: '徐梦圆 · Xu MengYuan',
-  source: 'https://www.youtube.com/watch?v=IAMbG8OiExU&t=2675s',
-  url: '/audio/china-p.mp3',
-};
+/** Every game plays the same background track: China-P (source and status in public/audio/CREDITS.md). */
+const backgroundMusic: AudioProfile['music'] = { url: '/audio/china-p.mp3' };
 
 export const fruitAudioProfile: AudioProfile = {
   storageKey: 'hanplay.fruit.audio.v1',

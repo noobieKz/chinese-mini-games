@@ -23,7 +23,7 @@ Phím mũi tên / WASD; vuốt trên bàn (mỗi đoạn vuốt 24px đổi hư�
 - `DragonScene.ts`: Phaser vẽ bàn và rồng; nội suy vị trí giữa hai ô theo thời gian thực, qua mép thì nhảy chứ không trượt ngang bàn; hiệu ứng ăn ngọc, ghép từ, ăn nhầm. Bước đi theo wall clock, tạm dừng dời mốc thời gian.
 - `DragonWords.tsx`: HUD, đề bài, ngọc chữ bằng DOM (chữ sắc nét), điều khiển, các màn; dùng lại khung trang, hộp thoại và nút của Nối cặp.
 - `dragon.css`: bàn, ngọc, nút điều hướng, bố cục vừa một màn hình (laptop và điện thoại từ 667px).
-- Âm thanh: `dragonAudioProfile` (nhạc Dragon Dance, tiếng ăn ngọc, báo đúng/sai).
+- Âm thanh: `dragonAudioProfile` (nhạc nền China-P dùng chung mọi game, tiếng ăn ngọc, báo đúng/sai).
 - Bàn 18 × 12 trên màn ngang, 12 × 15 trên điện thoại; chọn khi bắt đầu lượt và giữ nguyên trong lượt.
 - Bản dev có `window.__dragon` để kiểm thử trong trình duyệt; Vite loại bỏ đoạn này khỏi bản build.
 
