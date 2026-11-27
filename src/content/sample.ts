@@ -49,14 +49,14 @@ const words: [
   ['HSK 2', 3, '', '知道', 'zhīdào', 'biết'],
   ['HSK 2', 3, '', '觉得', 'juéde', 'cảm thấy'],
   ['HSK 2', 3, '', '可以', 'kěyǐ', 'có thể'],
-  ['Chào hỏi', 1, 'Chào hỏi & lớp học', '你好', 'nǐ hǎo', 'xin chào'],
-  ['Chào hỏi', 1, '', '再见', 'zàijiàn', 'tạm biệt'],
-  ['Chào hỏi', 1, '', '请问', 'qǐngwèn', 'xin hỏi'],
-  ['Chào hỏi', 1, '', '什么', 'shénme', 'cái gì'],
-  ['Chào hỏi', 1, '', '名字', 'míngzi', 'tên'],
-  ['Chào hỏi', 1, '', '老师', 'lǎoshī', 'giáo viên'],
-  ['Chào hỏi', 1, '', '同学', 'tóngxué', 'bạn học'],
-  ['Chào hỏi', 1, '', '大家', 'dàjiā', 'mọi người'],
+  ['HSK 1', 4, 'Chào hỏi', '你好', 'nǐ hǎo', 'xin chào'],
+  ['HSK 1', 4, '', '再见', 'zàijiàn', 'tạm biệt'],
+  ['HSK 1', 4, '', '请问', 'qǐngwèn', 'xin hỏi'],
+  ['HSK 1', 4, '', '什么', 'shénme', 'cái gì'],
+  ['HSK 1', 4, '', '名字', 'míngzi', 'tên'],
+  ['HSK 1', 4, '', '老师', 'lǎoshī', 'giáo viên'],
+  ['HSK 1', 4, '', '同学', 'tóngxué', 'bạn học'],
+  ['HSK 1', 4, '', '大家', 'dàjiā', 'mọi người'],
 ];
 const collocations: [
   lesson: number,
@@ -81,8 +81,7 @@ const collocations: [
   [3, '房间', '打扫', '喝', '听', 'dǎsǎo fángjiān', 'dọn phòng'],
 ];
 
-/** The two Nối cặp games (Ghép chữ, Nối từ) play only the greetings level; HSK words go elsewhere. */
-const PAIR_GAMES_LEVEL = 'Chào hỏi';
+/** The two matching games use the greetings lesson in the sample. */
 
 export const sampleWordRows: WordRow[] = words.map(
   ([level, lesson, lessonTitle, hanzi, pinyin, meaning], i) => ({
@@ -93,7 +92,7 @@ export const sampleWordRows: WordRow[] = words.map(
     hanzi,
     pinyin,
     meaning,
-    games: level === PAIR_GAMES_LEVEL ? '' : 'chem-hoa-qua, rong-san-chu',
+    games: level === 'HSK 1' && lesson === 4 ? '' : 'chem-hoa-qua, rong-san-chu',
   }),
 );
 export const sampleCollocationRows: CollocationRow[] = collocations.map(

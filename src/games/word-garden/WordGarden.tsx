@@ -632,7 +632,9 @@ export function WordGarden({ mode, onBack }: Props) {
               <br />
               Nối giúp không cộng điểm. Đảo ô miễn phí.
               <br />
-              Bài ít từ sẽ tự giảm số cặp.
+              {words.length > 0 && totalPairs < pairs
+                ? `Bộ từ đã chọn có ${words.length} từ phù hợp. Bàn ${pairs} cặp sẽ chơi với ${totalPairs} cặp.`
+                : 'Bài ít từ sẽ tự giảm số cặp.'}
             </p>
           </section>
           <button className="garden-primary" onClick={() => setSetup(false)}>

@@ -51,7 +51,7 @@ function Banner({ url, width, height }: { url: string; width: number; height: nu
       src={url}
       width={width}
       height={height}
-      sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"
+      sandbox="allow-scripts allow-popups"
       loading="lazy"
     />
   );

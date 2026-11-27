@@ -3,6 +3,7 @@ export type AudioChannel = (typeof audioChannels)[number];
 export type GameSound = 'swing' | 'slice' | 'correct' | 'wrong' | 'click' | 'select';
 export type AudioLevel = { enabled: boolean; volume: number };
 export type GameAudioSettings = Record<AudioChannel | 'master', AudioLevel>;
+export const audioSettingsVersion = 3;
 
 export async function loadMusicAsset(audio: AudioContext, url: string) {
   const response = await fetch(url);
@@ -13,7 +14,7 @@ export async function loadMusicAsset(audio: AudioContext, url: string) {
 export function readAudioSettings(raw: string | null): GameAudioSettings {
   const defaults: GameAudioSettings = {
     master: { enabled: true, volume: 0.8 },
-    music: { enabled: true, volume: 0.18 },
+    music: { enabled: true, volume: 0.1 },
     swing: { enabled: true, volume: 0.7 },
     slice: { enabled: true, volume: 0.8 },
     feedback: { enabled: true, volume: 0.7 },
@@ -24,6 +25,13 @@ export function readAudioSettings(raw: string | null): GameAudioSettings {
     for (const key of ['master', ...audioChannels] as const) {
       const item = saved?.[key];
       if (typeof item?.enabled === 'boolean') defaults[key].enabled = item.enabled;
+      // Older versions automatically saved their music default, even without user edits.
+      if (
+        key === 'music' &&
+        ((saved?.version == null && item?.volume === 0.18) ||
+          (saved?.version === 2 && item?.volume === 0.06))
+      )
+        continue;
       if (typeof item?.volume === 'number' && Number.isFinite(item.volume))
         defaults[key].volume = Math.max(0, Math.min(1, item.volume));
     }

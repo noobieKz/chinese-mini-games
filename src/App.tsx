@@ -5,6 +5,9 @@ import { GameAdRails, useDesktopAds } from './arcade/LobbyAds';
 import { FruitSlash } from './games/fruit-slash/FruitSlash';
 import { DragonWords } from './games/dragon-words/DragonWords';
 import { WordGarden } from './games/word-garden/WordGarden';
+import { SCENARIO_GAME_NAME, SCENARIO_GAME_ROUTE } from './games/milk-tea/orders';
+import { MilkTea } from './games/milk-tea/MilkTea';
+import { TeacherPage } from './teacher/TeacherPage';
 import { DuelPage } from './games/duel/DuelPage';
 import type { MatchMode } from './games/word-garden/vocabulary';
 import './games/word-garden/garden.css';
@@ -28,9 +31,12 @@ export default function App() {
   const route = path.split('?')[0].replace(/\/+$/, '') || '/';
   const fruit = route === '/games/chem-hoa-qua';
   const dragon = route === '/games/rong-san-chu';
+  const scenarios = route === '/games/' + SCENARIO_GAME_ROUTE;
+  const teacher = route === '/teacher';
   const duel = route === '/games/solo';
-  const notFound = !mode && !fruit && !dragon && !duel && !libraryRoutes.includes(route);
-  const game = Boolean(mode || fruit || dragon || duel);
+  const notFound =
+    !mode && !fruit && !dragon && !scenarios && !duel && !teacher && !libraryRoutes.includes(route);
+  const game = Boolean(mode || fruit || dragon || scenarios || duel);
   // On PC, game screens keep a banner in each side margin (the game is narrowed to make room).
   const ads = useDesktopAds(game);
   const shell = (page: React.ReactNode) => (
@@ -40,20 +46,24 @@ export default function App() {
     </div>
   );
   useEffect(() => {
-    document.title = fruit
-      ? 'Chém hoa quả · HanPlay'
-      : dragon
-        ? 'Rồng săn chữ · HanPlay'
-        : duel
-          ? 'Solo 2 người · HanPlay'
-          : mode
-            ? mode === 'meaning'
-              ? 'Nối từ với nghĩa · HanPlay'
-              : 'Ghép chữ thành từ · HanPlay'
-            : notFound
-              ? 'Không tìm thấy trang · HanPlay'
-              : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
-  }, [fruit, dragon, duel, mode, notFound]);
+    document.title = teacher
+      ? 'Quản lý bài học · HanPlay'
+      : scenarios
+        ? `${SCENARIO_GAME_NAME} · HanPlay`
+        : fruit
+          ? 'Chém hoa quả · HanPlay'
+          : dragon
+            ? 'Rồng săn chữ · HanPlay'
+            : duel
+              ? 'Solo 2 người · HanPlay'
+              : mode
+                ? mode === 'meaning'
+                  ? 'Nối từ với nghĩa · HanPlay'
+                  : 'Ghép chữ thành từ · HanPlay'
+                : notFound
+                  ? 'Không tìm thấy trang · HanPlay'
+                  : 'HanPlay · Chơi một lượt, nhớ thêm một từ';
+  }, [fruit, dragon, scenarios, duel, teacher, mode, notFound]);
   useEffect(() => {
     history.replaceState({ ...history.state, hanplayPosition: position.current }, '');
     const changed = (event: PopStateEvent) => {
@@ -81,6 +91,8 @@ export default function App() {
   };
   if (fruit) return shell(<FruitSlash onBack={() => navigate('/games')} />);
   if (dragon) return shell(<DragonWords onBack={() => navigate('/games')} />);
+  if (teacher) return <TeacherPage />;
+  if (scenarios) return shell(<MilkTea onBack={() => navigate('/games')} />);
   if (duel) return shell(<DuelPage onBack={() => navigate('/games')} />);
   if (mode) return shell(<WordGarden key={mode} mode={mode} onBack={() => navigate('/games')} />);
   return <Lobby navigate={navigate} notFound={notFound} />;

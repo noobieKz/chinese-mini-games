@@ -1,0 +1,181 @@
+.teacher-workspace {
+  width: min(100% - 2rem, 940px);
+  margin-inline: auto;
+  padding-block: 1.5rem 3rem;
+  color: #223d33;
+}
+.teacher-top,
+.teacher-title,
+.teacher-actions,
+.teacher-draft-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.teacher-top,
+.teacher-draft-row {
+  justify-content: space-between;
+}
+.teacher-top a,
+.teacher-top button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.teacher-top a {
+  color: #1d5948;
+  font-weight: 700;
+}
+.teacher-title {
+  margin-block: 1.8rem 1rem;
+}
+.teacher-title h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 5vw, 2.45rem);
+}
+.teacher-summary,
+.teacher-card p,
+.teacher-card small {
+  color: #4f635a;
+}
+.teacher-editor {
+  display: grid;
+  gap: 1rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.teacher-card {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border-radius: 14px;
+  border: 1px solid #d4e0d9;
+  background: #fff;
+}
+.teacher-card h2,
+.teacher-card p {
+  margin: 0;
+}
+.teacher-login-form {
+  max-width: 460px;
+}
+.teacher-card label,
+.teacher-select-field {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 650;
+  min-width: 0;
+}
+.teacher-select-field > .app-select {
+  min-width: 0;
+}
+.teacher-card :is(input:not([type='checkbox']), textarea) {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #aebfb5;
+  border-radius: 8px;
+  color: #223d33;
+  background: #fcfdfb;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  font-weight: 450;
+}
+.teacher-card textarea {
+  resize: vertical;
+}
+.teacher-fields {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
+}
+.teacher-level-action {
+  align-self: end;
+  justify-self: start;
+}
+.teacher-count {
+  font-weight: 650;
+}
+.teacher-switch,
+.teacher-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.teacher-workspace button {
+  min-height: 42px;
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid #b8ccc0;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+.teacher-primary,
+.teacher-switch button[aria-pressed='true'] {
+  background: #1d5948;
+  color: #fff;
+}
+.teacher-primary {
+  justify-self: start;
+}
+.teacher-secondary,
+.teacher-switch button {
+  background: #f4f7f3;
+  color: #26483b;
+}
+.teacher-workspace button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.teacher-workspace :is(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid #227756;
+  outline-offset: 2px;
+}
+.teacher-draft-row {
+  border-top: 1px solid #e2e9e1;
+  padding-top: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.teacher-draft-row small {
+  display: block;
+  margin-top: 0.25rem;
+}
+.teacher-draft-row button {
+  flex-shrink: 0;
+}
+.teacher-review,
+.teacher-error {
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #eff6ed;
+}
+.teacher-error {
+  color: #862f36 !important;
+  background: #fff1ef;
+}
+
+.teacher-word-list {
+  display: grid;
+  gap: 0.75rem;
+  max-height: 28rem;
+  overflow-y: auto;
+}
+.teacher-word-edit {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #eff6ed;
+}
+.teacher-card h3 {
+  margin: 0;
+}
+@media (max-width: 520px) {
+  .teacher-word-list .teacher-draft-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

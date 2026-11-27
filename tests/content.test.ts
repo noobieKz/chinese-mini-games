@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   buildBundle,
   levelSlug,
+  normalizeHskLevels,
   parseBundle,
   parseScopeKey,
   scopeKey,
@@ -31,9 +32,8 @@ test('the bundled sample is valid, complete and survives a JSON round trip', () 
   assert.deepEqual(
     sampleBundle.levels.map((l) => [l.name, l.lessons.length]),
     [
-      ['HSK 1', 3],
+      ['HSK 1', 4],
       ['HSK 2', 3],
-      ['Chào hỏi', 1],
     ],
   );
   assert.deepEqual(parseBundle(JSON.parse(JSON.stringify(sampleBundle))), sampleBundle);
@@ -46,7 +46,7 @@ test('spreadsheet errors name the row and column, and bad rows are skipped', () 
     row(3, { hanzi: '谢谢', pinyin: '' }),
     row(4, { hanzi: 'xie xie', pinyin: 'xièxie' }),
     row(5, { hanzi: '朋友', lesson: 'một' }),
-    row(6, { hanzi: '你好', lesson: '2' }),
+    row(6, { hanzi: '你好' }),
     row(7, { hanzi: '老师', games: 'rong-san-chu, bay-chim' }),
     row(8, { hanzi: '', pinyin: '', meaning: '' }),
   ]);
@@ -61,7 +61,7 @@ test('spreadsheet errors name the row and column, and bad rows are skipped', () 
   assert.equal(
     byRow[6].severity,
     'warning',
-    'duplicate in the same level is skipped with a warning',
+    'duplicate in the same lesson is skipped with a warning',
   );
   assert.match(byRow[7].message, /bay-chim/);
   assert.equal(byRow[8], undefined, 'blank lines are ignored');
@@ -86,8 +86,9 @@ test('scopes pick one lesson, every lesson up to one, or the whole level', () =>
     selectWords(sampleBundle, parseScopeKey('HSK 1', key), game).length;
   assert.equal(pick('lesson:2'), 6);
   assert.equal(pick('upto:2'), 12);
-  assert.equal(pick('all'), 18);
-  assert.equal(pick('nonsense'), 18, 'unknown keys fall back to the whole level');
+  assert.equal(pick('all'), 24);
+  assert.equal(pick('lesson:4', 'noi-tu'), 8);
+  assert.equal(pick('nonsense'), 24, 'unknown keys fall back to the whole level');
   assert.equal(scopeKey(parseScopeKey('HSK 1', 'upto:3')), 'upto:3');
   assert.equal(selectCollocations(sampleBundle, parseScopeKey('HSK 1', 'lesson:1')).length, 4);
   assert.equal(levelSlug('HSK 1'), 'hsk-1');
@@ -113,4 +114,33 @@ test('Ghép chữ only uses two-character words; the Game column limits a word t
     selectWords(bundle, scope, 'noi-tu').map((w) => w.hanzi),
     ['你好', '茶'],
   );
+});
+
+test('legacy themes move into HSK 1 as distinct lessons and keep their words', () => {
+  const { bundle } = buildBundle([
+    row(1, { level: 'HSK 1', lesson: '1' }),
+    row(2, { level: 'Chào hỏi', lesson: '1' }),
+    row(3, { level: 'Chào hỏi', lesson: '1', hanzi: '再见' }),
+  ]);
+  const migrated = normalizeHskLevels(bundle);
+  assert.deepEqual(migrated.levels, [
+    {
+      name: 'HSK 1',
+      lessons: [
+        { number: 1, title: '' },
+        { number: 2, title: 'Chào hỏi' },
+      ],
+    },
+  ]);
+  assert.equal(migrated.words.length, bundle.words.length);
+  assert.deepEqual(
+    migrated.words.map(({ id }) => id),
+    bundle.words.map(({ id }) => id),
+  );
+  assert.equal(
+    selectWords(migrated, { level: 'HSK 1', range: 'lesson', lesson: 2 }, 'noi-tu').length,
+    2,
+  );
+  assert.equal(selectWords(migrated, { level: 'HSK 1', range: 'all' }, 'noi-tu').length, 2);
+  assert.deepEqual(normalizeHskLevels(migrated), migrated);
 });

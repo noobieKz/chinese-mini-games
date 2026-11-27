@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   ArrowRight,
+  BookOpen,
   Expand,
   Gamepad2,
   Keyboard,
@@ -10,55 +11,58 @@ import {
   User,
   X,
 } from 'lucide-react';
+import { SCENARIO_GAME_NAME, SCENARIO_GAME_ROUTE } from '../games/milk-tea/orders';
 import { ArcadeDialog } from './ArcadeDialog';
 import { LobbyDesktopAds, LobbyMobileAd } from './LobbyAds';
 
 /** Games with a two-player duel (Solo 2 người); the others show it as coming soon. */
-const duelGames = new Set(['ghep-chu', 'noi-tu', 'chem-hoa-qua', 'rong-san-chu']);
+const duelGames = new Set([
+  'ghep-chu',
+  'noi-tu',
+  'chem-hoa-qua',
+  'rong-san-chu',
+  SCENARIO_GAME_ROUTE,
+]);
 const games = [
   {
     route: 'ghep-chu',
     name: 'Ghép chữ thành từ',
     tag: 'GHÉP CHỮ',
-    glyph: '学',
-    number: '01',
     color: 'jade',
     description: 'Hai chữ Hán. Một từ mới. Tìm đường nối và đánh thức khu vườn.',
     meta: 'Thư thả hoặc tính giờ',
-    tiles: ['朋', '友'],
   },
   {
     route: 'noi-tu',
     name: 'Nối từ với nghĩa',
     tag: 'GHI NHỚ',
-    glyph: '知',
-    number: '02',
     color: 'blue',
     description: 'Kết nối chữ với nghĩa. Mỗi cặp đúng mở ra một khám phá.',
     meta: 'Luyện trí nhớ',
-    tiles: ['你好', 'xin chào'],
   },
   {
     route: 'chem-hoa-qua',
     name: 'Chém hoa quả',
     tag: 'PHẢN XẠ',
-    glyph: '切',
-    number: '03',
     color: 'amber',
     description: 'Đọc thật nhanh. Chém thật chuẩn. Nối combo và bứt phá điểm số.',
     meta: '12 câu mỗi lượt',
-    tiles: ['果', '✦'],
   },
   {
     route: 'rong-san-chu',
     name: 'Rồng săn chữ',
     tag: 'PHIÊU LƯU',
-    glyph: '龙',
-    number: '04',
     color: 'rose',
     description: 'Lái rồng săn từng chữ. Ghép đúng từ để lớn lên và đi xa hơn.',
     meta: '3 mạng · Chơi vô tận',
-    tiles: ['龙', '字'],
+  },
+  {
+    route: SCENARIO_GAME_ROUTE,
+    name: SCENARIO_GAME_NAME,
+    tag: 'ĐỌC HIỂU',
+    color: 'rose',
+    description: 'Đọc tiếng Trung để pha trà, phục vụ món, bán vé, lấy quần áo hoặc cho mượn sách.',
+    meta: '90 giây · Solo 2 người',
   },
 ];
 
@@ -113,6 +117,14 @@ export function Lobby({
           <button className="arcade-icon" onClick={fullscreen} aria-label="Toàn màn hình">
             <Expand size={18} />
           </button>
+          <a
+            href="/teacher"
+            className="arcade-icon"
+            aria-label="Quản lý bài học"
+            title="Quản lý bài học"
+          >
+            <BookOpen size={19} aria-hidden="true" />
+          </a>
         </div>
       </header>
       <LobbyDesktopAds enabled={!notFound}>
@@ -139,7 +151,7 @@ export function Lobby({
               </p>
             </div>
             <span className="lobby-chapter">
-              CHỌN MÀN CHƠI<span>01 — 04</span>
+              CHỌN MÀN CHƠI<span>{games.length} TRÒ</span>
             </span>
           </div>
           <div className="lobby-games">
@@ -155,15 +167,8 @@ export function Lobby({
                   setChoice(game);
                 }}
               >
-                <div className="lobby-game-scene" aria-hidden="true">
-                  <span className="lobby-game-number">{game.number}</span>
-                  <div className="lobby-glyph">{game.glyph}</div>
-                  <div className="lobby-mini-tiles">
-                    {game.tiles.map((tile) => (
-                      <span key={tile}>{tile}</span>
-                    ))}
-                  </div>
-                  <i className="lobby-scene-orbit" />
+                <div className="lobby-game-scene">
+                  <img src={`/games-art/${game.route}.jpg`} alt="" decoding="async" />
                 </div>
                 <div className="lobby-game-copy">
                   <span className="arcade-kicker">{game.tag}</span>
@@ -186,7 +191,6 @@ export function Lobby({
           <MousePointer2 size={14} /> Chuột & cảm ứng <i /> <Keyboard size={15} /> Bàn phím
         </span>
         <span>KHÔNG TÀI KHOẢN. VÀO LÀ CHƠI.</span>
-        <b>玩中学 · 学中玩</b>
       </footer>
       <LobbyMobileAd enabled={!notFound} />
       {notice && (

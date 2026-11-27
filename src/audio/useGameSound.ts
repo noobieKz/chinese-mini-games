@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { GameAudio, loadMusicAsset, readAudioSettings, type GameAudioSettings } from './GameAudio';
+import {
+  audioSettingsVersion,
+  GameAudio,
+  loadMusicAsset,
+  readAudioSettings,
+  type GameAudioSettings,
+} from './GameAudio';
 import type { AudioProfile } from './profiles';
 
 export function useGameSound(profile: AudioProfile) {
@@ -33,7 +39,10 @@ export function useGameSound(profile: AudioProfile) {
   useEffect(() => {
     mixer.current?.update(settings);
     try {
-      localStorage.setItem(profile.storageKey, JSON.stringify(settings));
+      localStorage.setItem(
+        profile.storageKey,
+        JSON.stringify({ ...settings, version: audioSettingsVersion }),
+      );
     } catch {
       /* Optional persistence. */
     }

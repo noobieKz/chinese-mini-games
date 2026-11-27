@@ -1,0 +1,281 @@
+.tea-page {
+  min-height: 100dvh;
+  --tea-ink: #382b25;
+  --tea-muted: #674f42;
+  --tea-paper: #fffcf5;
+  --tea-line: #d9bba7;
+  --tea-peach: #f7d3c4;
+  --tea-peach-line: #b97d69;
+  --tea-green: #245846;
+  color: var(--tea-ink);
+  background: linear-gradient(180deg, #fff8ec, #f6e8dc);
+}
+.tea-page .arcade-topbar {
+  background: #fffaf1;
+  border-color: var(--tea-line);
+}
+.tea-arena {
+  width: min(100% - 1.5rem, 680px);
+  margin-inline: auto;
+  padding-block: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+.tea-ticket {
+  color: var(--tea-ink);
+  background: var(--tea-paper);
+  border: 1px solid var(--tea-line);
+  border-radius: 14px;
+  box-shadow: 0 3px 0 #dfc3ab;
+  padding: 0.8rem 1rem;
+}
+.tea-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+}
+.tea-hud span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.tea-ticket p {
+  margin: 0.6rem 0 0;
+  font-weight: 800;
+  font-size: clamp(1rem, 4.2vw, 1.55rem);
+}
+.tea-world {
+  aspect-ratio: 640 / 290;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f2d6be;
+  box-shadow: 0 3px 0 #d3ac8d;
+  display: grid;
+  place-items: center;
+}
+.tea-world canvas {
+  display: block;
+}
+.tea-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.tea-controls fieldset,
+.tea-controls button {
+  min-width: 0;
+}
+.tea-controls fieldset {
+  margin: 0;
+  padding: 0.35rem;
+  border: 1px solid var(--tea-line);
+  background: #fff7ee;
+  border-radius: 10px;
+}
+.tea-controls legend {
+  padding-inline: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.tea-controls fieldset div {
+  display: grid;
+  gap: 0.3rem;
+}
+.tea-controls button {
+  min-height: 44px;
+  color: var(--tea-ink);
+  background: var(--tea-paper);
+  border: 1px solid var(--tea-line);
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 0.25rem;
+}
+.tea-controls button[aria-pressed='true'] {
+  color: #572c23;
+  background: var(--tea-peach);
+  border-color: var(--tea-peach-line);
+}
+.tea-controls button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.tea-controls button:focus-visible {
+  outline: 2px solid var(--tea-green);
+  outline-offset: 2px;
+}
+.tea-controls .tea-serve {
+  grid-column: 1 / -1;
+  color: #fffdf5;
+  background: var(--tea-green);
+  border-color: transparent;
+}
+.tea-feedback {
+  display: flex;
+  gap: 0.45rem;
+  align-items: start;
+  min-height: 1.5em;
+  font-size: 0.86rem;
+}
+.tea-feedback:not(:empty) {
+  border: 1px solid var(--tea-line);
+  border-radius: 10px;
+  background: var(--tea-paper);
+  padding: 0.55rem 0.7rem;
+}
+.tea-feedback svg {
+  flex: none;
+  color: var(--tea-green);
+}
+
+.tea-counter {
+  grid-template-columns: minmax(0, 1fr);
+}
+.tea-steps,
+.tea-staging {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.tea-steps button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.55rem;
+}
+.tea-steps button[aria-current='step'] {
+  color: #302332;
+  background: #ffd790;
+  border-color: var(--tea-green);
+}
+.tea-controls .tea-workbench > div {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 125px), 1fr));
+}
+.tea-staging button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding-inline: 0.8rem;
+}
+.tea-staging .tea-serve {
+  flex: 1;
+}
+.tea-pinyin {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--tea-muted);
+}
+.tea-controls .tea-pour {
+  margin-top: 0.45rem;
+  width: 100%;
+  background: #f3dfbe;
+}
+.arcade-app:has(.tea-page) {
+  overflow-y: auto;
+}
+
+.tea-order-count {
+  display: grid;
+  gap: 0.35rem;
+}
+.arcade-dialog .tea-order-count {
+  margin-block: 0.8rem;
+}
+
+.tea-order-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.7rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tea-order-progress li {
+  display: inline-flex;
+  gap: 0.2rem;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.8rem;
+  min-height: 1.65rem;
+  padding-inline: 0.25rem;
+  border: 1px solid #aa9c94;
+  border-radius: 0.4rem;
+  background: #fbf7f4;
+  color: #5c504e;
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+.tea-order-progress li[aria-current='step'] {
+  border: 2px solid #9f614f;
+  background: #f8dcce;
+  color: #632f23;
+}
+.tea-order-progress li[data-result='correct'] {
+  border-color: #5b875e;
+  background: #e0f3df;
+  color: #24502c;
+}
+.tea-order-progress li[data-result='wrong'] {
+  border-color: #aa5454;
+  background: #fde4e2;
+  color: #852c31;
+}
+.tea-order-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.tea-page[data-topic='clothes'] {
+  --tea-paper: #fffafa;
+  --tea-line: #dcbcc3;
+  --tea-peach: #f4d0d9;
+  --tea-green: #784353;
+  background: linear-gradient(#fff6f5, #f5e4e9);
+}
+.tea-page[data-topic='train'] {
+  --tea-paper: #f7fbff;
+  --tea-line: #b6cad9;
+  --tea-peach: #cde5f0;
+  --tea-green: #255776;
+  background: linear-gradient(#f2faff, #e1edf4);
+}
+.tea-page[data-topic='restaurant'] {
+  --tea-paper: #fff9eb;
+  --tea-line: #dbba88;
+  --tea-peach: #f9d69b;
+  --tea-green: #7b401f;
+  background: linear-gradient(#fff8e9, #f7e6ca);
+}
+.tea-page[data-topic='library'] {
+  --tea-paper: #fbf8ff;
+  --tea-line: #cbc0db;
+  --tea-peach: #e6d6f4;
+  --tea-green: #594471;
+  background: linear-gradient(#faf6ff, #eee6f7);
+}
+
+.tea-topic-field,
+.tea-setup-fields {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.tea-setup-fields {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr));
+  margin-block: 0.8rem;
+}
+.tea-topic-field > .app-select,
+.tea-order-count > .app-select {
+  min-width: 0;
+}
+.tea-setup-fields .tea-order-count {
+  margin: 0;
+}

@@ -142,6 +142,10 @@
 .app-select-option > span {
   min-width: 0;
 }
+.app-select-option[aria-disabled='true'] {
+  color: #6b7770;
+  cursor: default;
+}
 .app-select-option > svg {
   flex-shrink: 0;
   color: #397859;

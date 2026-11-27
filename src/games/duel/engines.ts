@@ -6,6 +6,7 @@ import { z } from 'zod';
 import * as garden from '../word-garden/duel';
 import * as fruit from './fruit-rules';
 import * as dragon from './dragon-rules';
+import * as tea from './tea-rules';
 import type { BasePlayer, BaseState, DuelGame } from './core';
 
 export type Engine = {
@@ -26,7 +27,28 @@ const asGarden = (s: BaseState) => s as garden.DuelState;
 const asFruit = (s: BaseState) => s as fruit.FruitState;
 const asDragon = (s: BaseState) => s as dragon.DragonDuelState;
 
+const asTea = (s: BaseState) => s as tea.TeaState;
+
 export const engines: Record<DuelGame, Engine> = {
+  tea: {
+    create(code, body) {
+      const parsed = tea.teaRoomSchema.safeParse(body);
+      return parsed.success
+        ? tea.createTea(code, parsed.data.topic, parsed.data.scenarios, parsed.data.orderCount)
+        : 'Thiết lập tiệm trà sữa không hợp lệ.';
+    },
+    join: (s, id, name) => tea.joinTea(asTea(s), id, name),
+    disconnect: (s, id, now) => tea.leaveTea(asTea(s), id, now),
+    setReady: (s, id, ready, now) => tea.readyTea(asTea(s), id, ready, now),
+    handle(s, id, message, now) {
+      const parsed = tea.teaMessageSchema.safeParse(message);
+      return parsed.success && tea.serveTea(asTea(s), id, parsed.data, now);
+    },
+    tick: (s, now) => tea.tickTea(asTea(s), now),
+    rematch: (s, id) => tea.rematchTea(asTea(s), id),
+    publicState: (s) => tea.publicTea(asTea(s)),
+    nextDeadline: (s) => tea.teaDeadline(asTea(s)),
+  },
   garden: {
     create(code, body) {
       const parsed = garden.createRoomSchema.safeParse(body);
@@ -97,7 +119,7 @@ export const engines: Record<DuelGame, Engine> = {
 
 /** Which game a create request is for; requests without `game` are the matching games. */
 export const roomGameSchema = z.object({
-  game: z.enum(['garden', 'fruit', 'dragon']).default('garden'),
+  game: z.enum(['garden', 'fruit', 'dragon', 'tea']).default('garden'),
 });
 
 /** Every message a client may send, for the client side. */
@@ -107,7 +129,11 @@ export type ClientMessage =
   | { type: 'name'; name: string }
   | garden.GardenMessage
   | fruit.FruitMessage
-  | dragon.DragonMessage;
+  | dragon.DragonMessage
+  | tea.TeaMessage;
 
 export type PublicState =
-  ({ game: 'garden' } & garden.PublicDuelState) | fruit.PublicFruitState | dragon.PublicDragonState;
+  | ({ game: 'garden' } & garden.PublicDuelState)
+  | fruit.PublicFruitState
+  | dragon.PublicDragonState
+  | tea.PublicTeaState;

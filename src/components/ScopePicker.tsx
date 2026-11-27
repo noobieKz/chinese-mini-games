@@ -64,6 +64,7 @@ export function ScopePicker({
         <Select
           id={`${idPrefix}-lesson`}
           aria-label="Bài học"
+          showDisabledOptions
           value={scope.range === 'all' ? 'all' : String(scope.lesson)}
           disabled={disabled}
           onValueChange={(value) => {
@@ -77,7 +78,7 @@ export function ScopePicker({
           <option value="all">Tổng hợp · {total} từ</option>
           {lessons.map((l) => (
             <option key={l.number} value={String(l.number)} disabled={l.upto < min}>
-              {`Bài ${l.number}${l.title ? ` · ${l.title}` : ''} · ${l.count} từ`}
+              {`Bài ${l.number}${l.title ? ` · ${l.title}` : ''} · ${l.upto < min ? (l.count ? 'Chưa đủ từ' : 'Chưa có từ cho game này') : `${l.count} từ`}`}
             </option>
           ))}
         </Select>

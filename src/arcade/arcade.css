@@ -11,7 +11,7 @@
   --arcade-muted: #7c8883;
   color: var(--arcade-ink);
 }
-html,
+:root,
 body,
 #root {
   min-height: 100%;
@@ -19,14 +19,14 @@ body,
 }
 .arcade-app,
 .arcade-lobby {
-  height: 100dvh;
-  overflow: hidden;
   color: #264d3d;
   --garden-paper: #ffffff;
   --garden-border: #e9eeeb;
   background: var(--arcade-bg);
 }
 .arcade-app {
+  height: 100dvh;
+  overflow: hidden;
   --garden-paper: #ffffff;
   --garden-border: #e9eeeb;
 }
@@ -505,8 +505,9 @@ body,
   margin-left: auto;
 }
 
-/* Lobby: a single scene, four portals, no marketing page. */
+/* The lobby grows with the game library and keeps its footer in the page flow. */
 .arcade-lobby {
+  min-height: 100dvh;
   position: relative;
   isolation: isolate;
   display: flex;
@@ -613,8 +614,7 @@ body,
   box-shadow: none;
 }
 .lobby-content {
-  flex: 1;
-  min-height: 0;
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -665,7 +665,7 @@ body,
 }
 .lobby-games {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(12px, 1.6vw, 24px);
 }
 .lobby-game {
@@ -714,62 +714,11 @@ body,
   isolation: isolate;
   background: var(--portal-soft);
 }
-.lobby-game-number {
-  position: absolute;
-  top: 17px;
-  left: 17px;
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--portal);
-}
-.lobby-glyph {
-  font:
-    750 clamp(68px, 10vh, 104px) 'Noto Sans SC',
-    sans-serif;
-  color: var(--portal);
-  text-shadow: none;
-  text-align: center;
-  transform: rotate(-8deg);
-  position: relative;
-  z-index: 1;
-  padding-top: 16px;
-}
-.lobby-scene-orbit {
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  border: 1px solid var(--portal-light);
-  border-radius: 50%;
-  opacity: 0.2;
-  left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
-}
-.lobby-mini-tiles {
-  position: absolute;
-  z-index: 2;
-  bottom: 17px;
-  left: 0;
+.lobby-game-scene img {
+  display: block;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-.lobby-mini-tiles > span {
-  display: grid;
-  place-items: center;
-  background: #ffffff;
-  color: var(--arcade-primary);
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 20px;
-  font-weight: 750;
-  box-shadow: 0 3px 10px #1c3f2e0a;
-  transform: rotate(-8deg);
-  border: 1px solid #e2e8e0;
-}
-.lobby-mini-tiles > span:last-child {
-  transform: rotate(8deg);
+  height: 100%;
+  object-fit: cover;
 }
 .lobby-game-copy {
   flex: 1;
@@ -855,8 +804,7 @@ body,
   grid-template-columns: 160px minmax(0, 1fr) 160px;
   align-items: center;
   gap: 16px;
-  flex: 1;
-  min-height: 0;
+  flex: 1 0 auto;
   width: 100%;
   max-width: 1852px;
   margin-inline: auto;
@@ -915,12 +863,6 @@ body,
 .ad-rail-right {
   right: 16px;
 }
-.arcade-lobby:has(.lobby-banner-bottom) {
-  overflow-y: auto;
-}
-.arcade-lobby:has(.lobby-banner-bottom) .lobby-content {
-  flex: 1 0 auto;
-}
 .lobby-banner-bottom {
   align-self: center;
   flex: none;
@@ -957,24 +899,6 @@ body,
     height: 100%;
     min-height: 170px;
     background: var(--portal-soft);
-  }
-  .lobby-glyph {
-    font-size: 65px;
-    padding-top: 25px;
-    color: var(--portal);
-    text-shadow: none;
-  }
-  .lobby-mini-tiles {
-    bottom: 20px;
-    gap: 5px;
-  }
-  .lobby-mini-tiles > span {
-    font-size: 15px;
-    padding: 5px 8px;
-    background: #ffffff;
-    color: var(--arcade-primary);
-    border: 1px solid #e2e8e0;
-    box-shadow: 0 3px 10px #1c3f2e0a;
   }
   .lobby-game-copy {
     padding: 16px;
@@ -1308,30 +1232,6 @@ body,
     min-height: 0;
     background: var(--portal-soft);
   }
-  .lobby-game-number {
-    top: 10px;
-    left: 10px;
-    font-size: 7px;
-    color: var(--portal);
-  }
-  .lobby-glyph {
-    font-size: 48px;
-    padding-top: 1px;
-    color: var(--portal);
-    text-shadow: none;
-  }
-  .lobby-mini-tiles {
-    bottom: 8px;
-  }
-  .lobby-mini-tiles > span {
-    font-size: 11px;
-    border-radius: 5px;
-    padding: 3px 7px;
-    background: #ffffff;
-    color: var(--arcade-primary);
-    border: 1px solid #e2e8e0;
-    box-shadow: 0 3px 10px #1c3f2e0a;
-  }
   .lobby-game-copy {
     padding: 13px 12px;
   }
@@ -1395,9 +1295,6 @@ body,
     color: var(--arcade-ink);
     font-weight: 650;
   }
-  .lobby-games {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
   .lobby-game {
     flex-direction: column;
     --portal: #6f9079;
@@ -1412,23 +1309,6 @@ body,
     width: 100%;
     min-height: 0;
     background: var(--portal-soft);
-  }
-  .lobby-glyph {
-    font-size: 45px;
-    padding-top: 0;
-    color: var(--portal);
-    text-shadow: none;
-  }
-  .lobby-mini-tiles {
-    bottom: 5px;
-  }
-  .lobby-mini-tiles > span {
-    font-size: 10px;
-    padding: 2px 6px;
-    background: #ffffff;
-    color: var(--arcade-primary);
-    border: 1px solid #e2e8e0;
-    box-shadow: 0 3px 10px #1c3f2e0a;
   }
   .lobby-game p {
     display: none;
@@ -1492,22 +1372,6 @@ body,
   .lobby-game-scene {
     height: 68px;
     background: var(--portal-soft);
-  }
-  .lobby-glyph {
-    font-size: 40px;
-    color: var(--portal);
-    text-shadow: none;
-  }
-  .lobby-mini-tiles {
-    bottom: 5px;
-  }
-  .lobby-mini-tiles > span {
-    font-size: 10px;
-    padding: 2px 5px;
-    background: #ffffff;
-    color: var(--arcade-primary);
-    border: 1px solid #e2e8e0;
-    box-shadow: 0 3px 10px #1c3f2e0a;
   }
   .lobby-game-copy {
     padding: 10px;

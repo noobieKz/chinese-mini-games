@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   levelSlug,
   MIN_WORDS,
-  parseBundle,
   parseScopeKey,
   selectCollocations,
   selectWords,
@@ -10,21 +9,20 @@ import {
   type GameId,
   type Scope,
 } from '../../shared/content';
+import { parsePublishedContent, type PublishedContent } from '../../shared/lesson-editor';
 import { sampleBundle } from './sample';
 
-let request: Promise<{ bundle: ContentBundle; live: boolean }> | null = null;
-
 /**
- * Course content from Cloudflare (/api/content), fetched once per page load. A missing, slow or
+ * Course content from Cloudflare (/api/content), fetched when opening a game. A missing, slow or
  * malformed response falls back to the bundled sample, so the games always have something to play.
  */
 export function loadContent() {
-  request ??= (async () => {
+  return (async () => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 5000);
     try {
       const response = await fetch('/api/content', { signal: controller.signal });
-      const bundle = response.ok ? parseBundle(await response.json()) : null;
+      const bundle = response.ok ? parsePublishedContent(await response.json()) : null;
       return bundle ? { bundle, live: true } : { bundle: sampleBundle, live: false };
     } catch {
       return { bundle: sampleBundle, live: false };
@@ -32,11 +30,10 @@ export function loadContent() {
       clearTimeout(timer);
     }
   })();
-  return request;
 }
 
 export function useContent() {
-  const [state, setState] = useState<{ bundle: ContentBundle; live: boolean } | null>(null);
+  const [state, setState] = useState<{ bundle: PublishedContent; live: boolean } | null>(null);
   useEffect(() => {
     let alive = true;
     void loadContent().then((result) => alive && setState(result));
@@ -72,6 +69,12 @@ export function useScope(bundle: ContentBundle | null, game: GameId) {
   });
   const scope = useMemo<Scope | null>(() => {
     if (!bundle?.levels.length) return null;
+    if (choice.levelSlug === 'chao-hoi') {
+      const migrated = bundle.levels
+        .find((item) => item.name === 'HSK 1')
+        ?.lessons.find((item) => item.title === 'Chào hỏi');
+      if (migrated) return { level: 'HSK 1', range: 'lesson', lesson: migrated.number };
+    }
     const levels = bundle.levels.filter(
       (l) => selectWords(bundle, { level: l.name, range: 'all' }, game).length >= MIN_WORDS[game],
     );

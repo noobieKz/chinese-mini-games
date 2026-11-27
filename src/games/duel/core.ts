@@ -17,7 +17,7 @@ export function makeCode(random = Math.random) {
   ).join('');
 }
 
-export type DuelGame = 'garden' | 'fruit' | 'dragon';
+export type DuelGame = 'garden' | 'fruit' | 'dragon' | 'tea';
 export type DuelEnd = 'cleared' | 'time' | 'forfeit';
 export type BasePlayer = {
   id: string;

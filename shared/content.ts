@@ -85,6 +85,66 @@ export const levelSlug = (name: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
+export const HSK_LEVELS = Array.from({ length: 9 }, (_, index) => `HSK ${index + 1}`);
+
+export function canonicalHskLevel(name: string) {
+  const match = /^hsk[\s-]*([1-9])$/i.exec(name.trim());
+  return match ? `HSK ${match[1]}` : null;
+}
+
+/** Preserve IDs and lesson membership when an old theme was stored as a level. */
+export function normalizeHskLevels<T extends ContentBundle>(bundle: T): T {
+  const source = new Map<string, Map<number, string>>();
+  for (const { name, lessons } of bundle.levels) {
+    source.set(name, new Map(lessons.map(({ number, title }) => [number, title])));
+  }
+  for (const item of [...bundle.words, ...bundle.collocations]) {
+    const lessons = source.get(item.level) ?? new Map<number, string>();
+    if (!lessons.has(item.lesson)) lessons.set(item.lesson, '');
+    source.set(item.level, lessons);
+  }
+  const levels = new Map<string, Map<number, string>>();
+  const mapping = new Map<string, Map<number, { level: string; lesson: number }>>();
+  const ordered = [...source].sort(
+    ([a], [b]) => Number(canonicalHskLevel(b) === b) - Number(canonicalHskLevel(a) === a),
+  );
+  for (const [name, originalLessons] of ordered) {
+    const hsk = canonicalHskLevel(name);
+    const level = hsk ?? 'HSK 1';
+    const lessons = levels.get(level) ?? new Map<number, string>();
+    const targets = new Map<number, { level: string; lesson: number }>();
+    levels.set(level, lessons);
+    mapping.set(name, targets);
+    for (const [number, title] of originalLessons) {
+      const lesson = hsk && !lessons.has(number) ? number : Math.max(0, ...lessons.keys()) + 1;
+      const migratedTitle = hsk
+        ? title
+        : originalLessons.size === 1
+          ? name
+          : `${name} · ${title || `Bài ${number}`}`;
+      lessons.set(lesson, migratedTitle);
+      targets.set(number, { level, lesson });
+    }
+  }
+  const move = <I extends { level: string; lesson: number }>(item: I) => ({
+    ...item,
+    ...mapping.get(item.level)?.get(item.lesson),
+  });
+  return {
+    ...bundle,
+    levels: [...levels]
+      .sort(([a], [b]) => a.localeCompare(b, 'en', { numeric: true }))
+      .map(([name, lessons]) => ({
+        name,
+        lessons: [...lessons]
+          .sort(([a], [b]) => a - b)
+          .map(([number, title]) => ({ number, title })),
+      })),
+    words: bundle.words.map(move),
+    collocations: bundle.collocations.map(move),
+  };
+}
+
 /**
  * Build a validated bundle from spreadsheet rows. Rows with errors are skipped and reported, so one
  * typo never blocks the whole upload; the caller decides whether errors should stop the import.
@@ -155,13 +215,13 @@ export function buildBundle(
       continue;
     }
     const word = parsed.data;
-    const key = `${word.level}|${word.hanzi}`;
+    const key = `${word.level}|${word.lesson}|${word.hanzi}`;
     if (seen.has(key)) {
       issues.push({
         sheet,
         row: raw.row,
         severity: 'warning',
-        message: `${word.hanzi} đã có ở dòng ${seen.get(key)} cùng cấp độ; bỏ qua dòng này.`,
+        message: `${word.hanzi} đã có ở dòng ${seen.get(key)} cùng bài; bỏ qua dòng này.`,
       });
       continue;
     }
@@ -265,12 +325,16 @@ export function usableWords(bundle: ContentBundle, game: GameId) {
   );
 }
 export function selectWords(bundle: ContentBundle, scope: Scope, game: GameId) {
-  return usableWords(bundle, game).filter(
-    (w) =>
+  const seen = new Set<string>();
+  return usableWords(bundle, game).filter((w) => {
+    const included =
       w.level === scope.level &&
       (scope.range === 'all' ||
-        (scope.range === 'lesson' ? w.lesson === scope.lesson : w.lesson <= scope.lesson)),
-  );
+        (scope.range === 'lesson' ? w.lesson === scope.lesson : w.lesson <= scope.lesson));
+    if (!included || seen.has(w.hanzi)) return false;
+    seen.add(w.hanzi);
+    return true;
+  });
 }
 export function selectCollocations(bundle: ContentBundle, scope: Scope) {
   return bundle.collocations.filter(

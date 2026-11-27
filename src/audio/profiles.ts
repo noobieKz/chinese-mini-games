@@ -90,3 +90,18 @@ export const gardenAudioProfile: AudioProfile = {
     },
   ],
 };
+
+export const teaAudioProfile: AudioProfile = {
+  storageKey: 'hanplay.tea.audio.v1',
+  description: 'Nhạc nền của tiệm và âm báo khi giao đơn.',
+  music: backgroundMusic,
+  controls: [
+    { channel: 'music', title: 'Nhạc nền', description: 'Bật hoặc tắt nhạc nền' },
+    {
+      channel: 'feedback',
+      title: 'Báo đúng / sai',
+      description: 'Phân biệt đơn đúng và đơn sai',
+      sample: 'wrong',
+    },
+  ],
+};

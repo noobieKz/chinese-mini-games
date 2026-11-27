@@ -16,6 +16,7 @@ import ExcelJS from 'exceljs';
 import {
   buildBundle,
   GAME_IDS,
+  normalizeHskLevels,
   type CollocationRow,
   type ContentIssue,
   type WordRow,
@@ -166,7 +167,7 @@ async function writeTemplate() {
     'HƯỚNG DẪN NHẬP TỪ VỰNG CHO GAME HANPLAY',
     '',
     'Trang "Từ vựng": mỗi dòng là một từ. Giữ nguyên dòng 1 (tên cột).',
-    '• Cấp độ: ví dụ HSK 1. Viết giống nhau cho cùng một cấp độ.',
+    '• Cấp độ: dùng tên HSK 1, HSK 2… HSK 9. Chủ đề nhỏ điền vào tên bài.',
     '• Bài: số bài trong cấp độ, bắt đầu từ 1.',
     '• Tên bài: chỉ cần ghi ở dòng đầu của mỗi bài, các dòng sau để trống.',
     '• Chữ Hán: chỉ chữ Hán, không dấu cách, không pinyin.',
@@ -191,7 +192,8 @@ async function main() {
   if (command === 'check' || command === 'build') {
     if (!file) throw new Error(`Thiếu đường dẫn file: npm run content -- ${command} <file.xlsx>`);
     const rows = await readWorkbook(resolve(file));
-    const { bundle, issues } = buildBundle(rows.words, rows.collocations);
+    const { bundle: imported, issues } = buildBundle(rows.words, rows.collocations);
+    const bundle = normalizeHskLevels(imported);
     const errors = report(issues);
     for (const level of bundle.levels)
       console.log(

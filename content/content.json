@@ -16,6 +16,10 @@
         {
           "number": 3,
           "title": "Nơi chốn & sở thích"
+        },
+        {
+          "number": 4,
+          "title": "Chào hỏi"
         }
       ]
     },
@@ -35,15 +39,6 @@
           "title": "Giao tiếp"
         }
       ]
-    },
-    {
-      "name": "Chào hỏi",
-      "lessons": [
-        {
-          "number": 1,
-          "title": "Chào hỏi & lớp học"
-        }
-      ]
     }
   ],
   "words": [
@@ -54,10 +49,7 @@
       "hanzi": "朋友",
       "pinyin": "péngyou",
       "meaning": "bạn bè",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-1-学生",
@@ -66,10 +58,7 @@
       "hanzi": "学生",
       "pinyin": "xuésheng",
       "meaning": "học sinh",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-1-老师",
@@ -78,10 +67,7 @@
       "hanzi": "老师",
       "pinyin": "lǎoshī",
       "meaning": "giáo viên",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-1-学校",
@@ -90,10 +76,7 @@
       "hanzi": "学校",
       "pinyin": "xuéxiào",
       "meaning": "trường học",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-1-中国",
@@ -102,10 +85,7 @@
       "hanzi": "中国",
       "pinyin": "Zhōngguó",
       "meaning": "Trung Quốc",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-1-电脑",
@@ -114,10 +94,7 @@
       "hanzi": "电脑",
       "pinyin": "diànnǎo",
       "meaning": "máy tính",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-2-你好",
@@ -126,10 +103,7 @@
       "hanzi": "你好",
       "pinyin": "nǐ hǎo",
       "meaning": "xin chào",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-2-谢谢",
@@ -138,10 +112,7 @@
       "hanzi": "谢谢",
       "pinyin": "xièxie",
       "meaning": "cảm ơn",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-2-明天",
@@ -150,10 +121,7 @@
       "hanzi": "明天",
       "pinyin": "míngtiān",
       "meaning": "ngày mai",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-2-今天",
@@ -162,10 +130,7 @@
       "hanzi": "今天",
       "pinyin": "jīntiān",
       "meaning": "hôm nay",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-2-水果",
@@ -174,10 +139,7 @@
       "hanzi": "水果",
       "pinyin": "shuǐguǒ",
       "meaning": "trái cây",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-2-天气",
@@ -186,10 +148,7 @@
       "hanzi": "天气",
       "pinyin": "tiānqì",
       "meaning": "thời tiết",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-3-医院",
@@ -198,10 +157,7 @@
       "hanzi": "医院",
       "pinyin": "yīyuàn",
       "meaning": "bệnh viện",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-3-商店",
@@ -210,10 +166,7 @@
       "hanzi": "商店",
       "pinyin": "shāngdiàn",
       "meaning": "cửa hàng",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-3-电影",
@@ -222,10 +175,7 @@
       "hanzi": "电影",
       "pinyin": "diànyǐng",
       "meaning": "phim",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-3-喜欢",
@@ -234,10 +184,7 @@
       "hanzi": "喜欢",
       "pinyin": "xǐhuan",
       "meaning": "thích",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-3-漂亮",
@@ -246,10 +193,7 @@
       "hanzi": "漂亮",
       "pinyin": "piàoliang",
       "meaning": "xinh đẹp",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-1-3-昨天",
@@ -258,10 +202,7 @@
       "hanzi": "昨天",
       "pinyin": "zuótiān",
       "meaning": "hôm qua",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-1-快乐",
@@ -270,10 +211,7 @@
       "hanzi": "快乐",
       "pinyin": "kuàilè",
       "meaning": "vui vẻ",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-1-旅游",
@@ -282,10 +220,7 @@
       "hanzi": "旅游",
       "pinyin": "lǚyóu",
       "meaning": "du lịch",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-1-运动",
@@ -294,10 +229,7 @@
       "hanzi": "运动",
       "pinyin": "yùndòng",
       "meaning": "vận động",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-1-准备",
@@ -306,10 +238,7 @@
       "hanzi": "准备",
       "pinyin": "zhǔnbèi",
       "meaning": "chuẩn bị",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-1-帮助",
@@ -318,10 +247,7 @@
       "hanzi": "帮助",
       "pinyin": "bāngzhù",
       "meaning": "giúp đỡ",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-1-因为",
@@ -330,10 +256,7 @@
       "hanzi": "因为",
       "pinyin": "yīnwèi",
       "meaning": "bởi vì",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-2-希望",
@@ -342,10 +265,7 @@
       "hanzi": "希望",
       "pinyin": "xīwàng",
       "meaning": "hy vọng",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-2-时间",
@@ -354,10 +274,7 @@
       "hanzi": "时间",
       "pinyin": "shíjiān",
       "meaning": "thời gian",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-2-早上",
@@ -366,10 +283,7 @@
       "hanzi": "早上",
       "pinyin": "zǎoshang",
       "meaning": "buổi sáng",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-2-房间",
@@ -378,10 +292,7 @@
       "hanzi": "房间",
       "pinyin": "fángjiān",
       "meaning": "căn phòng",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-2-生日",
@@ -390,10 +301,7 @@
       "hanzi": "生日",
       "pinyin": "shēngrì",
       "meaning": "sinh nhật",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-2-一起",
@@ -402,10 +310,7 @@
       "hanzi": "一起",
       "pinyin": "yìqǐ",
       "meaning": "cùng nhau",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-3-已经",
@@ -414,10 +319,7 @@
       "hanzi": "已经",
       "pinyin": "yǐjīng",
       "meaning": "đã",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-3-介绍",
@@ -426,10 +328,7 @@
       "hanzi": "介绍",
       "pinyin": "jièshào",
       "meaning": "giới thiệu",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-3-问题",
@@ -438,10 +337,7 @@
       "hanzi": "问题",
       "pinyin": "wèntí",
       "meaning": "câu hỏi",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-3-知道",
@@ -450,10 +346,7 @@
       "hanzi": "知道",
       "pinyin": "zhīdào",
       "meaning": "biết",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-3-觉得",
@@ -462,10 +355,7 @@
       "hanzi": "觉得",
       "pinyin": "juéde",
       "meaning": "cảm thấy",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "hsk-2-3-可以",
@@ -474,15 +364,12 @@
       "hanzi": "可以",
       "pinyin": "kěyǐ",
       "meaning": "có thể",
-      "games": [
-        "chem-hoa-qua",
-        "rong-san-chu"
-      ]
+      "games": ["chem-hoa-qua", "rong-san-chu"]
     },
     {
       "id": "chao-hoi-1-你好",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "你好",
       "pinyin": "nǐ hǎo",
       "meaning": "xin chào",
@@ -490,8 +377,8 @@
     },
     {
       "id": "chao-hoi-1-再见",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "再见",
       "pinyin": "zàijiàn",
       "meaning": "tạm biệt",
@@ -499,8 +386,8 @@
     },
     {
       "id": "chao-hoi-1-请问",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "请问",
       "pinyin": "qǐngwèn",
       "meaning": "xin hỏi",
@@ -508,8 +395,8 @@
     },
     {
       "id": "chao-hoi-1-什么",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "什么",
       "pinyin": "shénme",
       "meaning": "cái gì",
@@ -517,8 +404,8 @@
     },
     {
       "id": "chao-hoi-1-名字",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "名字",
       "pinyin": "míngzi",
       "meaning": "tên",
@@ -526,8 +413,8 @@
     },
     {
       "id": "chao-hoi-1-老师",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "老师",
       "pinyin": "lǎoshī",
       "meaning": "giáo viên",
@@ -535,8 +422,8 @@
     },
     {
       "id": "chao-hoi-1-同学",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "同学",
       "pinyin": "tóngxué",
       "meaning": "bạn học",
@@ -544,8 +431,8 @@
     },
     {
       "id": "chao-hoi-1-大家",
-      "level": "Chào hỏi",
-      "lesson": 1,
+      "level": "HSK 1",
+      "lesson": 4,
       "hanzi": "大家",
       "pinyin": "dàjiā",
       "meaning": "mọi người",
@@ -559,10 +446,7 @@
       "lesson": 1,
       "noun": "篮球",
       "verb": "打",
-      "wrong": [
-        "喝",
-        "读"
-      ],
+      "wrong": ["喝", "读"],
       "pinyin": "dǎ lánqiú",
       "meaning": "chơi bóng rổ"
     },
@@ -572,10 +456,7 @@
       "lesson": 1,
       "noun": "足球",
       "verb": "踢",
-      "wrong": [
-        "喝",
-        "写"
-      ],
+      "wrong": ["喝", "写"],
       "pinyin": "tī zúqiú",
       "meaning": "đá bóng"
     },
@@ -585,10 +466,7 @@
       "lesson": 1,
       "noun": "电视",
       "verb": "看",
-      "wrong": [
-        "吃",
-        "写"
-      ],
+      "wrong": ["吃", "写"],
       "pinyin": "kàn diànshì",
       "meaning": "xem tivi"
     },
@@ -598,10 +476,7 @@
       "lesson": 1,
       "noun": "音乐",
       "verb": "听",
-      "wrong": [
-        "吃",
-        "写"
-      ],
+      "wrong": ["吃", "写"],
       "pinyin": "tīng yīnyuè",
       "meaning": "nghe nhạc"
     },
@@ -611,10 +486,7 @@
       "lesson": 2,
       "noun": "汉字",
       "verb": "写",
-      "wrong": [
-        "喝",
-        "踢"
-      ],
+      "wrong": ["喝", "踢"],
       "pinyin": "xiě Hànzì",
       "meaning": "viết chữ Hán"
     },
@@ -624,10 +496,7 @@
       "lesson": 2,
       "noun": "米饭",
       "verb": "吃",
-      "wrong": [
-        "看",
-        "听"
-      ],
+      "wrong": ["看", "听"],
       "pinyin": "chī mǐfàn",
       "meaning": "ăn cơm"
     },
@@ -637,10 +506,7 @@
       "lesson": 2,
       "noun": "茶",
       "verb": "喝",
-      "wrong": [
-        "写",
-        "踢"
-      ],
+      "wrong": ["写", "踢"],
       "pinyin": "hē chá",
       "meaning": "uống trà"
     },
@@ -650,10 +516,7 @@
       "lesson": 2,
       "noun": "电话",
       "verb": "打",
-      "wrong": [
-        "吃",
-        "读"
-      ],
+      "wrong": ["吃", "读"],
       "pinyin": "dǎ diànhuà",
       "meaning": "gọi điện thoại"
     },
@@ -663,10 +526,7 @@
       "lesson": 3,
       "noun": "衣服",
       "verb": "穿",
-      "wrong": [
-        "喝",
-        "听"
-      ],
+      "wrong": ["喝", "听"],
       "pinyin": "chuān yīfu",
       "meaning": "mặc quần áo"
     },
@@ -676,10 +536,7 @@
       "lesson": 3,
       "noun": "照片",
       "verb": "拍",
-      "wrong": [
-        "喝",
-        "踢"
-      ],
+      "wrong": ["喝", "踢"],
       "pinyin": "pāi zhàopiàn",
       "meaning": "chụp ảnh"
     },
@@ -689,10 +546,7 @@
       "lesson": 3,
       "noun": "作业",
       "verb": "做",
-      "wrong": [
-        "喝",
-        "踢"
-      ],
+      "wrong": ["喝", "踢"],
       "pinyin": "zuò zuòyè",
       "meaning": "làm bài tập"
     },
@@ -702,10 +556,7 @@
       "lesson": 3,
       "noun": "房间",
       "verb": "打扫",
-      "wrong": [
-        "喝",
-        "听"
-      ],
+      "wrong": ["喝", "听"],
       "pinyin": "dǎsǎo fángjiān",
       "meaning": "dọn phòng"
     }

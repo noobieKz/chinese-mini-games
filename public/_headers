@@ -6,4 +6,4 @@
 
 /ads/*
   ! X-Frame-Options
-  Content-Security-Policy: frame-ancestors 'self'
+  Content-Security-Policy: frame-ancestors 'self'; sandbox allow-scripts allow-popups

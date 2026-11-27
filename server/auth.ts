@@ -2,7 +2,12 @@ import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 import type { Teacher } from '../shared/auth';
 
 export const DEFAULT_TEACHERS = 'giathe.bk@gmail.com,anhbpt.haui@gmail.com';
-export type AuthConfig = { clientId: string; emails: string; origins: string };
+export type AuthConfig = {
+  clientId: string;
+  emails: string;
+  origins: string;
+  passwordLogin?: { username: string; password: string };
+};
 export interface AuthStore {
   take<T>(key: string): Promise<T | undefined>;
   get<T>(key: string): Promise<T | undefined>;
@@ -57,7 +62,7 @@ export function readCookie(header: string | null, name: string): string | undefi
     ?.slice(name.length + 1);
   return value && /^[a-f0-9-]{72}$/.test(value) ? value : undefined;
 }
-async function boundedBody(request: Request) {
+export async function boundedBody(request: Request, maxBytes = 20000) {
   const reader = request.body?.getReader();
   if (!reader) return '';
   const chunks: Uint8Array[] = [];
@@ -66,7 +71,7 @@ async function boundedBody(request: Request) {
     const { done, value } = await reader.read();
     if (done) break;
     length += value.byteLength;
-    if (length > 20000) {
+    if (length > maxBytes) {
       await reader.cancel();
       throw new Error('Payload too large');
     }
@@ -89,6 +94,7 @@ function json(value: unknown, status = 200, headers: Record<string, string> = {}
 export class AuthService {
   private allowlist: Set<string>;
   private origins: Set<string>;
+  private passwordAttempts = new Map<string, { count: number; until: number }>();
   constructor(
     public config: AuthConfig,
     private store: AuthStore,
@@ -142,6 +148,57 @@ export class AuthService {
         clientId: this.config.clientId || null,
         csrfToken: session?.csrf,
       });
+    }
+    if (url.pathname === '/api/auth/password' && request.method === 'POST') {
+      const credentials = this.config.passwordLogin;
+      if (!this.allowedOrigin(request.headers.get('origin') ?? ''))
+        return json({ error: 'Nguồn yêu cầu không hợp lệ.' }, 403);
+      if (!credentials?.username || !credentials.password)
+        return json({ error: 'Tài khoản quản lý chưa được cấu hình trên máy chủ.' }, 503);
+      const ip = request.headers.get('cf-connecting-ip') ?? 'local';
+      const now = Date.now();
+      for (const [key, attempt] of this.passwordAttempts)
+        if (attempt.until <= now) this.passwordAttempts.delete(key);
+      const attempt = this.passwordAttempts.get(ip) ?? { count: 0, until: now + 5 * 60000 };
+      if (
+        attempt.count >= 8 ||
+        (!this.passwordAttempts.has(ip) && this.passwordAttempts.size >= 1000)
+      )
+        return json({ error: 'Đã thử quá nhiều lần. Hãy đợi một lát rồi đăng nhập lại.' }, 429);
+      attempt.count++;
+      this.passwordAttempts.set(ip, attempt);
+      try {
+        const data = JSON.parse(await boundedBody(request, 4000));
+        if (typeof data?.username !== 'string' || typeof data?.password !== 'string')
+          return json({ error: 'Hãy nhập tên người dùng và mật khẩu.' }, 400);
+        const key = await crypto.subtle.importKey(
+          'raw',
+          new TextEncoder().encode(credentials.password),
+          { name: 'HMAC', hash: 'SHA-256' },
+          false,
+          ['sign', 'verify'],
+        );
+        const encoder = new TextEncoder();
+        const proof = await crypto.subtle.sign('HMAC', key, encoder.encode(credentials.password));
+        const matches = await crypto.subtle.verify(
+          'HMAC',
+          key,
+          proof,
+          encoder.encode(data.password),
+        );
+        if (!matches || data.username.trim() !== credentials.username)
+          return json({ error: 'Tên người dùng hoặc mật khẩu chưa đúng.' }, 401);
+        const username = credentials.username.toLowerCase();
+        const teacher = { id: username, email: username, name: credentials.username };
+        const created = await this.createSession(teacher);
+        this.passwordAttempts.delete(ip);
+        if (token) await this.store.delete('session:' + token);
+        return json({ teacher, clientId: null, csrfToken: created.session.csrf }, 200, {
+          'Set-Cookie': cookie(sessionCookie, created.token, secure, 8 * 3600),
+        });
+      } catch {
+        return json({ error: 'Không xử lý được yêu cầu đăng nhập.' }, 400);
+      }
     }
     if (url.pathname === '/api/auth/challenge' && request.method === 'POST') {
       if (!this.allowedOrigin(request.headers.get('origin') ?? ''))

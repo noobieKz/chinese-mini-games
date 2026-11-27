@@ -23,6 +23,7 @@ type Props = {
   name?: string;
   required?: boolean;
   disabled?: boolean;
+  showDisabledOptions?: boolean;
   'aria-label'?: string;
 };
 const normalize = (text: string) =>
@@ -42,6 +43,7 @@ export function Select({
   name,
   required,
   disabled,
+  showDisabledOptions = false,
   'aria-label': label = 'Lựa chọn',
 }: Props) {
   const options = Children.toArray(children).flatMap((child): Option[] => {
@@ -84,9 +86,12 @@ export function Select({
   const typeahead = useRef({ text: '', time: 0 });
   const id = useId();
   const searchEnabled = options.filter((o) => !o.disabled).length >= 5;
-  const filtered = options.filter(
-    (o) => !o.disabled && normalize(o.label).includes(normalize(query)),
+  const visible = options.filter(
+    (o) =>
+      (!o.disabled || (showDisabledOptions && o.value !== '')) &&
+      normalize(o.label).includes(normalize(query)),
   );
+  const filtered = visible.filter((o) => !o.disabled);
 
   function close(restoreFocus = false) {
     setOpen(false);
@@ -238,7 +243,7 @@ export function Select({
     return () => form?.removeEventListener('reset', reset);
   }, [initial, value]);
   const activeId = filtered.some((o) => o.value === active)
-    ? `${id}-option-${filtered.findIndex((o) => o.value === active)}`
+    ? `${id}-option-${visible.findIndex((o) => o.value === active)}`
     : undefined;
   return (
     <span className={`app-select ${open ? 'is-open' : ''} ${invalid ? 'is-invalid' : ''}`}>
@@ -341,15 +346,18 @@ export function Select({
               </div>
             )}
             <div className="app-select-options" id={`${id}-list`} role="listbox" aria-label={label}>
-              {filtered.map((option, i) => (
+              {visible.map((option, i) => (
                 <div
                   key={option.value}
                   id={`${id}-option-${i}`}
                   role="option"
                   aria-selected={option.value === current}
+                  aria-disabled={option.disabled || undefined}
                   data-active={option.value === active}
                   className="app-select-option"
-                  onPointerMove={() => setActive(option.value)}
+                  onPointerMove={() => {
+                    if (!option.disabled) setActive(option.value);
+                  }}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => choose(option)}
                 >
@@ -357,7 +365,7 @@ export function Select({
                   {option.value === current && <Check size={15} aria-hidden="true" />}
                 </div>
               ))}
-              {!filtered.length && <div className="app-select-empty">Không tìm thấy kết quả</div>}
+              {!visible.length && <div className="app-select-empty">Không tìm thấy kết quả</div>}
             </div>
             {searchEnabled && (
               <div className="app-select-hint">

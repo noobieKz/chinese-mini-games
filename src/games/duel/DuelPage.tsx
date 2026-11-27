@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Check, Copy, Crown, LogIn, Play, RotateCcw, Swords, X } from 'lucide-react';
 import { GameTopbar } from '../../arcade/GameTopbar';
 import { Select } from '../../components/Select';
@@ -16,9 +16,25 @@ import { createRoom, useDuelRoom } from './useDuelRoom';
 import { GardenDuelView } from './GardenDuelView';
 import { FruitDuelView } from './FruitDuelView';
 import { DragonDuelView } from './DragonDuelView';
+import { TeaOrderCount } from '../milk-tea/TeaOrderCount';
+import {
+  SCENARIO_GAME_NAME,
+  SCENARIO_GAME_ROUTE,
+  TEA_DEFAULT_ORDERS,
+  type TopicId,
+} from '../milk-tea/orders';
+import { TopicPicker } from '../milk-tea/TopicPicker';
+import { TeaOrderProgress } from '../milk-tea/TeaOrderProgress';
+import { TeaStation } from '../milk-tea/TeaStation';
+import { AudioSettings } from '../../audio/AudioSettings';
+import { teaAudioProfile } from '../../audio/profiles';
+import { useGameSound } from '../../audio/useGameSound';
 import './duel.css';
 
-const gameName: Record<GameId, string> = {
+type DuelGameId = GameId | typeof SCENARIO_GAME_ROUTE;
+
+const gameNames: Record<DuelGameId, string> = {
+  [SCENARIO_GAME_ROUTE]: SCENARIO_GAME_NAME,
   'ghep-chu': 'Ghép chữ thành từ',
   'noi-tu': 'Nối từ với nghĩa',
   'chem-hoa-qua': 'Chém hoa quả',
@@ -30,7 +46,8 @@ const engineOf: Record<GameId, DuelGame> = {
   'chem-hoa-qua': 'fruit',
   'rong-san-chu': 'dragon',
 };
-const isGame = (value: string | null): value is GameId => Boolean(value && value in gameName);
+const isGame = (value: string | null): value is DuelGameId =>
+  Boolean(value && Object.hasOwn(gameNames, value));
 /** Fewest words each game needs to deal a board. */
 const minWords: Record<GameId, number> = {
   'ghep-chu': 2,
@@ -39,6 +56,11 @@ const minWords: Record<GameId, number> = {
   'rong-san-chu': 2,
 };
 const rules: Record<DuelGame, string[]> = {
+  tea: [
+    'Hai người nhận cùng một chuỗi yêu cầu và hoàn thành theo nhịp riêng.',
+    'Đọc đơn tiếng Trung, pha theo từng trạm, đóng nắp rồi giao ly.',
+    'Đơn đúng được một điểm. Hết 90 giây, ai có nhiều đơn đúng hơn thắng.',
+  ],
   garden: [
     'Hai người cùng một bàn. Cặp ai nối được sẽ biến mất ở cả hai bên.',
     'Nối đúng +10, sai −2. Chậm hơn đối thủ ở cùng một cặp thì không bị trừ.',
@@ -77,15 +99,17 @@ export function DuelPage({ onBack }: { onBack(): void }) {
     const ma = (query.get('ma') ?? '').toUpperCase();
     return codePattern.test(ma) ? ma : null;
   });
-  const [game, setGame] = useState<GameId>(() => {
+  const [selectedGame] = useState<DuelGameId | null>(() => {
     const tro = query.get('tro');
-    return isGame(tro) ? tro : 'ghep-chu';
+    return isGame(tro) ? tro : null;
   });
+  const game = selectedGame ?? 'ghep-chu';
   const [name, setName] = useState(savedName);
-  const [tab, setTab] = useState<'create' | 'join'>('create');
+  const [tab, setTab] = useState<'create' | 'join'>(selectedGame ? 'create' : 'join');
   const [joinCode, setJoinCode] = useState('');
   const [pairs, setPairs] = useState<8 | 12>(8);
   const [difficulty, setDifficulty] = useState<'normal' | 'hard'>('normal');
+  const [teaOrderCount, setTeaOrderCount] = useState(TEA_DEFAULT_ORDERS);
   const [fruitKind, setFruitKind] = useState<'words' | 'collocations'>('words');
   const [fruitSeconds, setFruitSeconds] = useState<8 | 12>(8);
   const [speed, setSpeed] = useState<'slow' | 'normal' | 'fast'>('normal');
@@ -97,19 +121,29 @@ export function DuelPage({ onBack }: { onBack(): void }) {
   const [soundOpen, setSoundOpen] = useState(false);
   const [now, setNow] = useState(Date.now());
   const content = useContent();
-  const { scope, set: setScope, words, collocations } = useScope(content?.bundle ?? null, game);
+  const scenarioGame = game === SCENARIO_GAME_ROUTE;
+  const courseGame = scenarioGame ? 'ghep-chu' : game;
+  const [topic, setTopic] = useState<TopicId>('tea');
+  const {
+    scope,
+    set: setScope,
+    words,
+    collocations,
+  } = useScope(content?.bundle ?? null, courseGame);
   const { state, status, offset, send, me } = useDuelRoom(code, name);
 
-  const kind: DuelGame = state?.game ?? engineOf[game];
+  const kind: DuelGame = state?.game ?? (scenarioGame ? 'tea' : engineOf[courseGame]);
   const serverNow = now + offset;
   const meP = state?.players.find((p) => p.id === me) ?? null;
   const them = state?.players.find((p) => p.id !== me) ?? null;
   const playing = state?.phase === 'playing';
   const counting = playing && state?.startAt !== null && serverNow < (state?.startAt ?? 0);
   const canCreate =
-    game === 'chem-hoa-qua'
-      ? words.length >= minWords[game] || (fruitKind === 'collocations' && collocations.length > 0)
-      : words.length >= minWords[game];
+    scenarioGame ||
+    (game === 'chem-hoa-qua'
+      ? words.length >= minWords[courseGame] ||
+        (fruitKind === 'collocations' && collocations.length > 0)
+      : words.length >= minWords[courseGame]);
   useLeaveWarning(Boolean(playing), () => undefined);
 
   useEffect(() => {
@@ -130,45 +164,52 @@ export function DuelPage({ onBack }: { onBack(): void }) {
     if (code) next.set('ma', code);
     else next.delete('ma');
     if (code) next.delete('tro');
-    else next.set('tro', game);
-    history.replaceState(history.state, '', `${location.pathname}?${next}`);
-  }, [code, game]);
+    else if (selectedGame) next.set('tro', selectedGame);
+    else next.delete('tro');
+    history.replaceState(
+      history.state,
+      '',
+      next.size ? `${location.pathname}?${next}` : location.pathname,
+    );
+  }, [code, selectedGame]);
 
   const create = async () => {
-    if (!scope || !canCreate) return;
+    if (!selectedGame || !canCreate || (!scope && !scenarioGame)) return;
     setCreating(true);
     setProblem('');
     const lesson =
-      scope.range === 'all'
+      !scope || scope.range === 'all'
         ? 'Tổng hợp'
         : scope.range === 'lesson'
           ? `Bài ${scope.lesson}`
           : `Ôn bài 1–${scope.lesson}`;
-    const label = `${gameName[game]} · ${scope.level} · ${lesson}`;
+    const label = `${gameNames[game]} · ${scope?.level} · ${lesson}`;
     const body =
-      kind === 'garden'
-        ? {
-            game: 'garden',
-            settings: {
-              mode: game === 'noi-tu' ? 'meaning' : 'characters',
-              difficulty: game === 'noi-tu' ? 'normal' : difficulty,
-              pairs,
-              label,
-            },
-            words: shuffle(words).slice(0, 36),
-          }
-        : kind === 'fruit'
+      kind === 'tea'
+        ? { game: 'tea', topic, orderCount: teaOrderCount }
+        : kind === 'garden'
           ? {
-              game: 'fruit',
-              settings: { kind: fruitKind, seconds: fruitSeconds, label },
-              words: shuffle(words).slice(0, 60),
-              collocations: shuffle(collocations).slice(0, 40),
+              game: 'garden',
+              settings: {
+                mode: game === 'noi-tu' ? 'meaning' : 'characters',
+                difficulty: game === 'noi-tu' ? 'normal' : difficulty,
+                pairs,
+                label,
+              },
+              words: shuffle(words).slice(0, 36),
             }
-          : {
-              game: 'dragon',
-              settings: { speed, minutes, label },
-              words: shuffle(words).slice(0, 60),
-            };
+          : kind === 'fruit'
+            ? {
+                game: 'fruit',
+                settings: { kind: fruitKind, seconds: fruitSeconds, label },
+                words: shuffle(words).slice(0, 60),
+                collocations: shuffle(collocations).slice(0, 40),
+              }
+            : {
+                game: 'dragon',
+                settings: { speed, minutes, label },
+                words: shuffle(words).slice(0, 60),
+              };
     try {
       setCode(await createRoom(body));
     } catch (error) {
@@ -238,7 +279,7 @@ export function DuelPage({ onBack }: { onBack(): void }) {
         : 'Đối thủ thắng';
   const reasonText =
     state?.endReason === 'cleared'
-      ? state.game === 'fruit'
+      ? state.game === 'fruit' || state.game === 'tea'
         ? 'Hết câu hỏi.'
         : 'Bàn đã sạch.'
       : state?.endReason === 'time'
@@ -247,6 +288,10 @@ export function DuelPage({ onBack }: { onBack(): void }) {
           ? 'Một người đã rời trận.'
           : '';
   const stats = (state: PublicState, id: string) => {
+    if (state.game === 'tea') {
+      const p = state.players.find((x) => x.id === id)!;
+      return `${p.score} đơn đúng · ${p.misses} đơn sai`;
+    }
     if (state.game === 'garden') {
       const p = state.players.find((x) => x.id === id)!;
       return `${p.matched} cặp · ${p.misses} lần sai`;
@@ -261,17 +306,31 @@ export function DuelPage({ onBack }: { onBack(): void }) {
 
   return (
     <div
-      className={`${kind === 'fruit' ? 'fruit-page' : 'garden-page'} ${kind === 'dragon' ? 'dragon-page' : ''} duel-page`}
+      className={`${kind === 'fruit' ? 'fruit-page' : 'garden-page'} ${kind === 'dragon' ? 'dragon-page' : ''} ${kind === 'tea' ? 'tea-page' : ''} duel-page`}
+      data-topic={
+        kind === 'tea'
+          ? state?.game === 'tea'
+            ? (state.settings.topic ?? 'tea')
+            : topic
+          : undefined
+      }
     >
       <GameTopbar
         title="Solo 2 người"
-        subtitle={state?.settings.label ?? gameName[game]}
+        subtitle={state?.settings.label ?? (selectedGame ? gameNames[selectedGame] : undefined)}
         onBack={back}
         onHelp={() => setHelp(true)}
         onSound={() => setSoundOpen(true)}
         onFullscreen={() => void fullscreen()}
       />
-      {kind === 'garden' ? (
+      {kind === 'tea' ? (
+        <TeaDuelStation
+          {...viewProps}
+          state={state?.game === 'tea' ? state : null}
+          counting={counting}
+          previewTopic={topic}
+        />
+      ) : kind === 'garden' ? (
         <GardenDuelView
           {...viewProps}
           state={state?.game === 'garden' ? (state as PublicDuelState) : null}
@@ -297,7 +356,9 @@ export function DuelPage({ onBack }: { onBack(): void }) {
                 <Swords size={22} />
               </span>
               <div>
-                <span className="garden-eyebrow">ĐỐI KHÁNG TRÊN CÙNG MỘT BÀN</span>
+                <span className="garden-eyebrow">
+                  {selectedGame ? gameNames[selectedGame] : 'Vào phòng bằng mã'}
+                </span>
                 <h2>Solo 2 người</h2>
               </div>
             </header>
@@ -315,156 +376,163 @@ export function DuelPage({ onBack }: { onBack(): void }) {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div className="duel-tabs" role="tablist" aria-label="Tạo hoặc vào phòng">
-              <button
-                role="tab"
-                aria-selected={tab === 'create'}
-                onClick={() => (setTab('create'), setProblem(''))}
-              >
-                <Swords size={16} /> Tạo phòng
-              </button>
-              <button
-                role="tab"
-                aria-selected={tab === 'join'}
-                onClick={() => (setTab('join'), setProblem(''))}
-              >
-                <LogIn size={16} /> Vào phòng
-              </button>
-            </div>
-            {/* Both panels share one grid cell, so switching tabs never resizes the dialog. */}
-            <div className="duel-panels">
-              <div
-                className={`duel-panel${tab === 'create' ? '' : ' is-hidden'}`}
-                role="tabpanel"
-                inert={tab !== 'create'}
-              >
-                <div className="duel-fields">
-                  <div>
-                    <label htmlFor="duel-game">Trò chơi</label>
-                    <Select
-                      id="duel-game"
-                      aria-label="Trò chơi"
-                      value={game}
-                      onValueChange={(value) => setGame(value as GameId)}
-                    >
-                      <option value="ghep-chu">Ghép chữ thành từ</option>
-                      <option value="noi-tu">Nối từ với nghĩa</option>
-                      <option value="chem-hoa-qua">Chém hoa quả</option>
-                      <option value="rong-san-chu">Rồng săn chữ</option>
-                    </Select>
-                  </div>
-                  {content && scope && (
-                    <ScopePicker
-                      bundle={content.bundle}
-                      game={game}
-                      scope={scope}
-                      idPrefix="duel"
-                      wrapFields
-                      onChange={setScope}
-                    />
-                  )}
-                  {kind === 'garden' && (
-                    <>
-                      <div>
-                        <label htmlFor="duel-pairs">Kích thước bàn</label>
-                        <Select
-                          id="duel-pairs"
-                          aria-label="Kích thước bàn"
-                          value={String(pairs)}
-                          onValueChange={(value) => setPairs(Number(value) as 8 | 12)}
-                        >
-                          <option value="8">8 cặp · nhanh</option>
-                          <option value="12">12 cặp · dài hơi</option>
-                        </Select>
-                      </div>
-                      {/* Always present (locked for Nối nghĩa) so the dialog keeps its size. */}
-                      <div>
-                        <label htmlFor="duel-difficulty">Độ khó</label>
-                        <Select
-                          id="duel-difficulty"
-                          aria-label="Độ khó"
-                          value={game === 'ghep-chu' ? difficulty : 'normal'}
-                          disabled={game !== 'ghep-chu'}
-                          onValueChange={(value) => setDifficulty(value as 'normal' | 'hard')}
-                        >
-                          <option value="normal">Bình thường</option>
-                          <option value="hard">Khó · đúng thứ tự</option>
-                        </Select>
-                      </div>
-                    </>
-                  )}
-                  {kind === 'fruit' && (
-                    <>
-                      <div>
-                        <label htmlFor="duel-fruit-kind">Nội dung</label>
-                        <Select
-                          id="duel-fruit-kind"
-                          aria-label="Nội dung"
-                          value={collocations.length ? fruitKind : 'words'}
-                          onValueChange={(value) => setFruitKind(value as 'words' | 'collocations')}
-                        >
-                          <option value="words">Từ vựng</option>
-                          <option value="collocations" disabled={!collocations.length}>
-                            Cụm động từ
-                          </option>
-                        </Select>
-                      </div>
-                      <div>
-                        <label htmlFor="duel-fruit-seconds">Thời gian mỗi câu</label>
-                        <Select
-                          id="duel-fruit-seconds"
-                          aria-label="Thời gian mỗi câu"
-                          value={String(fruitSeconds)}
-                          onValueChange={(value) => setFruitSeconds(Number(value) as 8 | 12)}
-                        >
-                          <option value="8">8 giây · nhanh tay</option>
-                          <option value="12">12 giây · thong thả</option>
-                        </Select>
-                      </div>
-                    </>
-                  )}
-                  {kind === 'dragon' && (
-                    <>
-                      <div>
-                        <label htmlFor="duel-speed">Tốc độ</label>
-                        <Select
-                          id="duel-speed"
-                          aria-label="Tốc độ"
-                          value={speed}
-                          onValueChange={(value) => setSpeed(value as 'slow' | 'normal' | 'fast')}
-                        >
-                          <option value="slow">Chậm · làm quen</option>
-                          <option value="normal">Vừa</option>
-                          <option value="fast">Nhanh · thử thách</option>
-                        </Select>
-                      </div>
-                      <div>
-                        <label htmlFor="duel-minutes">Thời lượng</label>
-                        <Select
-                          id="duel-minutes"
-                          aria-label="Thời lượng"
-                          value={String(minutes)}
-                          onValueChange={(value) => setMinutes(Number(value) as 2 | 3)}
-                        >
-                          <option value="2">2 phút</option>
-                          <option value="3">3 phút</option>
-                        </Select>
-                      </div>
-                    </>
-                  )}
-                </div>
+            {selectedGame && (
+              <div className="duel-tabs" role="tablist" aria-label="Tạo hoặc vào phòng">
                 <button
-                  className="garden-primary duel-cta"
-                  onClick={() => void create()}
-                  disabled={creating || !canCreate}
+                  role="tab"
+                  aria-selected={tab === 'create'}
+                  onClick={() => (setTab('create'), setProblem(''))}
                 >
-                  {creating ? 'Đang tạo phòng…' : 'Tạo phòng & lấy mã mời'}
-                  <ArrowRight size={18} />
+                  <Swords size={16} /> Tạo phòng
+                </button>
+                <button
+                  role="tab"
+                  aria-selected={tab === 'join'}
+                  onClick={() => (setTab('join'), setProblem(''))}
+                >
+                  <LogIn size={16} /> Vào phòng
                 </button>
               </div>
+            )}
+            {/* Both panels share one grid cell, so switching tabs never resizes the dialog. */}
+            <div className="duel-panels">
+              {selectedGame && (
+                <div
+                  className={`duel-panel${tab === 'create' ? '' : ' is-hidden'}`}
+                  role="tabpanel"
+                  inert={tab !== 'create'}
+                >
+                  <div className="duel-fields">
+                    {kind === 'tea' && (
+                      <>
+                        <TopicPicker id="duel-topic" value={topic} onChange={setTopic} />
+                        <TeaOrderCount
+                          id="tea-duel-order-count"
+                          value={teaOrderCount}
+                          onChange={setTeaOrderCount}
+                        />
+                      </>
+                    )}
+                    {kind !== 'tea' && content && scope && (
+                      <ScopePicker
+                        bundle={content.bundle}
+                        game={courseGame}
+                        scope={scope}
+                        idPrefix="duel"
+                        wrapFields
+                        onChange={setScope}
+                      />
+                    )}
+                    {kind === 'garden' && (
+                      <>
+                        <div>
+                          <label htmlFor="duel-pairs">Kích thước bàn</label>
+                          <Select
+                            id="duel-pairs"
+                            aria-label="Kích thước bàn"
+                            value={String(pairs)}
+                            onValueChange={(value) => setPairs(Number(value) as 8 | 12)}
+                          >
+                            <option value="8">8 cặp · nhanh</option>
+                            <option value="12">12 cặp · dài hơi</option>
+                          </Select>
+                          {canCreate && words.length < pairs && (
+                            <small>
+                              Bộ từ đã chọn có {words.length} từ. Bàn sẽ dùng {words.length} cặp.
+                            </small>
+                          )}
+                        </div>
+                        {/* Always present (locked for Nối nghĩa) so the dialog keeps its size. */}
+                        <div>
+                          <label htmlFor="duel-difficulty">Độ khó</label>
+                          <Select
+                            id="duel-difficulty"
+                            aria-label="Độ khó"
+                            value={game === 'ghep-chu' ? difficulty : 'normal'}
+                            disabled={game !== 'ghep-chu'}
+                            onValueChange={(value) => setDifficulty(value as 'normal' | 'hard')}
+                          >
+                            <option value="normal">Bình thường</option>
+                            <option value="hard">Khó · đúng thứ tự</option>
+                          </Select>
+                        </div>
+                      </>
+                    )}
+                    {kind === 'fruit' && (
+                      <>
+                        <div>
+                          <label htmlFor="duel-fruit-kind">Nội dung</label>
+                          <Select
+                            id="duel-fruit-kind"
+                            aria-label="Nội dung"
+                            value={collocations.length ? fruitKind : 'words'}
+                            onValueChange={(value) =>
+                              setFruitKind(value as 'words' | 'collocations')
+                            }
+                          >
+                            <option value="words">Từ vựng</option>
+                            <option value="collocations" disabled={!collocations.length}>
+                              Cụm động từ
+                            </option>
+                          </Select>
+                        </div>
+                        <div>
+                          <label htmlFor="duel-fruit-seconds">Thời gian mỗi câu</label>
+                          <Select
+                            id="duel-fruit-seconds"
+                            aria-label="Thời gian mỗi câu"
+                            value={String(fruitSeconds)}
+                            onValueChange={(value) => setFruitSeconds(Number(value) as 8 | 12)}
+                          >
+                            <option value="8">8 giây · nhanh tay</option>
+                            <option value="12">12 giây · thong thả</option>
+                          </Select>
+                        </div>
+                      </>
+                    )}
+                    {kind === 'dragon' && (
+                      <>
+                        <div>
+                          <label htmlFor="duel-speed">Tốc độ</label>
+                          <Select
+                            id="duel-speed"
+                            aria-label="Tốc độ"
+                            value={speed}
+                            onValueChange={(value) => setSpeed(value as 'slow' | 'normal' | 'fast')}
+                          >
+                            <option value="slow">Chậm · làm quen</option>
+                            <option value="normal">Vừa</option>
+                            <option value="fast">Nhanh · thử thách</option>
+                          </Select>
+                        </div>
+                        <div>
+                          <label htmlFor="duel-minutes">Thời lượng</label>
+                          <Select
+                            id="duel-minutes"
+                            aria-label="Thời lượng"
+                            value={String(minutes)}
+                            onValueChange={(value) => setMinutes(Number(value) as 2 | 3)}
+                          >
+                            <option value="2">2 phút</option>
+                            <option value="3">3 phút</option>
+                          </Select>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    className="garden-primary duel-cta"
+                    onClick={() => void create()}
+                    disabled={creating || !canCreate}
+                  >
+                    {creating ? 'Đang tạo phòng…' : 'Tạo phòng & lấy mã mời'}
+                    <ArrowRight size={18} />
+                  </button>
+                </div>
+              )}
               <div
                 className={`duel-panel duel-join${tab === 'join' ? '' : ' is-hidden'}`}
-                role="tabpanel"
+                role={selectedGame ? 'tabpanel' : undefined}
                 inert={tab !== 'join'}
               >
                 <label htmlFor="duel-code">Nhập mã 6 ký tự bạn của bạn gửi</label>
@@ -613,6 +681,13 @@ export function DuelPage({ onBack }: { onBack(): void }) {
                 </div>
               ))}
             </div>
+            {state.game === 'tea' && (
+              <TeaOrderProgress
+                total={state.total}
+                results={state.players.find((player) => player.id === me)?.results ?? []}
+                submitted={state.players.find((player) => player.id === me)?.served ?? 0}
+              />
+            )}
             <button className="garden-primary" onClick={() => send({ type: 'rematch' })}>
               Đấu lại <RotateCcw size={18} />
             </button>
@@ -633,9 +708,16 @@ export function DuelPage({ onBack }: { onBack(): void }) {
             >
               <X size={20} />
             </button>
-            <h2>Luật solo · {state ? state.settings.label.split(' · ')[0] : gameName[game]}</h2>
+            <h2>Luật solo · {state ? state.settings.label.split(' · ')[0] : gameNames[game]}</h2>
             <ol>
-              {rules[kind].map((rule) => (
+              {(kind === 'tea' && (state?.game === 'tea' ? state.settings.topic : topic) !== 'tea'
+                ? [
+                    'Hai người nhận cùng chuỗi yêu cầu bằng tiếng Trung.',
+                    'Chọn đúng các thông tin trên phiếu rồi xác nhận.',
+                    'Hết giờ, ai trả lời đúng nhiều hơn thắng.',
+                  ]
+                : rules[kind]
+              ).map((rule) => (
                 <li key={rule}>{rule}</li>
               ))}
               <li>Mất mạng thì vào lại trong 20 giây để giữ trận.</li>
@@ -647,5 +729,77 @@ export function DuelPage({ onBack }: { onBack(): void }) {
         </div>
       )}
     </div>
+  );
+}
+
+function TeaDuelStation({
+  state,
+  me,
+  serverNow,
+  send,
+  counting,
+  previewTopic,
+  connected,
+  notice,
+  soundOpen,
+  closeSound,
+}: {
+  state: Extract<PublicState, { game: 'tea' }> | null;
+  me: string;
+  serverNow: number;
+  send: ReturnType<typeof useDuelRoom>['send'];
+  counting: boolean;
+  previewTopic: TopicId;
+  connected: boolean;
+  notice: string | null;
+  soundOpen: boolean;
+  closeSound(): void;
+}) {
+  const player = state?.players.find((p) => p.id === me);
+  const opponent = state?.players.find((p) => p.id !== me);
+  const progress = player?.served ?? 0;
+  const correct = player?.feedback?.correct;
+  const audio = useGameSound(teaAudioProfile);
+  const play = useRef(audio.play);
+  play.current = audio.play;
+  useEffect(() => {
+    if (correct !== undefined) play.current(correct ? 'correct' : 'wrong');
+  }, [progress, correct]);
+  return (
+    <>
+      <TeaStation
+        topic={state?.settings.topic ?? previewTopic}
+        fullOrder={Boolean(state?.fullOrders?.includes(me))}
+        ticket={counting ? undefined : state?.tickets[me]}
+        progress={progress}
+        results={player?.results ?? []}
+        total={state?.total ?? 0}
+        seconds={
+          state?.endsAt
+            ? Math.max(0, Math.min(90, Math.ceil((state.endsAt - serverNow) / 1000)))
+            : 90
+        }
+        score={player?.score ?? 0}
+        opponent={opponent}
+        feedback={player?.feedback ?? null}
+        disabled={state?.phase !== 'playing' || counting || !connected}
+        waiting={state?.phase === 'playing' && progress === state.total}
+        onServe={(recipe) => send({ type: 'serve-tea', order: progress, recipe })}
+      />
+      {notice && (
+        <p className="tea-arena" role="status">
+          {notice}
+        </p>
+      )}
+      {soundOpen && (
+        <AudioSettings
+          settings={audio.settings}
+          change={audio.change}
+          play={audio.play}
+          profile={teaAudioProfile}
+          close={closeSound}
+        />
+      )}
+    </>
   );
 }
